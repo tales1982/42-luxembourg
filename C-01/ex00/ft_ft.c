@@ -11,4 +11,5 @@ int main(){
 	a = 10;
 	ft_ft( &a);
 	printf("O valor de a é %d\n", a);
+	return (0);
 }
