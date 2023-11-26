@@ -1,0 +1,34 @@
+ENG:
+Assignment name  : ft_strlen
+Expected files   : ft_strlen.c
+Allowed functions: 
+--------------------------------------------------------------------------------
+
+Write a function that returns the length of a string.
+
+Your function must be declared as follows:
+
+int	ft_strlen(char *str);
+===============================================================================
+FR:
+Nom de la mission : ft_strlen
+Fichiers attendus : ft_strlen.c
+Fonctions autorisées :
+-------------------------------------------------- -------------------------------
+
+Écrivez une fonction qui renvoie la longueur d'une chaîne.
+
+Votre fonction doit être déclarée comme suit :
+
+int ft_strlen(char *str);
+===============================================================================
+Nome da tarefa: ft_strlen
+Arquivos esperados: ft_strlen.c
+Funções permitidas:
+-------------------------------------------------- ------------------------------
+
+Escreva uma função que retorne o comprimento de uma string.
+
+Sua função deve ser declarada da seguinte forma:
+
+int ft_strlen(char *str);

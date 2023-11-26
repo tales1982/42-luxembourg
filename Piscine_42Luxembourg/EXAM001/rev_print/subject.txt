@@ -1,0 +1,60 @@
+ENG:
+Assignment name  : rev_print
+Expected files   : rev_print.c
+Allowed functions: write
+--------------------------------------------------------------------------------
+
+Write a function that takes a string and displays the string in reverse
+order followed by the newline.
+Its prototype is constructed like this : 
+  char *ft_rev_print (char *str)
+It must return its argument
+
+Examples:
+
+$> ./rev_print "zaz" | cat -e
+zaz$
+$> ./rev_print "dub0 a POIL" | cat -e
+LIOP a 0bud$
+$> ./rev_print | cat -e
+$===============================================================================
+FR:
+Nom de la mission : rev_print
+Fichiers attendus : rev_print.c
+Fonctions autorisées : écrire
+-------------------------------------------------- -------------------------------
+
+Écrivez une fonction qui prend une chaîne et affiche la chaîne à l'envers
+ordre suivi de la nouvelle ligne.
+Son prototype est construit ainsi :
+   char *ft_rev_print (char *str)
+Il doit retourner son argument
+
+Exemples:
+
+$> ./rev_print "zaz" | chat -e
+zaz$
+$> ./rev_print "dub0 un POIL" | chat -e
+LIOP à 0bud$
+$> ./rev_print | chat -e
+$===============================================================================
+PT:
+Nome da tarefa: rev_print
+Arquivos esperados: rev_print.c
+Funções permitidas: escrever
+-------------------------------------------------- ------------------------------
+
+Escreva uma função que receba uma string e a exiba ao contrário
+ordem seguida pela nova linha.
+Seu protótipo é construído assim:
+   char *ft_rev_print (char *str)
+Ele deve retornar seu argumento
+
+Exemplos:
+
+$> ./rev_print "zaz" | gato -e
+zaz$
+$> ./rev_print "dub0 a POIL" | gato -e
+LIOP a 0bud$
+$>./rev_print | gato -e
+$

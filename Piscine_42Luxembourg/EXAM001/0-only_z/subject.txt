@@ -1,0 +1,24 @@
+ENG:
+Assignment name  : only_z
+Expected files   : only_z.c
+Allowed functions: write
+----------------------------------------------------------------------------
+
+Write a program that displays a 'z' character on the standard output.
+
+============================================================================
+FR:
+Nom de l'affectation : only_z
+Fichiers attendus : only_z.c
+Fonctions autorisées : écrire
+-------------------------------------------------- -------------------------------
+
+Écrivez un programme qui affiche un caractère « z » sur la sortie standard.
+===========================================================================
+PT:
+Nome da tarefa: only_z
+Arquivos esperados: only_z.c
+Funções permitidas: escrever
+-------------------------------------------------- ------------------------------
+
+Escreva um programa que exiba um caractere 'z' na saída padrão.
