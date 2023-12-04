@@ -13,7 +13,7 @@
 
 void	ft_swap(int *a, int *b);
 
-/*
+
 int	main (void)
 {
 	int	a;
@@ -32,7 +32,7 @@ int	main (void)
 	printf("\n");
 
 }
-*/
+
 
 void	ft_swap(int *a, int *b)
 {

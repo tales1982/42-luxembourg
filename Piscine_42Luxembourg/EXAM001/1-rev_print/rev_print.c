@@ -15,7 +15,7 @@
 char	*ft_rev_print(char *str);
 int		length(char *str);
 
-/*
+
 int	main(void)
 {
 
@@ -23,7 +23,7 @@ int	main(void)
 	ft_rev_print(str);
 
 }
-*/
+
 
 int	length(char *str)
 {

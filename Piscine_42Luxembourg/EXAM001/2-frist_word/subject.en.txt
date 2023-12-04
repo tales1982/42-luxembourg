@@ -1,0 +1,79 @@
+Assignment name  : first_word
+Expected files   : first_word.c
+Allowed functions: write
+---------------------------------------------------------------------------------------------------
+
+Write a program that takes a string and displays its first word, followed by a
+newline.
+
+A word is a section of string delimited by spaces/tabs or by the start/end of
+the string.
+
+If the number of parameters is not 1, or if there are no words, simply display
+a newline.
+
+Examples:
+
+$> ./first_word "FOR PONY" | cat -e
+FOR$
+$> ./first_word "this        ...       is sparta, then again, maybe    not" | cat -e
+this$
+$> ./first_word "   " | cat -e
+$
+$> ./first_word "a" "b" | cat -e
+$
+$> ./first_word "  lorem,ipsum  " | cat -e
+lorem,ipsum$
+$>
+===================================================================================================
+FR:
+Assignment name  : first_word
+Expected files   : first_word.c
+Allowed functions: write
+---------------------------------------------------------------------------------------------------
+Écrivez un programme qui prend une chaîne et affiche son premier mot, suivi d'un
+nouvelle ligne.
+
+Un mot est une section de chaîne délimitée par des espaces/tabulations ou par le début/la fin de
+la chaîne.
+
+Si le nombre de paramètres est différent de 1, ou s'il n'y a pas de mots, afficher simplement
+une nouvelle ligne.
+
+Examples:
+
+$> ./first_word "FOR PONY" | cat -e
+FOR$
+$> ./first_word "this        ...       is sparta, then again, maybe    not" | cat -e
+this$
+$> ./first_word "   " | cat -e
+$
+$> ./first_word "a" "b" | cat -e
+$
+$> ./first_word "  lorem,ipsum  " | cat -e
+lorem,ipsum$
+$>
+==================================================================================================
+Escreva um programa que receba uma string e exiba sua primeira palavra, seguida por uma
+nova linha.
+
+Uma palavra é uma seção de string delimitada por espaços/tabulações ou pelo início/fim de
+a corda.
+
+Se o número de parâmetros não for 1, ou se não houver palavras, basta exibir
+uma nova linha.
+
+Exemplos:
+
+$> ./first_word "FOR PONY" | cat -e
+FOR$
+$> ./first_word "this        ...       is sparta, then again, maybe    not" | cat -e
+this$
+$> ./first_word "   " | cat -e
+$
+$> ./first_word "a" "b" | cat -e
+$
+$> ./first_word "  lorem,ipsum  " | cat -e
+lorem,ipsum$
+$>
+

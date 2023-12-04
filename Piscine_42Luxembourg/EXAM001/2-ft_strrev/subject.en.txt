@@ -1,0 +1,32 @@
+Assignment name  : ft_strrev
+Expected files   : ft_strrev.c
+Allowed functions: 
+--------------------------------------------------------------------------------
+
+Write a function that reverses (in-place) a string.
+
+It must return its parameter.
+
+Your function must be declared as follows:
+
+char    *ft_strrev(char *str);
+
+==================================================================================
+FR:
+Écrivez une fonction qui inverse (sur place) une chaîne.
+
+Il doit renvoyer son paramètre.
+
+Votre fonction doit être déclarée comme suit :
+
+char *ft_strrev(char *str);
+==================================================================================
+PT:
+
+Escreva uma função que inverte (no local) uma string.
+
+Deve retornar seu parâmetro.
+
+Sua função deve ser declarada da seguinte forma:
+
+char *ft_strrev(char *str);
