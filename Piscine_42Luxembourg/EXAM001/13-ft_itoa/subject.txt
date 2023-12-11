@@ -1,0 +1,31 @@
+/*
+Assignment name  : ft_itoa
+Expected files   : ft_itoa.c
+Allowed functions: malloc
+--------------------------------------------------------------------------------
+
+Write a function that takes an int and converts it to a null-terminated string.
+The function returns the result in a char array that you must allocate.
+
+Your function must be declared as follows:
+
+char	*ft_itoa(int nbr);
+============================================================================================
+FR:
+Écrivez une fonction qui prend un int et le convertit en une chaîne terminée par
+un caractère nul. 
+La fonction renvoie le résultat dans un tableau de caractères que vous devez allouer.
+
+Votre fonction doit être déclarée comme suit :
+===========================================================================================
+PT:
+Nome da tarefa: ft_itoa
+Arquivos esperados: ft_itoa.c
+Funções permitidas: malloc
+
+Escreva uma função que receba um int e o converta em uma string terminada em nulo.
+A função retorna o resultado em um array char que você deve alocar.
+
+Sua função deve ser declarada da seguinte forma:
+*/
+
