@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_rev_int_tab.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: migmarti <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/16 15:30:19 by tales             #+#    #+#             */
+/*   Updated: 2023/12/16 15:58:01 by tales            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 /*
  Funções permitidas: Nenhuma
 • Crie uma função que reverta um determinado array de inteiros (o primeiro vai para o último, etc.).
