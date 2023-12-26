@@ -106,23 +106,3 @@ void	ft_frizzbuzz(int n)
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
