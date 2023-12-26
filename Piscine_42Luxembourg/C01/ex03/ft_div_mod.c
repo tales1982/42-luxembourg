@@ -5,6 +5,7 @@ void ft_div_mod(int a, int b, int *div, int *mod);
 • Esta função divide os parâmetros a por b e armazena o resultado no int apontado por
 div. Também armazena o restante da divisão de a por b no int apontado por mod
 */
+
 #include <stdio.h>
 void ft_div_mod(int a, int b, int *div, int *mod);
 
