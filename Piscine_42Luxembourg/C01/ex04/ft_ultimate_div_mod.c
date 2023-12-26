@@ -5,6 +5,7 @@ void ft_ultimate_div_mod(int *a, int *b);
 • Esta função divide os parâmetros a por b. O resultado desta divisão é armazenado no
 int apontado por a. O restante da divisão é armazenado no int apontado por b.
 */
+
 #include <stdio.h>
 
 void ft_ultimate_div_mod(int *a, int *b);
