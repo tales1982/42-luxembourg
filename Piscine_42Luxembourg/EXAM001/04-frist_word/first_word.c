@@ -22,7 +22,6 @@ $> ./first_word "  lorem,ipsum  " | cat -e
 lorem,ipsum$
 $>
 */
-
 #include <stdio.h>
 
 int	main(int argc, char *argv[])
