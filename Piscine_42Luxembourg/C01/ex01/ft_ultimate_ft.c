@@ -16,7 +16,6 @@
  • Veja como deve ser prototipado:
  void ft_ultimate_ft(int *********nbr);
 */
-
 #include <stdio.h>
 void ft_ultimate_ft(int *********nbr);
 
