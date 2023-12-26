@@ -5,7 +5,6 @@
 • Veja como deve ser prototipado:
 void ft_rev_int_tab(int *tab, int size);
 */
-
 #include <stdio.h>
 #define TAM 9
 
