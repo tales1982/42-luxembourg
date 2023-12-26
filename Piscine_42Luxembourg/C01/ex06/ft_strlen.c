@@ -4,7 +4,6 @@ Funções permitidas: Nenhuma
 • Veja como deve ser prototipado:
 int ft_strlen(char*str);
 */
-
 #include <stdio.h>
 
 int ft_strlen(char*str);
