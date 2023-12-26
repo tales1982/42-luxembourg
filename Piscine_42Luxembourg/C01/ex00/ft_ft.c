@@ -15,6 +15,7 @@
  • Veja como deve ser prototipado:
  void ft_ft(int *nbr);
 */
+
 #include <stdio.h>
 
 void	ft_ft(int *nbr);
