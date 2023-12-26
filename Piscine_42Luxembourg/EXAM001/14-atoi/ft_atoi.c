@@ -62,5 +62,3 @@ int	ft_atoi(char *str)
 	
 	return (num * sinal);
 }
-
-
