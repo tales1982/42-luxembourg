@@ -23,7 +23,7 @@ int ft_str_is_lowercase(char *str);
 
  int main(void)
 {
-     char str[] = "ssT";
+     char str[] = "jk";
 
   int res;
 
@@ -35,7 +35,7 @@ int ft_str_is_lowercase(char *str);
 
  int ft_str_is_lowercase(char *str)
  {
-    while(*str)
+    while(*str != '\0')
     {
         if(!(*str >='a' && *str <= 'z'))
         {
