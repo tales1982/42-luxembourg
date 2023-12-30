@@ -25,10 +25,10 @@ int main()
     char dest[20] = "Tales ";
     char src[] = "Lima";
 
-    printf("%s\n",dest);
+    printf("%s\n", dest);
     ft_strncat(dest, src, 2);
-    printf("%s\n",dest);
-    return(0);
+    printf("%s\n", dest);
+    return (0);
 }
 
 int ft_strlen(char *str)
@@ -36,11 +36,11 @@ int ft_strlen(char *str)
     int i;
 
     i = 0;
-    while(str[i] != '\0')
+    while (str[i] != '\0')
     {
         i++;
     }
-    return(i);
+    return (i);
 }
 
 char *ft_strncat(char *dest, char *src, unsigned int nb)
@@ -49,14 +49,13 @@ char *ft_strncat(char *dest, char *src, unsigned int nb)
     int len;
 
     i = 0;
-    len =ft_strlen(dest);
-    while(i < nb && src[i] != '\0')
+    len = ft_strlen(dest);
+    while (i < nb && src[i] != '\0')
     {
         dest[len] = src[i];
         len++;
         i++;
     }
     dest[len] = '\0';
-    return(dest);
+    return (dest);
 }
-
