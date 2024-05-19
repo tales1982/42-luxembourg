@@ -1,5 +1,6 @@
 #include "minitalk.h"
 
+
 void	send_char(pid_t server_pid, char c)
 {
 	int	i;
@@ -15,7 +16,7 @@ void	send_char(pid_t server_pid, char c)
 		
 		if (res == -1)
 		{
-			ft_putchar_fd("kill", 2);
+			ft_putstr_fd("kill", 2);
 			exit(EXIT_FAILURE);
 		}
 		
