@@ -17,6 +17,10 @@ CLIENT_OBJ = $(CLIENT_SRC:.c=.o)
 # Regras principais
 all: $(SERVER) $(CLIENT)
 
+# Roda o valgrind para checar vazamentos de memória
+check:
+	@valgrind --leak-check=full ./$(NAME)
+
 $(SERVER): $(SERVER_OBJ)
 	$(CC) $(CFLAGS) -o $(SERVER) $(SERVER_OBJ)
 
@@ -53,4 +57,3 @@ help:
 	@echo "  1. Compile o projeto: make all"
 	@echo "  2. Execute o servidor: ./server"
 	@echo "  3. Em outra janela do terminal, execute o cliente: ./client <PID do servidor> <mensagem>"
-
