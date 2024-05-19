@@ -18,7 +18,7 @@ void	handle_signal(int sig, siginfo_t *info, void *context)
 	
 	if (bit_count == 8)
 	{
-		ft_putchar_fd(character,1); // Usar ft_putchar para imprimir o caractere
+		ft_putstr_fd(character,1); // Usar ft_putchar para imprimir o caractere
 		bit_count = 0;
 		character = 0;
 	}
