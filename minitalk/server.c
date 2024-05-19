@@ -1,4 +1,5 @@
 #include "minitalk.h"
+#include "./libft.h"
 
 void	handle_signal(int sig, siginfo_t *info, void *context)
 {
@@ -17,7 +18,7 @@ void	handle_signal(int sig, siginfo_t *info, void *context)
 	
 	if (bit_count == 8)
 	{
-		write(1, &character, 1);//alterar para usar o ft_putchar
+		ft_putchar_fd(character,1); // Usar ft_putchar para imprimir o caractere
 		bit_count = 0;
 		character = 0;
 	}
@@ -31,14 +32,15 @@ int	main(void)
 	sa.sa_sigaction = handle_signal;
 	sigemptyset(&sa.sa_mask);
 
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1) {
+		ft_putstr_fd("Error: Failed to set signal handlers\n", 2);
+		return (1);
+	}
 
-	write(1, "Server PID: ", 12);//alterrar para usar o ft_putstr
+	ft_putstr_fd("Server PID: ",1); // Usar ft_putstr para imprimir o texto
 	pid_t pid = getpid();
-	char pid_str[12];
-	sprintf(pid_str, "%d\n", pid);
-	write(1, pid_str, strlen(pid_str));//alterar para usar o ft_putstr e o ft_strlen
+	ft_putnbr_fd(pid, 1); // Usar ft_putnbr_fd para imprimir o PID
+	ft_putchar_fd('\n',1); // Usar ft_putchar para imprimir uma nova linha
 
 	while (1)
 	{
