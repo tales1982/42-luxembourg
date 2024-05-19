@@ -19,11 +19,7 @@ SERVER_OBJ = $(SERVER_SRC:.c=.o)
 CLIENT_OBJ = $(CLIENT_SRC:.c=.o)
 
 # Regras principais
-all: $(LIBFT) $(SERVER) $(CLIENT)
-
-# Regra para rodar o valgrind para checar vazamentos de memória
-check:
-	@valgrind --leak-check=full ./$(CLIENT) <PID do servidor> "mensagem de teste"
+all: $(SERVER) $(CLIENT)
 
 # Compilar a libft
 $(LIBFT):
@@ -31,14 +27,17 @@ $(LIBFT):
 
 # Compilar o servidor com a libft
 $(SERVER): $(SERVER_OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) -o $(SERVER) $(SERVER_OBJ) -L$(LIBFT_DIR) -I$(LIBFT_DIR) -lft
+	$(CC) $(CFLAGS) -o $(SERVER) $(SERVER_OBJ) -L$(LIBFT_DIR) -lft
 
 # Compilar o cliente com a libft
 $(CLIENT): $(CLIENT_OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT_OBJ) -L$(LIBFT_DIR) -I$(LIBFT_DIR) -lft
+	$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT_OBJ) -L$(LIBFT_DIR) -lft
 
 # Regras para criar arquivos objeto
-%.o: %.c
+$(SERVER_OBJ): $(SERVER_SRC)
+	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -c $< -o $@
+
+$(CLIENT_OBJ): $(CLIENT_SRC)
 	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -c $< -o $@
 
 # Limpar arquivos compilados
