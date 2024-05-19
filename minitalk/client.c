@@ -15,7 +15,7 @@ void	send_char(pid_t server_pid, char c)
 		
 		if (res == -1)
 		{
-			perror("kill");
+			ft_putchar_fd("kill", 2);
 			exit(EXIT_FAILURE);
 		}
 		
