@@ -19,6 +19,6 @@ int	main(int argc, char **argv)
 			// verifica se o arquivo map foi carregado
 		return (1);
 	}
-	start_game(data);
+	start_game(&data);
 	return (0);
 }

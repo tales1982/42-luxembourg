@@ -11,6 +11,7 @@ SOURCES_FILES    = so_long.c \
 					src/key_event.c \
 					src/load_map.c \
 					src/start_game.c \
+					src/copy_image_part.c \
 
 OBJS             = $(SOURCES_FILES:.c=.o)
 
