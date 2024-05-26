@@ -1,0 +1,73 @@
+# Paths and libraries
+LIBFT_PATH       = ./lib/libft
+LIBFT            = $(LIBFT_PATH)/libft.a
+
+MINILIBX_PATH    = ./lib/minilibx-linux
+MINILIBX         = $(MINILIBX_PATH)/libmlx.a
+
+SOURCES_FILES    = so_long.c \
+					src/close_window.c \
+					src/draw_map.c \
+					src/key_event.c \
+					src/load_map.c \
+					src/start_game.c \
+
+OBJS             = $(SOURCES_FILES:.c=.o)
+
+# Compiler options
+CC               = cc
+RM               = rm -f
+CFLAGS           = -Wall -Wextra -Werror -g -I $(LIBFT_PATH) -I $(MINILIBX_PATH)
+
+# Executable name
+NAME             = so_long
+
+# Implicit rule for compiling .c to .o
+%.o : %.c
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+# Rule to link the executable
+$(NAME): $(OBJS)
+	@if [ ! -d $(LIBFT_PATH) ]; then \
+		echo "Directory $(LIBFT_PATH) does not exist."; \
+		exit 1; \
+	fi
+	@if [ ! -d $(MINILIBX_PATH) ]; then \
+		echo "Directory $(MINILIBX_PATH) does not exist."; \
+		exit 1; \
+	fi
+	@$(MAKE) -C $(LIBFT_PATH)
+	@$(MAKE) -C $(MINILIBX_PATH)
+	@$(CC) $(OBJS) $(LIBFT) $(MINILIBX) -o $(NAME) -L$(MINILIBX_PATH) -lmlx -lXext -lX11 -lm
+	@echo "Executable $(NAME) created successfully."
+
+# Default rule
+all: $(NAME)
+
+# Roda o valgrind
+check:
+	@valgrind --leak-check=full ./$(NAME)
+
+# Rule for cleaning up
+fclean:
+	@if [ ! -d $(LIBFT_PATH) ]; then \
+		echo "Directory $(LIBFT_PATH) does not exist."; \
+	else \
+		$(MAKE) -C $(LIBFT_PATH) fclean; \
+	fi
+	@if [ ! -d $(MINILIBX_PATH) ]; then \
+		echo "Directory $(MINILIBX_PATH) does not exist."; \
+	else \
+		$(MAKE) -C $(MINILIBX_PATH) clean; \
+	fi
+	@$(RM) $(NAME) $(OBJS)
+	@echo "Clean completed."
+
+# Rule to re-make everything
+re: fclean all
+
+# Clean up object files only
+clean:
+	@$(RM) $(OBJS)
+	@echo "Object files cleaned."
+
