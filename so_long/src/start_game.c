@@ -33,7 +33,7 @@ void	initialize_images(t_data *data)
 	int		sprite_width;
 	int		sprite_height;
 
-	load_image(&sprite_sheet, data->mlx, "./img/male.xpm", data);// Carrega a imagem do player com todas as direções
+	load_image(&sprite_sheet, data->mlx, "./img/pacMan.xpm", data);// Carrega a imagem do player com todas as direções
 	sprite_width = data->img_width / 3;// Calcula a largura e altura de cada sprite
 	sprite_height = data->img_height / 4;// Calcula a largura e altura de cada sprite
 	initialize_direction_images(data, sprite_sheet, sprite_width, sprite_height);// Inicializa as imagens de cada direção do player
