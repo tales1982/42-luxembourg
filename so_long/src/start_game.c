@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   start_game.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/31 18:25:20 by tlima-de          #+#    #+#             */
+/*   Updated: 2024/05/31 18:25:22 by tlima-de         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../so_long.h"
 
 void	load_image(void **img, void *mlx, char *path, t_data *data)
@@ -13,16 +25,36 @@ void	load_image(void **img, void *mlx, char *path, t_data *data)
 void initialize_direction_images(t_data *data, void *sprite_sheet, int sprite_width, int sprite_height)
 {// Inicializa as imagens de cada direção do player
     int i = 0;
+    t_image_data img_data;
+    img_data.mlx = data->mlx;
+    img_data.src_img = sprite_sheet;
+    img_data.width = sprite_width;
+    img_data.height = sprite_height;
+
     while (i < 3)
     {
         data->img_player_down[i] = mlx_new_image(data->mlx, sprite_width, sprite_height);
         data->img_player_left[i] = mlx_new_image(data->mlx, sprite_width, sprite_height);
         data->img_player_right[i] = mlx_new_image(data->mlx, sprite_width, sprite_height);
         data->img_player_up[i] = mlx_new_image(data->mlx, sprite_width, sprite_height);
-        copy_image_part(data->mlx, sprite_sheet, data->img_player_down[i], i * sprite_width, 0, sprite_width, sprite_height);
-        copy_image_part(data->mlx, sprite_sheet, data->img_player_left[i], i * sprite_width, sprite_height, sprite_width, sprite_height);
-        copy_image_part(data->mlx, sprite_sheet, data->img_player_right[i], i * sprite_width, 2 * sprite_height, sprite_width, sprite_height);
-        copy_image_part(data->mlx, sprite_sheet, data->img_player_up[i], i * sprite_width, 3 * sprite_height, sprite_width, sprite_height);
+
+        img_data.dest_img = data->img_player_down[i];
+        img_data.src_x = i * sprite_width;
+        img_data.src_y = 0;
+        copy_image_part(&img_data);
+
+        img_data.dest_img = data->img_player_left[i];
+        img_data.src_y = sprite_height;
+        copy_image_part(&img_data);
+
+        img_data.dest_img = data->img_player_right[i];
+        img_data.src_y = 2 * sprite_height;
+        copy_image_part(&img_data);
+
+        img_data.dest_img = data->img_player_up[i];
+        img_data.src_y = 3 * sprite_height;
+        copy_image_part(&img_data);
+
         i++;
     }
 }
