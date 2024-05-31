@@ -9,7 +9,8 @@
 /*   Updated: 2024/02/29 18:36:42 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include"libft.h"
+
+#include "libft.h"
 
 char	*ft_strtrim(char const*s1, char const *set)
 {
