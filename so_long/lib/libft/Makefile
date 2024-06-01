@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/26 17:36:37 by tlima-de          #+#    #+#              #
-#    Updated: 2024/02/26 17:36:46 by tlima-de         ###   ########.fr        #
+#    Updated: 2024/06/01 11:32:02 by tales            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,16 @@ SRC = 	ft_atoi.c \
 	ft_putstr_fd.c \
 	ft_putendl_fd.c \
 	ft_putnbr_fd.c \
-	ft_split.c 
+	ft_split.c \
+	ft_printf.c \
+	print_pointer.c \
+	print_unsigned.c \
+	print_string.c \
+	print_int.c \
+	print_char.c \
+	print_hex.c \
+
+	
 
 	
 NAME	=	libft.a

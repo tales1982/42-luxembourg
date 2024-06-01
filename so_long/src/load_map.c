@@ -6,28 +6,42 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:22:40 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/01 10:17:02 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/01 11:20:44 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
 
-int	*parse_line_to_map(const char *line, int width)
+int *parse_line_to_map(const char *line, int width)
 {
-	int	*map_row;
-	int	i;
+    int *map_row;
+    int i;
 
-	map_row = malloc(sizeof(int) * width);
-	i = 0;
-	while (i < width)
-	{
-		if (line[i] == '1')
-			map_row[i] = 1;
-		else
-			map_row[i] = 0;
-		i++;
-	}
-	return (map_row);
+    map_row = malloc(sizeof(int) * width);
+    if (!map_row)
+        return (NULL);
+    i = 0;
+    while (i < width)
+    {
+        if (line[i] == '1')
+            map_row[i] = 1;
+        else if (line[i] == '0')
+            map_row[i] = 0;
+        else if (line[i] == 'C')
+            map_row[i] = 2;
+        else if (line[i] == 'E')
+		{
+            map_row[i] = 3;
+			if(map_row[i] == 'E')
+				exit(1);
+		}
+		else if (line[i] == 'P')
+        {
+            map_row[i] = 4;
+        }
+        i++;
+    }
+    return (map_row);
 }
 
 int	**initialize_map(int width, int initial_height)

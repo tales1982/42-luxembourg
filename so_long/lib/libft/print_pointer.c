@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   print_pointer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/10 18:55:48 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/03/13 18:25:48 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/01 11:28:28 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libft.h"
 
 static char	*string(unsigned long value, int *strlen)
 {

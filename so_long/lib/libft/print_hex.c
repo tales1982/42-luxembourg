@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   print_hex.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/10 17:56:00 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/03/10 17:56:03 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/01 11:28:35 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libft.h"
 
 static char	*string(unsigned int value, int *strlen)
 {

@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 09:47:24 by tales             #+#    #+#             */
-/*   Updated: 2024/06/01 10:06:14 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/01 11:38:01 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,33 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include "libft.h"
 
 # define TILE_SIZE 32
 
 typedef struct s_data
 {
-	void	*mlx;
-	void	*win;
-	int		**map;
-	int		map_width;
-	int		map_height;
-	void	*img_floor;
-	void	*img_wall;
-	void	*img_player_up[3];
-	void	*img_player_down[3];
-	void	*img_player_left[3];
-	void	*img_player_right[3];
-	void	*img_player_current;
-	int		img_width;
-	int		img_height;
-	int		x;
-	int		y;
-	int		frame;
-}			t_data;
-
+    void    *mlx;
+    void    *win;
+    int     **map;
+    int     map_width;
+    int     map_height;
+    void    *img_floor;
+    void    *img_wall;
+    void    *img_collectible;
+    void    *img_exit;
+    void    *img_player_up[3];
+    void    *img_player_down[3];
+    void    *img_player_left[3];
+    void    *img_player_right[3];
+    void    *img_player_current;
+    int     img_width;
+    int     img_height;
+    int     x;
+    int     y;
+    int     frame;
+    int     collectibles_count;
+}           t_data;
 typedef struct s_image_data
 {
 	void	*mlx;

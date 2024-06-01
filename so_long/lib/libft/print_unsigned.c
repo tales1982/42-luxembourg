@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   print_unsigned.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/10 16:03:30 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/03/13 18:55:52 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/01 11:28:20 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libft.h"
 
 static void	convert_num(unsigned int nb)
 {

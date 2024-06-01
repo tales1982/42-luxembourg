@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 14:00:09 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/02/24 14:04:32 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/01 11:24:30 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 #  define BUFFER_SIZE 42
 # endif
 /*************** LIBRARIES *************** */
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
-# include <string.h>
 # include <stdarg.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <unistd.h>
 /* ****** FUNCTION DECLARATIONS *********** */
 int		ft_atoi(const char *str);
 void	ft_bzero(void *s, size_t n);
@@ -48,13 +48,21 @@ int		ft_tolower(int i);
 int		ft_toupper(int i);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_strtrim(char const*s1, char const *set);
+char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_itoa(int n);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
-void	ft_striteri(char *s, void (*f)(unsigned int, char*));
+void	ft_striteri(char *s, void (*f)(unsigned int, char *));
 void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *str, int fd);
 void	ft_putendl_fd(char *str, int fd);
 void	ft_putnbr_fd(int n, int fd);
 char	**ft_split(char const *s, char c);
+// printf
+int		ft_printf(const char *input, ...);
+int		print_pointer(unsigned long value, int asc);
+int		print_unsigned(unsigned int nb);
+int		print_string(char *s);
+int		print_int(int n);
+int		print_char(char c);
+int		print_hex(unsigned int value, int asc);
 #endif

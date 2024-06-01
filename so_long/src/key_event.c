@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:22:32 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/01 10:16:58 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/01 11:36:20 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,24 @@ int	key_event(int keycode, t_data *data)
 			data->y);
 		data->x = new_x;
 		data->y = new_y;
+		if (data->map[new_y / TILE_SIZE][new_x / TILE_SIZE] == 2)
+		{
+			data->collectibles_count--;
+			data->map[new_y / TILE_SIZE][new_x / TILE_SIZE] = 0;
+		}
+		if (data->map[new_y / TILE_SIZE][new_x / TILE_SIZE] == 3
+			&& data->collectibles_count == 0)
+		{
+			ft_printf("You win!\n");
+			exit(0);
+		}
 		mlx_put_image_to_window(data->mlx, data->win, data->img_player_current,
 			data->x, data->y);
 		data->frame = (data->frame + 1) % 3;
 	}
 	return (0);
 }
+
 /*
 ° is_wall: Verifica se uma posição no mapa é uma parede.
 ° update_position_and_image: Atualiza a posição e a imagem do jogador com base na tecla pressionada.
