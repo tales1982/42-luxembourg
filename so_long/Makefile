@@ -23,6 +23,9 @@ CFLAGS           = -Wall -Wextra -Werror -g -I $(LIBFT_PATH) -I $(MINILIBX_PATH)
 # Executable name
 NAME             = so_long
 
+# Map file
+MAP_FILE         = maps/map.ber
+
 # Implicit rule for compiling .c to .o
 %.o : %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -46,8 +49,8 @@ $(NAME): $(OBJS)
 all: $(NAME)
 
 # Roda o valgrind
-check:
-	@valgrind --leak-check=full ./$(NAME)
+check: $(NAME)
+	@valgrind --leak-check=full ./$(NAME) $(MAP_FILE)
 
 # Rule for cleaning up
 fclean:
@@ -71,4 +74,3 @@ re: fclean all
 clean:
 	@$(RM) $(OBJS)
 	@echo "Object files cleaned."
-

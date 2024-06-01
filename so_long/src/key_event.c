@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   key_event.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:22:32 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/05/31 18:22:35 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/01 10:16:58 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,28 +24,29 @@ int	is_wall(int x, int y, t_data *data)
 	{
 		return (data->map[map_y][map_x] == 1);
 	}
-	return (1); // Considera fora do mapa como parede
+	return (1);
 }
 
-void	update_position_and_image(int keycode, t_data *data, int *new_x, int *new_y)
+void	update_position_and_image(int keycode, t_data *data, int *new_x,
+		int *new_y)
 {
 	if (keycode == 'a')
-	{ // seta para a esquerda
+	{
 		*new_x -= TILE_SIZE;
 		data->img_player_current = data->img_player_left[data->frame];
 	}
 	else if (keycode == 'd')
-	{ // seta para a direita
+	{
 		*new_x += TILE_SIZE;
 		data->img_player_current = data->img_player_right[data->frame];
 	}
 	else if (keycode == 'w')
-	{ // seta para cima
+	{
 		*new_y -= TILE_SIZE;
 		data->img_player_current = data->img_player_up[data->frame];
 	}
 	else if (keycode == 's')
-	{ // seta para baixo
+	{
 		*new_y += TILE_SIZE;
 		data->img_player_current = data->img_player_down[data->frame];
 	}
@@ -60,16 +61,22 @@ int	key_event(int keycode, t_data *data)
 	new_y = data->y;
 	if (keycode == 65307)
 		exit(0);
-
-	update_position_and_image(keycode, data, &new_x, &new_y);// Atualiza a posição e imagem do jogador
-
+	update_position_and_image(keycode, data, &new_x, &new_y);
 	if (!is_wall(new_x, new_y, data))
-	{// Se não for parede, atualiza a posição do jogador
-		mlx_put_image_to_window(data->mlx, data->win, data->img_floor, data->x, data->y); // Limpa a posição atual
+	{
+		mlx_put_image_to_window(data->mlx, data->win, data->img_floor, data->x,
+			data->y);
 		data->x = new_x;
 		data->y = new_y;
-		mlx_put_image_to_window(data->mlx, data->win, data->img_player_current, data->x, data->y); // Desenha o jogador na nova posição
-		data->frame = (data->frame + 1) % 3; // Avança para o próximo frame (assumindo 3 frames por direção)
+		mlx_put_image_to_window(data->mlx, data->win, data->img_player_current,
+			data->x, data->y);
+		data->frame = (data->frame + 1) % 3;
 	}
 	return (0);
 }
+/*
+° is_wall: Verifica se uma posição no mapa é uma parede.
+° update_position_and_image: Atualiza a posição e a imagem do jogador com base na tecla pressionada.
+° key_event: Trata os eventos de teclado para mover o jogador no mapa,
+	atualizando a posição e a imagem se o movimento for válido.
+*/

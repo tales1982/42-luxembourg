@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   so_long.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/01 09:47:24 by tales             #+#    #+#             */
+/*   Updated: 2024/06/01 10:06:14 by tales            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SO_LONG_H
 # define SO_LONG_H
 
@@ -22,15 +34,41 @@ typedef struct s_data
 	void	*img_player_down[3];
 	void	*img_player_left[3];
 	void	*img_player_right[3];
-	void *img_player_current; // Current image for the player
+	void	*img_player_current;
 	int		img_width;
 	int		img_height;
 	int		x;
 	int		y;
 	int		frame;
 }			t_data;
+
+typedef struct s_image_data
+{
+	void	*mlx;
+	void	*src_img;
+	void	*dest_img;
+	int		src_x;
+	int		src_y;
+	int		width;
+	int		height;
+	char	*src_data;
+	char	*dest_data;
+	int		src_index;
+	int		dest_index;
+	int		y;
+	int		x;
+	int		i;
+	int		src_size_line;
+	int		src_endian;
+	int		src_bpp;
+	int		dest_bpp;
+	int		dest_size_line;
+	int		dest_endian;
+}			t_image_data;
+
 // inicialização
 int			close_window(void *param);
+void		initialize_game_window(t_data *data);
 // copia de parte da imagem
 void		draw_map(t_data *data);
 // leitura do map
@@ -48,7 +86,6 @@ void		start_game(t_data *data);
 int			is_wall(int x, int y, t_data *data);
 void		update_position_and_image(int keycode, t_data *data, int *new_x,
 				int *new_y);
-void		copy_image_part(void *mlx, void *src_img, void *dest_img, int src_x,
-				int src_y, int width, int height);
+void		copy_image_part(t_image_data *data);
 int			key_event(int keycode, t_data *data);
 #endif

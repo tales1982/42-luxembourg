@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   load_map.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:22:40 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/05/31 18:22:42 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/01 10:17:02 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
 
 int	*parse_line_to_map(const char *line, int width)
-{// Converte uma linha do arquivo do mapa para um array de inteiros
+{
 	int	*map_row;
 	int	i;
 
@@ -31,15 +31,16 @@ int	*parse_line_to_map(const char *line, int width)
 }
 
 int	**initialize_map(int width, int initial_height)
-{// Inicializa o mapa
+{
 	int	**map;
-    (void)width;
+
+	(void)width;
 	map = malloc(sizeof(int *) * initial_height);
 	return (map);
 }
 
 void	read_map_file(FILE *file, int **map, int *width, int *height)
-{// Lê o arquivo do mapa
+{
 	char	*line;
 	size_t	len;
 	ssize_t	read;
@@ -60,7 +61,7 @@ void	read_map_file(FILE *file, int **map, int *width, int *height)
 }
 
 int	**load_map(const char *filename, int *width, int *height)
-{// Carrega o mapa do arquivo
+{
 	int		fd;
 	FILE	*file;
 	int		**map;
@@ -71,11 +72,19 @@ int	**load_map(const char *filename, int *width, int *height)
 	file = fdopen(fd, "r");
 	if (!file)
 		return (NULL);
-
-	map = initialize_map(*width, 100); // Aloca memória para o mapa
+	map = initialize_map(*width, 100);
 	read_map_file(file, map, width, height);
-
 	fclose(file);
 	close(fd);
 	return (map);
 }
+/*
+° parse_line_to_map: Converte uma linha do arquivo de mapa em uma linha de inteiros (1 para parede,
+	0 para chão).
+° initialize_map: Inicializa a estrutura de dados para armazenar o mapa.
+° read_map_file: Lê o arquivo de mapa e converte cada linha em uma representação interna,
+	preenchendo a estrutura de dados do mapa.
+° load_map: Abre o arquivo de mapa,
+	inicializa a estrutura de dados e carrega o mapa,
+	retornando a representação interna do mapa.
+*/
