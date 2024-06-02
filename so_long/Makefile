@@ -8,10 +8,13 @@ MINILIBX         = $(MINILIBX_PATH)/libmlx.a
 SOURCES_FILES    = so_long.c \
 					src/close_window.c \
 					src/draw_map.c \
+					src/draw_exit.c \
 					src/key_event.c \
 					src/load_map.c \
 					src/start_game.c \
 					src/copy_image_part.c \
+					src/key_event_player.c \
+					src/free_resources.c \
 
 OBJS             = $(SOURCES_FILES:.c=.o)
 

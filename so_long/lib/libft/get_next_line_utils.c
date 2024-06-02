@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/21 18:54:39 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/03/21 18:54:42 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/01 17:57:54 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "libft.h"
 
 size_t	ft_strlen(const char *str)
 {
@@ -22,12 +22,18 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+#include "libft.h"
+#include <stdlib.h>
+
+char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*result;
 	int		i;
+	int		j;
 
-	result = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * 1);
+	if (!s1 || !s2)
+		return (NULL);
+	result = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (!result)
 		return (NULL);
 	i = 0;
@@ -36,12 +42,17 @@ char	*ft_strjoin(char *s1, char *s2)
 		result[i] = s1[i];
 		i++;
 	}
-	while (*s2)
-		result[i++] = *s2++;
+	j = 0;
+	while (s2[j])
+	{
+		result[i] = s2[j];
+		i++;
+		j++;
+	}
 	result[i] = '\0';
-	free(s1);
 	return (result);
 }
+
 
 char	*ft_strchr(const char *s, int c)
 {

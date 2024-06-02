@@ -6,11 +6,25 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:22:21 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/01 11:01:55 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/01 18:38:58 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
+
+void	draw_element(t_data *data, int x, int y, void *img)
+{
+	mlx_put_image_to_window(data->mlx, data->win, img, x * TILE_SIZE, y
+		* TILE_SIZE);
+}
+
+void	draw_player(t_data *data, int x, int y)
+{
+	draw_element(data, x, y, data->img_floor);
+	draw_element(data, x, y, data->img_player_current);
+	data->x = x * TILE_SIZE;
+	data->y = y * TILE_SIZE;
+}
 
 void	draw_map(t_data *data)
 {
@@ -24,31 +38,19 @@ void	draw_map(t_data *data)
 		while (x < data->map_width)
 		{
 			if (data->map[y][x] == 1)
-				mlx_put_image_to_window(data->mlx, data->win, data->img_wall, x
-					* TILE_SIZE, y * TILE_SIZE);
+				draw_element(data, x, y, data->img_wall);
 			else if (data->map[y][x] == 0)
-				mlx_put_image_to_window(data->mlx, data->win, data->img_floor, x
-					* TILE_SIZE, y * TILE_SIZE);
+				draw_element(data, x, y, data->img_floor);
 			else if (data->map[y][x] == 2)
-				mlx_put_image_to_window(data->mlx, data->win,
-					data->img_collectible, x * TILE_SIZE, y * TILE_SIZE);
-			else if (data->map[y][x] == 3)
-				mlx_put_image_to_window(data->mlx, data->win, data->img_exit, x
-					* TILE_SIZE, y * TILE_SIZE);
+				draw_element(data, x, y, data->img_collectible);
 			else if (data->map[y][x] == 4)
-			{
-				mlx_put_image_to_window(data->mlx, data->win, data->img_floor, x
-					* TILE_SIZE, y * TILE_SIZE);
-				mlx_put_image_to_window(data->mlx, data->win,
-					data->img_player_current, x * TILE_SIZE, y * TILE_SIZE);
-				data->x = x * TILE_SIZE;
-				data->y = y * TILE_SIZE;
-			}
+				draw_player(data, x, y);
 			x++;
 		}
 		y++;
 	}
 }
+
 
 /*
 A função draw_map percorre a matriz data->map,

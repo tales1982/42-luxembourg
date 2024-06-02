@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 14:00:09 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/01 11:24:30 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/01 17:54:00 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define LIBFT_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
+#  define BUFFER_SIZE 10
 # endif
 /*************** LIBRARIES *************** */
 # include <stdarg.h>
@@ -40,7 +40,7 @@ char	*ft_strchr(const char *s, int i);
 char	*ft_strdup(const char *src);
 size_t	ft_strlcat(char *dest, const char *src, size_t size);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);
-int		ft_strlen(const char *str);
+size_t		ft_strlen(const char *str);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strnstr(const char *haystack, const char *needle, size_t n);
 char	*ft_strrchr(const char *s, int c);
@@ -65,4 +65,8 @@ int		print_string(char *s);
 int		print_int(int n);
 int		print_char(char c);
 int		print_hex(unsigned int value, int asc);
+// get_next_line
+char	*ft_strchr(const char *s, int c);
+char	*get_next_line(int fd);
+
 #endif

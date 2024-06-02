@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   draw_exit.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/20 18:12:52 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/01 18:02:17 by tales            ###   ########.fr       */
+/*   Created: 2024/06/01 18:47:19 by tales             #+#    #+#             */
+/*   Updated: 2024/06/01 18:47:24 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../so_long.h"
 
-size_t	ft_strlen(const char *str)
+void draw_exit(t_data *data)
 {
-	int	i;
+    int y;
+    int x;
 
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
+    y = 0;
+    while (y < data->map_height)
+    {
+        x = 0;
+        while (x < data->map_width)
+        {
+            if (data->map[y][x] == 3)
+                mlx_put_image_to_window(data->mlx, data->win, data->img_exit, x * TILE_SIZE, y * TILE_SIZE);
+            x++;
+        }
+        y++;
+    }
 }
+

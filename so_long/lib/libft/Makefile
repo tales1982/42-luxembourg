@@ -6,7 +6,7 @@
 #    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/26 17:36:37 by tlima-de          #+#    #+#              #
-#    Updated: 2024/06/01 11:32:02 by tales            ###   ########.fr        #
+#    Updated: 2024/06/01 17:49:09 by tales            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,6 +51,8 @@ SRC = 	ft_atoi.c \
 	print_int.c \
 	print_char.c \
 	print_hex.c \
+	get_next_line_utils.c \
+	get_next_line.c \
 
 	
 
