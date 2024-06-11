@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 09:47:24 by tales             #+#    #+#             */
-/*   Updated: 2024/06/01 19:44:08 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/11 18:21:10 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SO_LONG_H
 # define SO_LONG_H
 
-# include "libft.h" // Certifique-se de incluir a libft
+# include "libft.h"
 # include <fcntl.h>
 # include <mlx.h>
 # include <stdio.h>
@@ -44,7 +44,7 @@ typedef struct s_data
 	int		y;
 	int		frame;
 	int		collectibles_count;
-	int move_count; // Adicionado campo para contar os movimentos
+	int		move_count;
 }			t_data;
 
 typedef struct s_image_data
@@ -80,12 +80,8 @@ void		draw_map(t_data *data);
 
 // Leitura do mapa
 int			*parse_line_to_map(const char *line, int width, t_data *data);
-int			**initialize_map(int width, int initial_height);
-void		read_map_file(int fd, int **map, int *width, int *height,
-				t_data *data);
-int			**load_map(const char *filename, int *width, int *height,
-				t_data *data);
-int			**initialize_map(int width, int initial_height);
+void		read_map_file(t_data *data, int fd);
+int			**load_map(const char *filename, t_data *data);
 
 // Leitura de imagens
 void		load_image(void **img, void *mlx, char *path, t_data *data);
@@ -107,5 +103,9 @@ int			key_event(int keycode, t_data *data);
 void		draw_exit(t_data *data);
 void		copy_image_part(t_image_data *data);
 void		free_resources(t_data *data);
+void		free_mlx_resources(t_data *data);
+void		free_player_images(t_data *data);
+void		free_images(t_data *data);
+void		free_map(t_data *data);
 
 #endif
