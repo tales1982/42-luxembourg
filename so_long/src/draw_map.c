@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw_map.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:22:21 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/01 18:38:58 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/05 18:18:51 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void	draw_map(t_data *data)
 		y++;
 	}
 }
-
 
 /*
 A função draw_map percorre a matriz data->map,

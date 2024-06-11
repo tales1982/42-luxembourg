@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_game.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:25:20 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/01 11:07:55 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/05 18:20:17 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,22 +67,23 @@ void	initialize_direction_images(t_data *data, void *sprite_sheet,
 	}
 }
 
-void initialize_images(t_data *data)
+void	initialize_images(t_data *data)
 {
-    void *sprite_sheet;
-    int sprite_width;
-    int sprite_height;
+	void	*sprite_sheet;
+	int		sprite_width;
+	int		sprite_height;
 
-    load_image(&sprite_sheet, data->mlx, "./img/pacMan.xpm", data);
-    sprite_width = data->img_width / 3;
-    sprite_height = data->img_height / 4;
-    initialize_direction_images(data, sprite_sheet, sprite_width, sprite_height);
-    data->img_player_current = data->img_player_down[0];
-    data->frame = 0;
-    load_image(&data->img_floor, data->mlx, "./img/0.xpm", data);
-    load_image(&data->img_wall, data->mlx, "./img/1.xpm", data);
-    load_image(&data->img_collectible, data->mlx, "./img/C.xpm", data);
-    load_image(&data->img_exit, data->mlx, "./img/E.xpm", data);
+	load_image(&sprite_sheet, data->mlx, "./img/pacMan.xpm", data);
+	sprite_width = data->img_width / 3;
+	sprite_height = data->img_height / 4;
+	initialize_direction_images(data, sprite_sheet, sprite_width,
+		sprite_height);
+	data->img_player_current = data->img_player_down[0];
+	data->frame = 0;
+	load_image(&data->img_floor, data->mlx, "./img/0.xpm", data);
+	load_image(&data->img_wall, data->mlx, "./img/1.xpm", data);
+	load_image(&data->img_collectible, data->mlx, "./img/C.xpm", data);
+	load_image(&data->img_exit, data->mlx, "./img/E.xpm", data);
 }
 
 void	start_game(t_data *data)
