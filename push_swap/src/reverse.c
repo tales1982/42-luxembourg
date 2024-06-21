@@ -35,7 +35,7 @@ void	rra(t_stack **stack)
 void	rrb(t_stack **stack)
 {
 	reverse(stack);
-	ft_putstr_fd("rra\n", 1);
+	ft_putstr_fd("rrb\n", 1);
 }
 
 void	rrr(t_stack **a_stack, t_stack **b_stack)

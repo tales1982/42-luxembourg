@@ -32,15 +32,17 @@ static int	calculate_max_index_bits(t_stack **stack)
 	return (max_b);
 }
 
-int get_stack_size(t_stack *stack) {
-    int count;
-	
+int	get_stack_size(t_stack *stack)
+{
+	int	count;
+
 	count = 0;
-    while (stack) {
-        count++;
-        stack = stack->next;
-    }
-    return count;
+	while (stack)
+	{
+		count++;
+		stack = stack->next;
+	}
+	return (count);
 }
 
 void	radix_sort(t_stack**a_stack, t_stack **b_stack)
