@@ -6,7 +6,7 @@
 #    By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/13 17:34:59 by tlima-de          #+#    #+#              #
-#    Updated: 2024/05/13 17:35:02 by tlima-de         ###   ########.fr        #
+#    Updated: 2024/06/05 19:21:24 by tlima-de         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ all: $(NAME)
 
 # Roda o valgrind
 check:
-	@valgrind --leak-check=full ./$(NAME)
+	@valgrind --leak-check=full --track-origins=yes --show-reachable=yes ./$(NAME)
 
 # Rule for cleaning up
 fclean:
