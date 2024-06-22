@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   is_number.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 18:01:49 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/22 12:49:48 by tales            ###   ########.fr       */
+/*   Created: 2024/06/22 12:13:16 by tales             #+#    #+#             */
+/*   Updated: 2024/06/22 12:21:13 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../push_swap.h"
-#include <unistd.h>
 
-int	ft_putstr_fd(char *s, int fd)
+int ft_isdigit(int c)
 {
-	if (!s)
-		return (-1);
-	write(fd, s, ft_strlen(s));
-	return (0);
+    return (c >= '0' && c <= '9');
 }
 
+int	is_number(char *str)
+{
+	int i = 0;
+
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}

@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   ps_check_dup.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 18:01:49 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/22 12:49:48 by tales            ###   ########.fr       */
+/*   Created: 2024/06/22 14:35:33 by tales             #+#    #+#             */
+/*   Updated: 2024/06/22 15:24:38 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../push_swap.h"
-#include <unistd.h>
 
-int	ft_putstr_fd(char *s, int fd)
+int ps_check_dup(t_stack *stack)
 {
-	if (!s)
-		return (-1);
-	write(fd, s, ft_strlen(s));
-	return (0);
-}
+    t_stack *current;
+    t_stack *runner;
 
+    current = stack;
+    while (current)
+    {
+        runner = current->next;
+        while (runner)
+        {
+            if (current->content == runner->content)
+                return (-1);
+            runner = runner->next;
+        }
+        current = current->next;
+    }
+    return (1);
+}

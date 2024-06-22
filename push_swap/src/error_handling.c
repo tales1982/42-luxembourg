@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   error_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 18:01:49 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/22 12:49:48 by tales            ###   ########.fr       */
+/*   Created: 2024/06/22 14:50:18 by tales             #+#    #+#             */
+/*   Updated: 2024/06/22 15:59:20 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../push_swap.h"
-#include <unistd.h>
 
-int	ft_putstr_fd(char *s, int fd)
+void	print_error_and_exit(t_stack **a_stack)
 {
-	if (!s)
-		return (-1);
-	write(fd, s, ft_strlen(s));
-	return (0);
+	ft_putstr_fd("Error\n", 2);
+	//printf("Error function called.\n");//REMOVER
+	ps_stackclear(a_stack);
+	exit(1);
 }
-

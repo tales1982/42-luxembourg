@@ -3,94 +3,82 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 17:55:30 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/05/13 17:56:07 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/22 15:59:47 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../push_swap.h"
 
-static int	ps_check_dup(t_stack *stack)
+
+
+int main(int ac, char **av)
 {
-	int		tmp;
-	t_stack	*dup;
+    t_stack *a_stack;
+    t_stack *b_stack;
 
-	while (stack && stack->next)
-	{
-		tmp = stack->content;
-		dup = stack;
-		while (dup->next)
-		{
-			dup = dup->next;
-			if (dup->content == tmp)
-				return (-1);
-		}
-		stack = stack->next;
-	}
-	return (1);
+    if (ac < 2)
+    {
+        ft_putstr_fd("Error\n", 2);
+        return (1);
+    }
+    a_stack = NULL;
+    b_stack = NULL;
+    if (ps_initstack(ac, av, &a_stack) == 0 || ps_check_dup(a_stack) == -1)
+        print_error_and_exit(&a_stack);
+    index_all_elements_by_content(&a_stack);
+    if (is_sorted(&a_stack) != 1)
+    {
+        if (get_stack_size(a_stack) <= 5)
+            conditional_sort_based_on_size(&a_stack, &b_stack);
+        else
+            radix_sort(&a_stack, &b_stack);
+    }
+    ps_stackclear(&a_stack);
+    ps_stackclear(&b_stack);
+    return (0);
 }
+/*
 
-static void	ps_stackclear(t_stack **stack)
+int main(int ac, char **av)
 {
-	if (!stack || !(*stack))
-		return ;
-	ps_stackclear(&(*stack)->next);
-	free(*stack);
-	*stack = NULL;
-}
+    t_stack *a_stack;
+    t_stack *b_stack;
 
-static int	ps_initstack(int ac, char **av, t_stack **a_stack)
-{
-	int		i;
-	int		j;
-	char	**split;
+    if (ac < 2)
+    {
+        ft_putstr_fd("Error\n", 2);
+        return (1);
+    }
+    printf("Starting push_swap with %d arguments.\n", ac - 1);
 
-	i = 1;
-	while (i < ac)
-	{
-		j = 0;
-		split = ft_split(av[i], ' ');
-		if (!split[j])
-			return (0);
-		while (split[j])
-		{
-			if (ft_atol(split[j]) > INT_MAX || ft_atol(split[j]) < INT_MIN)
-				return (0);
-			lst_addback(a_stack, lst_new(ft_atoi(split[j])));
-			j++;
-		}
-		free_split(split);
-		i++;
-	}
-	return (1);
-}
+    a_stack = NULL;
+    b_stack = NULL;
+    if (ps_initstack(ac, av, &a_stack) == 0 || ps_check_dup(a_stack) == -1)
+    {
+        printf("Initialization failed or duplicate found.\n");
+        print_error_and_exit(&a_stack);
+    }
+    printf("Initialization successful.\n");
 
-int	main(int ac, char **av)
-{
-	t_stack	*a_stack;
-	t_stack	*b_stack;
-
-	if (ac == 1)
-		return (ft_putstr_fd("Error\n", 1));
-	a_stack = NULL;
-	b_stack = NULL;
-	if (ps_initstack(ac, av, &a_stack) == 0 || ps_check_dup(a_stack) == -1)
-		return (ft_putstr_fd("Error\n", 1));
-	index_all_elements_by_content(&a_stack);
-	if (is_sorted(&a_stack) != 1)
-	{
-		if (get_stack_size(a_stack) <= 5)
-		{
-			conditional_sort_based_on_size(&a_stack, &b_stack);
-		}
-		else
-		{
-			radix_sort(&a_stack, &b_stack);
-		}
-	}
-	ps_stackclear(&a_stack);
-	ps_stackclear(&b_stack);
-	return (0);
-}
+    index_all_elements_by_content(&a_stack);
+    if (is_sorted(&a_stack) != 1)
+    {
+        if (get_stack_size(a_stack) <= 5)
+        {
+            printf("Using conditional sort.\n");
+            conditional_sort_based_on_size(&a_stack, &b_stack);
+        }
+        else
+        {
+            printf("Using radix sort.\n");
+            radix_sort(&a_stack, &b_stack);
+        }
+    }
+    ps_stackclear(&a_stack);
+    ps_stackclear(&b_stack);
+    printf("Execution finished.\n");
+    return (0);
+}*/

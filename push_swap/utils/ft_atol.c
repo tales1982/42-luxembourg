@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atol.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 18:36:09 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/05/13 18:36:13 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/22 12:49:57 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,3 @@ long	ft_atol(const char *str)
 	}
 	return (sign * nb);
 }
-/*
-A função atol (ASCII to long integer) converte uma string
- (sequência de caracteres) em um valor inteiro longo (long). 
-*/

@@ -1,23 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   ps_stackclear.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/29 18:01:49 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/22 12:49:48 by tales            ###   ########.fr       */
+/*   Created: 2024/06/22 14:44:38 by tales             #+#    #+#             */
+/*   Updated: 2024/06/22 15:25:54 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../push_swap.h"
-#include <unistd.h>
 
-int	ft_putstr_fd(char *s, int fd)
+void ps_stackclear(t_stack **stack)
 {
-	if (!s)
-		return (-1);
-	write(fd, s, ft_strlen(s));
-	return (0);
+    if (!stack || !(*stack))
+        return;
+    ps_stackclear(&(*stack)->next);
+    free(*stack);
+    *stack = NULL;
 }
-
