@@ -6,16 +6,16 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 17:33:13 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/22 15:51:19 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/22 18:17:07 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
-#include <stdio.h>
 # include <limits.h>
 # include <stddef.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 
@@ -81,6 +81,7 @@ int					is_number(char *str);
 void				ps_stackclear(t_stack **stack);
 int					ps_check_dup(t_stack *stack);
 int					ps_initstack(int ac, char **av, t_stack **a_stack);
+void				sort_two_elements(t_stack **a_stack);
 
 void				print_error_and_exit(t_stack **a_stack);
 

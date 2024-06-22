@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   radix.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 17:57:18 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/05/13 17:57:27 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/22 18:59:51 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	get_stack_size(t_stack *stack)
 	return (count);
 }
 
-void	radix_sort(t_stack**a_stack, t_stack **b_stack)
+void	radix_sort(t_stack **a_stack, t_stack **b_stack)
 {
 	t_stack	*lst;
 	int		i;

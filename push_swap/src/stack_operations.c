@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stack_operations.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 18:04:40 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/05/13 18:04:46 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/06/22 18:20:30 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,9 @@ void	conditional_sort_based_on_size(t_stack **a_stack, t_stack **b_stack)
 	int	size;
 
 	size = get_stack_size(*a_stack);
-	if (size == 3)
+	if (size == 2)
+		sort_two_elements(a_stack);
+	else if (size == 3)
 		sort_three_elements(a_stack);
 	else if (size == 4)
 		sort_four_with_auxiliary(a_stack, b_stack);
