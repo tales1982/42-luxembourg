@@ -1,80 +1,92 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/06/05 18:38:19 by tlima-de          #+#    #+#              #
+#    Updated: 2024/06/23 13:20:27 by tales            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-LIBFT_PATH		=	./libraries/libft
-LIBFT			=	$(LIBFT_PATH)/libft.a
+# Paths and libraries
+LIBFT_PATH       = ./lib/libft
+LIBFT            = $(LIBFT_PATH)/libft.a
 
-MINILIBX_PATH	=	./libraries/minilibx
-MINILIBX		=	$(MINILIBX_PATH)/libmlx.a
+MINILIBX_PATH    = ./lib/minilibx-linux
+MINILIBX         = $(MINILIBX_PATH)/libmlx.a
 
-SOURCES_FILES	=	so_long.c \
-					draw.c \
-					init.c \
-					read_map.c \
-					map_validate.c \
-					player_update.c \
-					gameplay.c \
-					exit_game.c
+SOURCES_FILES    = so_long.c \
+					src/close_window.c \
+					src/draw_map.c \
+					src/draw_exit.c \
+					src/key_event.c \
+					src/load_map.c \
+					src/start_game.c \
+					src/copy_image_part.c \
+					src/key_event_player.c \
+					src/free_resources.c \
+					src/verify_map.c \
 
-SOURCES_BONUS	=	so_long_bonus.c \
-					draw_bonus.c \
-					init_bonus.c \
-					read_map_bonus.c \
-					map_validate_bonus.c \
-					player_update_bonus.c \
-					gameplay_bonus.c \
-					exit_game_bonus.c \
-					moves_bonus.c \
-					animation_bonus.c
+OBJS             = $(SOURCES_FILES:.c=.o)
 
+# Compiler options
+CC               = cc
+RM               = rm -f
+CFLAGS           = -Wall -Wextra -Werror -g -I $(LIBFT_PATH) -I $(MINILIBX_PATH)
 
-SOURCES_DIR		=	sources
-BONUS_DIR		=	sources_bonus
+# Executable name
+NAME             = so_long
 
-HEADER			=	$(SOURCES_DIR)/so_long.h
-HEEADER_BONUS	=	$(BONUS_DIR)/so_long_bonus.h
+# Map file
+MAP_FILE         = maps/map.ber
 
-SOURCES			=	$(addprefix $(SOURCES_DIR)/, $(SOURCES_FILES))
-BONUS_FILES		=	$(addprefix $(BONUS_DIR)/, $(SOURCES_BONUS))
+# Implicit rule for compiling .c to .o
+%.o : %.c
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-OBJECTS			= 	$(SOURCES:.c=.o)
-OBJECTS_BONUS	= 	$(BONUS_FILES:.c=.o)
+# Rule to link the executable
+$(NAME): $(OBJS)
+	@if [ ! -d $(LIBFT_PATH) ]; then \
+		echo "Directory $(LIBFT_PATH) does not exist."; \
+		exit 1; \
+	fi
+	@if [ ! -d $(MINILIBX_PATH) ]; then \
+		echo "Directory $(MINILIBX_PATH) does not exist."; \
+		exit 1; \
+	fi
+	@$(MAKE) -C $(LIBFT_PATH)
+	@$(MAKE) -C $(MINILIBX_PATH)
+	@$(CC) $(OBJS) $(LIBFT) $(MINILIBX) -o $(NAME) -L$(MINILIBX_PATH) -lmlx -lXext -lX11 -lm
+	@echo "Executable $(NAME) created successfully."
 
-NAME			=	so_long
-NAME_BONUS		=	so_long_bonus
+# Default rule
+all: $(NAME)
 
-CC				=	clang
-RM				=	rm -f
+# Roda o valgrind
+check: $(NAME)
+	@valgrind --leak-check=full ./$(NAME) $(MAP_FILE)
 
-CFLAGS			=	-Wall -Wextra -Werror
-MLXFLAGS		=	-L. -lXext -L. -lX11
+# Rule for cleaning up
+fclean:
+	@if [ ! -d $(LIBFT_PATH) ]; then \
+		echo "Directory $(LIBFT_PATH) does not exist."; \
+	else \
+		$(MAKE) -C $(LIBFT_PATH) fclean; \
+	fi
+	@if [ ! -d $(MINILIBX_PATH) ]; then \
+		echo "Directory $(MINILIBX_PATH) does not exist."; \
+	else \
+		$(MAKE) -C $(MINILIBX_PATH) clean; \
+	fi
+	@$(RM) $(NAME) $(OBJS)
+	@echo "Clean completed."
 
-.c.o:
-				$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
+# Rule to re-make everything
+re: fclean all
 
-all:			$(NAME)
-
-bonus:			$(NAME_BONUS)
-
-$(NAME):		$(LIBFT) $(MINILIBX) $(OBJECTS) $(HEADER)
-				$(CC) $(CFLAGS) $(OBJECTS) $(LIBFT) $(MINILIBX) $(MLXFLAGS) -o $(NAME)
-
-$(NAME_BONUS):		$(LIBFT) $(MINILIBX) $(OBJECTS_BONUS) $(HEADER_BONUS)
-					$(CC) $(CFLAGS) $(OBJECTS_BONUS) $(LIBFT) $(MINILIBX) $(MLXFLAGS) -o $(NAME_BONUS)
-
-$(LIBFT):
-				$(MAKE) -C $(LIBFT_PATH)
-
-$(MINILIBX):
-				$(MAKE) -C $(MINILIBX_PATH)
-
+# Clean up object files only
 clean:
-				$(MAKE) -C $(LIBFT_PATH) clean
-				$(MAKE) -C $(MINILIBX_PATH) clean
-				$(RM) $(OBJECTS) $(OBJECTS_BONUS)
-
-fclean:			clean
-				$(MAKE) -C $(LIBFT_PATH) fclean
-				$(RM) $(NAME) $(NAME_BONUS)
-
-re:				fclean all
-
-.PHONY:			all clean fclean re libft minilibx bonus
+	@$(RM) $(OBJS)
+	@echo "Object files cleaned."
