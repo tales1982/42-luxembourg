@@ -19,8 +19,9 @@ int	ft_isdigit(int c)
 
 int	is_number(char *str)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	if (str[i] == '-' || str[i] == '+')
 		i++;
 	while (str[i])

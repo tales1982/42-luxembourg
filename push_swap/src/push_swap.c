@@ -35,7 +35,6 @@ int	main(int ac, char **av)
 	index_all_elements_by_content(&a_stack);
 	if (is_sorted(&a_stack) == 1)
 		ps_stackclear(&a_stack);
-	// return (0);
 	if (get_stack_size(a_stack) == 2)
 		sort_two_elements(&a_stack);
 	else if (get_stack_size(a_stack) <= 5)

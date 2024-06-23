@@ -24,6 +24,7 @@ static void	push(t_stack **a_stack, t_stack **b_stack)
 	if (*b_stack)
 		(*b_stack)->prev = NULL;
 }
+
 void	pa(t_stack **a_stack, t_stack **b_stack)
 {
 	push(a_stack, b_stack);
