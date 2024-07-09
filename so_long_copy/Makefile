@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
+#    By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/05 18:38:19 by tlima-de          #+#    #+#              #
-#    Updated: 2024/06/23 13:20:27 by tales            ###   ########.fr        #
+#    Updated: 2024/06/05 18:38:25 by tlima-de         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,6 @@ SOURCES_FILES    = so_long.c \
 					src/copy_image_part.c \
 					src/key_event_player.c \
 					src/free_resources.c \
-					src/verify_map.c \
 
 OBJS             = $(SOURCES_FILES:.c=.o)
 

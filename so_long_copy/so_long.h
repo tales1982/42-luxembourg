@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 09:47:24 by tales             #+#    #+#             */
-/*   Updated: 2024/06/23 13:55:44 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/11 18:21:10 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,5 @@ void		free_mlx_resources(t_data *data);
 void		free_player_images(t_data *data);
 void		free_images(t_data *data);
 void		free_map(t_data *data);
-// Funções auxiliares para verificação do mapa
-int			is_valid_cell(int x, int y, t_data *data, int **visited);
-void		dfs(int x, int y, t_data *data, int **visited);
-int			**initialize_visited(int width, int height);
-int			can_collect_all_and_reach_exit(t_data *data);
 
 #endif
