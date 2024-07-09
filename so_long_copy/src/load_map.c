@@ -6,7 +6,7 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:22:40 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/11 18:01:24 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/07/08 17:41:56 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int	**initialize_map(int initial_height)
 	}
 	return (map);
 }
-
 int	*parse_line_to_map(const char *line, int width, t_data *data)
 {
 	int	*map_row;

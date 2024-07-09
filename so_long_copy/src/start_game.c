@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_game.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:25:20 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/23 13:54:17 by tales            ###   ########.fr       */
+/*   Updated: 2024/06/05 18:20:17 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,25 +86,26 @@ void	initialize_images(t_data *data)
 	load_image(&data->img_exit, data->mlx, "./img/E.xpm", data);
 }
 
-void start_game(t_data *data)
+void	start_game(t_data *data)
 {
-    initialize_game_window(data);
-    initialize_images(data);
-    data->x = 1 * TILE_SIZE;
-    data->y = 1 * TILE_SIZE;
-
-    if (!can_collect_all_and_reach_exit(data))
-    {
-        printf("Error: Map is not valid.\n");
-        free_resources(data);
-        exit(1);
-    }
-
-    draw_map(data);
-    mlx_put_image_to_window(data->mlx, data->win, data->img_player_current,
-        data->x, data->y);
-    mlx_key_hook(data->win, key_event, data);
-    mlx_hook(data->win, 17, 0, close_window, data);
-    mlx_loop(data->mlx);
+	initialize_game_window(data);
+	initialize_images(data);
+	data->x = 1 * TILE_SIZE;
+	data->y = 1 * TILE_SIZE;
+	draw_map(data);
+	mlx_put_image_to_window(data->mlx, data->win, data->img_player_current,
+		data->x, data->y);
+	mlx_key_hook(data->win, key_event, data);
+	mlx_hook(data->win, 17, 0, close_window, data);
+	mlx_loop(data->mlx);
 }
+//data->mlx limpar memoria
 
+/*
+° Estas funções trabalham em conjunto para carregar e inicializar as imagens do jogo,
+criar uma janela e desenhar o mapa do jogo. O fluxo é o seguinte:
+° Carregar e inicializar as imagens de sprites e elementos do jogo.
+° Configurar a janela do jogo.
+° Desenhar o mapa do jogo.
+° Iniciar o loop de eventos para detectar e responder às entradas do usuário.
+*/
