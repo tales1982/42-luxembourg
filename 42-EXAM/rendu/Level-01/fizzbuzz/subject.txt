@@ -1,0 +1,35 @@
+Assignment name  : fizzbuzz
+Expected files   : fizzbuzz.c
+Allowed functions: write
+--------------------------------------------------------------------------------
+Escreva um programa que imprime os números de 1 a 100, cada um separado por uma nova linha.
+
+Se o número for múltiplo de 3, imprima 'fizz' em vez disso.
+
+Se o número for múltiplo de 5, imprima 'buzz' em vez disso.
+
+Se o número for tanto múltiplo de 3 quanto múltiplo de 5, imprima 'fizzbuzz' em vez disso.
+
+Example:
+$>./fizzbuzz
+1
+2
+fizz
+4
+buzz
+fizz
+7
+8
+fizz
+buzz
+11
+fizz
+13
+14
+fizzbuzz
+[...]
+97
+98
+fizz
+buzz
+$> 
