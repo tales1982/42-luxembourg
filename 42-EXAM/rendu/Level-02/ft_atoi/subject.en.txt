@@ -1,0 +1,12 @@
+Assignment name  : ft_atoi
+Expected files   : ft_atoi.c
+Allowed functions: None
+--------------------------------------------------------------------------------
+
+Escreva uma função que converte a string argumento str em um inteiro (tipo int) e o retorna.
+
+Funciona de forma semelhante à função atoi(const char *str) padrão, consulte o manual.
+
+Sua função deve ser declarada da seguinte forma:
+
+int	ft_atoi(const char *str);
