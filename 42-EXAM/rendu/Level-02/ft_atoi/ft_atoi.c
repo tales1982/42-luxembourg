@@ -6,11 +6,13 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 22:07:04 by tales             #+#    #+#             */
-/*   Updated: 2024/07/23 22:15:36 by tales            ###   ########.fr       */
+/*   Updated: 2024/07/31 16:10:07 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 int	ft_atoi(const char *str)
 {
@@ -37,8 +39,7 @@ int	ft_atoi(const char *str)
     return(res * sign);    
 }
 
-#include <stdlib.h>
-#include <stdio.h>
+
 
 int main(int argc, char **argv)
 {
