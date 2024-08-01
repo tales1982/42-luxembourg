@@ -3,30 +3,82 @@
 /*                                                        :::      ::::::::   */
 /*   union.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/31 22:04:36 by tales             #+#    #+#             */
-/*   Updated: 2024/07/31 23:17:20 by tales            ###   ########.fr       */
+/*   Created: 2024/08/01 11:07:31 by tlima-de          #+#    #+#             */
+/*   Updated: 2024/08/01 12:59:19 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include<unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int ft_len(char *str)
 {
-    int i;
-
-    i = 0;
+    int i = 0;
     while (str[i] != '\0')
         i++;
-    return(i);
+    return i;
 }
 
-void ft_union(char *str1, char *str2)
+int ft_char_in_str(char c, char *str)
 {
-    int i;
-    char *aux;
+    int i = 0;
+    while (str[i] != '\0')
+    {
+        if (str[i] == c)
+            return 1;
+        i++;
+    }
+    return 0;
+}
+
+char *ft_union(char *str, char *str2)
+{
+    int i = 0;
+    int k = 0;
+    int len = ft_len(str) + ft_len(str2);
+    char *aux = (char *)malloc(sizeof(char) * (len + 1));
+    
+    if (aux == NULL)
+        return NULL;
+
+    // Adiciona caracteres únicos de str
+    while (str[i] != '\0')
+    {
+        if (!ft_char_in_str(str[i], aux))
+        {
+            aux[k] = str[i];
+            k++;
+        }
+        i++;
+    }
 
     i = 0;
-    aux = (char *)malloc(sizeof(char) * ft_len(str2 + 1));
+    // Adiciona caracteres únicos de str2
+    while (str2[i] != '\0')
+    {
+        if (!ft_char_in_str(str2[i], aux))
+        {
+            aux[k] = str2[i];
+            k++;
+        }
+        i++;
+    }
+
+    aux[k] = '\0';
+    return aux;
+}
+
+int main(void)
+{
+    char *str = "rien";
+    char *str2 = "cette phrase ne cache rien";
+    char *aux;
+
+    aux = ft_union(str, str2);
+    printf("%s\n", aux);
+
+    free(aux);
+    return 0;
 }
