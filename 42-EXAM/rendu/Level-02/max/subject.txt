@@ -1,0 +1,14 @@
+Assignment name  : max
+Expected files   : max.c
+Allowed functions:
+--------------------------------------------------------------------------------
+
+Escreva a seguinte função:
+
+int max(int* tab, unsigned int len);
+
+O primeiro parâmetro é um array de inteiros, o segundo é o número de elementos no array.
+
+A função retorna o maior número encontrado no array.
+
+Se o array estiver vazio, a função retorna 0.

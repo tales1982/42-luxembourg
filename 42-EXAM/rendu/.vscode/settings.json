@@ -3,6 +3,6 @@
         "*.page-template": "vue",
         "*.layout-template": "vue",
         "*.vue": "vue",
-        "camel_to_snake.C": "cpp"
+        "unistd.h": "c"
     }
 }
