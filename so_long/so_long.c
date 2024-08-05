@@ -18,6 +18,7 @@ void	initialize_game_window(t_data *data)
 	data->win = mlx_new_window(data->mlx, data->map_width * TILE_SIZE,
 			data->map_height * TILE_SIZE, "So Long");
 }
+
 int	main(int argc, char **argv)
 {
 	t_data	data;

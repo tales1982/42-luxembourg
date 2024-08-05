@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 09:47:24 by tales             #+#    #+#             */
-/*   Updated: 2024/06/11 18:21:10 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/08/05 20:14:39 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,12 @@ typedef struct s_image_data
 	int		dest_endian;
 }			t_image_data;
 
+typedef struct s_sprite_dim
+{
+	int		width;
+	int		height;
+}			t_sprite_dim;
+
 // Inicialização
 int			close_window(void *param);
 void		initialize_game_window(t_data *data);
@@ -85,8 +91,15 @@ int			**load_map(const char *filename, t_data *data);
 
 // Leitura de imagens
 void		load_image(void **img, void *mlx, char *path, t_data *data);
+void		create_images(t_data *data, int i, t_sprite_dim dim);
+void		copy_sprite_part(t_image_data *img_data, int i, t_sprite_dim dim,
+				int y_offset);
+void		copy_sprite_images(t_data *data, t_image_data *img_data, int i,
+				t_sprite_dim dim);
+void		initialize_image_data(t_image_data *img_data, t_data *data,
+				void *sprite_sheet, t_sprite_dim dim);
 void		initialize_direction_images(t_data *data, void *sprite_sheet,
-				int sprite_width, int sprite_height);
+				t_sprite_dim dim);
 void		initialize_images(t_data *data);
 void		start_game(t_data *data);
 

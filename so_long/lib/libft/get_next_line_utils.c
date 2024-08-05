@@ -5,65 +5,76 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/21 18:54:39 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/01 17:57:54 by tales            ###   ########.fr       */
+/*   Created: 2024/08/05 21:01:12 by tales             #+#    #+#             */
+/*   Updated: 2024/08/05 21:01:17 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_strlen(const char *str)
+int	found_newline(t_list *stash)
 {
-	size_t	i;
-
-	i = 0;
-	while (*str++)
-		i++;
-	return (i);
-}
-
-#include "libft.h"
-#include <stdlib.h>
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*result;
 	int		i;
-	int		j;
+	t_list	*current;
 
-	if (!s1 || !s2)
-		return (NULL);
-	result = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
-	if (!result)
-		return (NULL);
+	if (stash == NULL)
+		return (0);
+	current = ft_lst_get_last(stash);
 	i = 0;
-	while (s1[i])
+	while (current->content[i])
 	{
-		result[i] = s1[i];
+		if (current->content[i] == '\n')
+			return (1);
 		i++;
 	}
-	j = 0;
-	while (s2[j])
-	{
-		result[i] = s2[j];
-		i++;
-		j++;
-	}
-	result[i] = '\0';
-	return (result);
+	return (0);
 }
 
-
-char	*ft_strchr(const char *s, int c)
+t_list	*ft_lst_get_last(t_list *stash)
 {
-	c = (char)c;
-	while (*s)
+	t_list	*current;
+
+	current = stash;
+	while (current && current->next)
+		current = current->next;
+	return (current);
+}
+
+void	generate_line(char **line, t_list *stash)
+{
+	int	i;
+	int	len;
+
+	len = 0;
+	while (stash)
 	{
-		if (*s == c)
-			return ((char *)s);
-		s++;
+		i = 0;
+		while (stash->content[i])
+		{
+			if (stash->content[i] == '\n')
+			{
+				len++;
+				break ;
+			}
+			len++;
+			i++;
+		}
+		stash = stash->next;
 	}
-	if (*s == c)
-		return ((char *)s);
-	return (NULL);
+	*line = malloc(sizeof(char) * (len + 1));
+}
+
+void	free_stash(t_list *stash)
+{
+	t_list	*current;
+	t_list	*next;
+
+	current = stash;
+	while (current)
+	{
+		free(current->content);
+		next = current->next;
+		free(current);
+		current = next;
+	}
 }

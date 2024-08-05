@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   load_map.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:22:40 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/06/11 18:01:24 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/08/05 19:42:04 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,3 @@ int	**load_map(const char *filename, t_data *data)
 	close(fd);
 	return (map);
 }
-/*
-
-° parse_line_to_map: Converte uma linha do arquivo de mapa em uma linha de inteiros (1 para parede,
-	0 para chão).
-° initialize_map: Inicializa a estrutura de dados para armazenar o mapa.
-° read_map_file: Lê o arquivo de mapa e converte cada linha em uma representação interna,
-	preenchendo a estrutura de dados do mapa.
-° load_map: Abre o arquivo de mapa,
-	inicializa a estrutura de dados e carrega o mapa,
-	retornando a representação interna do mapa.
-*/
