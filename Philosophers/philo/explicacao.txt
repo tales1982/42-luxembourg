@@ -1,0 +1,67 @@
+
+
+1. Entendimento do Problema
+Contexto: O problema dos filósofos se baseia em uma situação onde filósofos estão sentados ao redor de uma mesa com um 
+prato de espaguete no meio. Cada filósofo alterna entre pensar, comer e dormir. Para comer, cada filósofo precisa pegar
+ dois garfos (um em cada lado). Após comer, ele deve devolver os garfos para a mesa.
+Objetivo: Criar um programa em C que simule essa situação, garantindo que os filósofos não morram de fome, evitem deadlocks
+ (onde nenhum filósofo consegue comer), e não haja condições de corrida (race conditions).
+ 
+2. Requisitos Técnicos
+Threads e Mutexes: Cada filósofo será representado por uma thread. Os garfos serão compartilhados entre os filósofos,
+ e você precisará usar mutexes para evitar que dois filósofos peguem o mesmo garfo ao mesmo tempo.
+Entradas do Programa: O programa deve receber os seguintes argumentos:
+number_of_philosophers: Número de filósofos (e garfos).
+time_to_die: Tempo (em milissegundos) que um filósofo pode ficar sem comer antes de morrer.
+time_to_eat: Tempo que um filósofo leva para comer.
+time_to_sleep: Tempo que um filósofo passa dormindo.
+number_of_times_each_philosopher_must_eat (opcional): Quantidade mínima de vezes que cada filósofo deve comer antes da simulação parar.
+
+3. Passos Iniciais
+Configuração do Ambiente:
+
+Crie uma estrutura básica de projeto em C:
+bash
+Copiar código
+mkdir philo
+cd philo
+touch Makefile philo.c philo.h
+Implementação Básica:
+
+Estrutura dos Dados: Comece definindo as estruturas de dados principais no arquivo philo.h.
+c
+Copiar código
+typedef struct s_philosopher {
+    int id;
+    pthread_t thread;
+    int times_eaten;
+    long last_meal_time;
+    pthread_mutex_t *left_fork;
+    pthread_mutex_t *right_fork;
+    // Outras variáveis que possam ser necessárias
+} t_philosopher;
+
+typedef struct s_simulation {
+    int num_philosophers;
+    int time_to_die;
+    int time_to_eat;
+    int time_to_sleep;
+    t_philosopher *philosophers;
+    pthread_mutex_t *forks;
+    // Outras variáveis para controlar a simulação
+} t_simulation;
+Funções Principais:
+
+Inicialização: Crie uma função para inicializar a simulação, incluindo a alocação de memória para os filósofos e garfos, e a criação das threads.
+Função da Thread: Cada thread vai executar uma função que simula o comportamento de um filósofo (pensar, comer, dormir).
+Controle de Sincronização: Use mutexes para controlar o acesso aos garfos.
+
+4. Próximos Passos
+Desenvolver a Função de Simulação: Escreva a lógica dentro da função principal que controla a simulação e as interações entre os filósofos.
+Teste e Depuração: Teste o programa com diferentes cenários para garantir que não ocorram deadlocks e que os filósofos não morram inesperadamente 
+(a menos que seja inevitável pelo design do problema).
+
+5. Considerações Finais
+Makefile: Certifique-se de que o Makefile esteja configurado corretamente para compilar seu projeto com as opções adequadas (-Wall -Wextra -Werror).
+Memória: Lembre-se de gerenciar a memória corretamente para evitar vazamentos (use free adequadamente).
+Se precisar de ajuda em alguma parte específica ou na implementação de uma função em particular, estou à disposição!
