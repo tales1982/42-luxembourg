@@ -1,48 +1,75 @@
-# "Philosophers"
+# Simulação do Problema dos Filósofos
 
-O exercício "Philosophers" da Escola 42 é um clássico problema da computação conhecido 
-como o "Problema dos Filósofos Comensais". Esse problema envolve questões de sincronização
-e concorrência, onde você terá que lidar com threads e a coordenação entre elas 
-para evitar problemas como deadlocks e race conditions.
+## Descrição do Problema
 
-Aqui está uma lista de tópicos que você deve estudar para ter uma boa base para resolver o exercício:
+O problema dos filósofos trata de uma situação onde cinco filósofos estão sentados em torno de uma mesa redonda. 
+Cada filósofo pode alternadamente pensar, comer ou ficar faminto. Para comer, um filósofo precisa usar dois garfos, 
+um à sua esquerda e outro à sua direita. No entanto, existe apenas um garfo entre cada par de filósofos adjacentes, 
+o que pode levar a situações de deadlock, onde todos os filósofos estão esperando indefinidamente pelos garfos.
 
-- 1. ## Threads em C
-Criação e manipulação de threads: Entenda como criar, 
-iniciar e terminar threads usando a biblioteca pthread em C.
-pthread_create, pthread_join: Estude como essas funções são usadas para gerenciar threads.
-Passagem de parâmetros para threads: Aprenda como passar parâmetros para funções executadas por threads.
-- 2. ## Sincronização
-Mutexes (pthread_mutex_t): Fundamental para evitar race conditions, 
-permitindo que apenas uma thread acesse um recurso compartilhado por vez.
-Condicionais (pthread_cond_t): Úteis para fazer com que threads esperem 
-por uma condição específica antes de continuar a execução.
-Semáforos (sem_t): Para controlar o acesso a recursos limitados.
-- 3. ## Problemas de Concorrência
-Race conditions: Entenda o que são e como evitá-los usando mutexes e outras técnicas de sincronização.
-Deadlocks: Compreenda como eles ocorrem e como podem ser evitados (ex.: ordenação dos mutexes, timeouts).
-Starvation: Aprenda sobre a situação onde uma thread nunca consegue acessar um recurso necessário.
-- 4. ## O Problema dos Filósofos Comensais
-Entendimento do problema: Os filósofos estão sentados em volta de uma mesa com garfos entre eles. 
-Eles devem pensar e comer, mas só podem comer se conseguirem pegar os dois garfos adjacentes.
-Soluções clássicas: Estude diferentes abordagens para resolver o problema, como a solução de Dijkstra e a solução com semáforos.
-- 5. ## Programação Paralela e Concorrente
-Modelos de concorrência: Entenda as diferentes abordagens para programação concorrente,
-como threads, processos, e programação assíncrona.
-Detecção e resolução de deadlocks: Ferramentas e técnicas para identificar
-e corrigir deadlocks em sistemas concorrentes.
-- 6. ## Exemplos e Prática
-Exemplos de código: Estude exemplos práticos de implementação de threads e sincronização em C.
-Implementação de soluções para problemas clássicos de sincronização: Como o problema 
-do produtor-consumidor, leitores-escritores, etc.
-- 7. ## Leitura e Discussão
-Documentação da biblioteca pthread: Familiarize-se com a documentação oficial da biblioteca,
-que será sua principal ferramenta.
-Artigos e livros sobre concorrência: Recursos como "Operating Systems: Three Easy Pieces" e "The Little Book of Semaphores" podem ser úteis.
-- 8. ## Testes e Debugging
-Valgrind e outros depuradores: Use ferramentas como Valgrind para detectar
- problemas como leaks de memória e race conditions.
-Testes de estresse: Crie testes que estressem seu código para garantir que ele não falhe em condições de alta concorrência.
-- 9. ## Desenvolvimento de Pensamento Algorítmico
-Dividir o problema: Pratique a divisão do problema em partes menores e mais manejáveis, 
-abordando cada parte individualmente antes de integrá-las.
+## Estrutura do Projeto
+
+O projeto está dividido em vários arquivos de código-fonte:
+
+- **philo.c**: Contém a função `main` que inicializa a simulação.
+- **launch.c**: Implementa a lógica principal da simulação, incluindo a criação e gerenciamento das threads dos filósofos.
+- **msg_error.c**: Contém a função `handle_error`, que lida com a exibição das mensagens de erro.
+- **start.c**: Implementa as funções de inicialização, como a configuração dos mutexes e a criação das estruturas dos filósofos.
+- **utils.c**: Contém funções utilitárias, como a obtenção do tempo atual e a simulação de dormir dos filósofos.
+- **philo.h**: Arquivo de cabeçalho que declara as estruturas e funções utilizadas em todo o projeto.
+
+## Funcionamento do Código
+
+### Estruturas Principais
+
+- **t_philosopher**: Estrutura que representa cada filósofo. Contém informações como seu ID, o número de refeições que ele já fez,
+e os IDs dos garfos à sua esquerda e direita.
+- **t_simulation**: Estrutura que contém as regras da simulação, como o número de filósofos, tempos de morte, comer, dormir, 
+e mutexes para sincronização das threads.
+
+### Fluxo de Execução
+
+1. **Inicialização**:
+   - A função `init_simulation` configura os parâmetros da simulação a partir dos argumentos passados pela linha de comando e inicializa os mutexes e as estruturas dos filósofos.
+
+2. **Execução da Simulação**:
+   - A função `launch_simulation` cria uma thread para cada filósofo. Cada thread executa a função `philo_thread`, que controla o ciclo de vida do filósofo (comer, dormir e pensar).
+   - A função `philo_dines` gerencia o processo de um filósofo pegar os garfos, comer e liberar os garfos.
+
+3. **Verificação de Condições de Parada**:
+   - A função `check_death` monitora a simulação para verificar se algum filósofo morreu ou se todos os filósofos já comeram o número de vezes necessário.
+   - Se algum filósofo morrer ou todos tiverem comido o suficiente, a simulação é interrompida.
+
+4. **Limpeza**:
+   - A função `cleanup_simulation` é chamada para garantir que todas as threads sejam corretamente finalizadas e que os mutexes sejam destruídos.
+
+### Mensagens de Erro
+
+- **handle_error**: Esta função exibe mensagens de erro específicas para diferentes problemas encontrados durante a simulação, como argumentos inválidos ou falhas na inicialização de mutexes ou criação de threads.
+
+## Execução
+
+### Compilação
+
+Para compilar o projeto, utilize o comando `make` no terminal:
+
+```bash
+make
+```
+# Execução do Programa
+- Após a compilação, execute o programa com o seguinte formato de comando:
+
+´´´ bash
+
+./philo <num_philos> <time_to_die> <time_to_eat> <time_to_sleep> [meals_required]
+´´´
+- **num_philos**: Número de filósofos (e garfos).
+- **time_to_die**: Tempo máximo (em milissegundos) que um filósofo pode ficar sem comer antes de morrer.
+- **time_to_eat**: Tempo que um filósofo leva para comer (em milissegundos).
+- **time_to_sleep**: Tempo que um filósofo passa dormindo (em milissegundos).
+- **meals_required (opcional)**: Número de vezes que cada filósofo deve comer antes que a simulação termine.
+## Exemplo de execução:
+
+```bash
+./philo 5 800 200 200 3
+```
