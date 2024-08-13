@@ -6,12 +6,17 @@
 #    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/11 22:14:52 by tales             #+#    #+#              #
-#    Updated: 2024/08/11 22:23:08 by tales            ###   ########.fr        #
+#    Updated: 2024/08/13 17:53:04 by tales            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= philo
-SRC		= philo.c # Adicione aqui outros arquivos .c se necessário
+SRC		= philo.c \
+		launch.c \
+		msg_error.c \
+		start.c \
+		utils.c  \
+		
 OBJS	= $(SRC:.c=.o)
 
 # Compiler options
