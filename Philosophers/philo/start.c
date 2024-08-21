@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:34:53 by tales             #+#    #+#             */
-/*   Updated: 2024/08/13 18:15:54 by tales            ###   ########.fr       */
+/*   Updated: 2024/08/21 21:01:12 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,27 +46,39 @@ int	init_philos(t_simulation *sim)
 	return (0);
 }
 
-int	init_simulation(t_simulation *sim, char **argv)
+int init_simulation(t_simulation *sim, char **argv)
 {
-	sim->num_philos = ft_atoi(argv[1]);
-	sim->time_to_die = ft_atoi(argv[2]);
-	sim->time_to_eat = ft_atoi(argv[3]);
-	sim->time_to_sleep = ft_atoi(argv[4]);
-	sim->all_full = 0;
-	sim->someone_died = 0;
-	if (sim->num_philos < 2 || sim->time_to_die < 0 || sim->time_to_eat < 0
-		|| sim->time_to_sleep < 0 || sim->num_philos > 250)
-		return (1);
-	if (argv[5])
-	{
-		sim->meals_required = ft_atoi(argv[5]);
-		if (sim->meals_required <= 0)
-			return (1);
-	}
-	else
-		sim->meals_required = -1;
-	if (init_mutexes(sim))
-		return (2);
-	init_philos(sim);
-	return (0);
+    sim->num_philos = ft_atoi(argv[1]);
+    sim->time_to_die = ft_atoi(argv[2]);
+    sim->time_to_eat = ft_atoi(argv[3]);
+    sim->time_to_sleep = ft_atoi(argv[4]);
+    sim->all_full = 0;
+    sim->someone_died = 0;
+
+    if (sim->num_philos < 1 || sim->time_to_die < 0 || sim->time_to_eat < 0
+        || sim->time_to_sleep < 0 || sim->num_philos > 250)
+        return (handle_error(1));
+
+    if (argv[5])
+    {
+        sim->meals_required = ft_atoi(argv[5]);
+        if (sim->meals_required <= 0)
+            return (handle_error(1));
+    }
+    else
+    {
+        sim->meals_required = -1;
+    }
+
+    if (sim->num_philos == 1)
+    {
+        sim->philos[0].left_fork_id = 0;
+        sim->philos[0].right_fork_id = -1;  // Only one fork available
+    }
+
+    if (init_mutexes(sim))
+        return (handle_error(2));
+    
+    init_philos(sim);
+    return (0);
 }

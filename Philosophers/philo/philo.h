@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:06:14 by tales             #+#    #+#             */
-/*   Updated: 2024/08/13 18:15:48 by tales            ###   ########.fr       */
+/*   Updated: 2024/08/21 20:52:55 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,6 @@ void					sleep_for(long long time, t_simulation *sim);
 int						launch_simulation(t_simulation *sim);
 void					cleanup_simulation(t_simulation *sim,
 							t_philosopher *philos);
+
 
 #endif

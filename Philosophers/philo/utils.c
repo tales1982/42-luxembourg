@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:45:31 by tales             #+#    #+#             */
-/*   Updated: 2024/08/13 18:16:03 by tales            ###   ########.fr       */
+/*   Updated: 2024/08/21 22:10:10 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,28 +47,29 @@ long long	time_diff(long long start, long long end)
 {
 	return (end - start);
 }
-
-void	sleep_for(long long time, t_simulation *sim)
+void sleep_for(long long time, t_simulation *sim)
 {
-	long long	start_time;
+    long long start_time = get_current_time();
+    while (!(sim->someone_died))
+    {
+        if (time_diff(start_time, get_current_time()) >= time)
+            break;
+        usleep(500);  // Verificações mais frequentes
+    }
 
-	start_time = get_current_time();
-	while (!(sim->someone_died))
-	{
-		if (time_diff(start_time, get_current_time()) >= time)
-			break ;
-		usleep(50);
-	}
+    //printf("Sleep ended after %lld ms\n", time_diff(start_time, get_current_time()));  // Debug log
 }
 
-void	log_action(t_simulation *sim, int id, char *message)
+
+
+
+
+void log_action(t_simulation *sim, int id, char *message)
 {
-	pthread_mutex_lock(&(sim->write_lock));
-	if (!(sim->someone_died))
-	{
-		printf("%lli ", get_current_time() - sim->start_time);
-		printf("%i ", id + 1);
-		printf("%s\n", message);
-	}
-	pthread_mutex_unlock(&(sim->write_lock));
+    pthread_mutex_lock(&(sim->write_lock));
+    if (!sim->someone_died)
+    {
+        printf("%lld %d %s\n", get_current_time() - sim->start_time, id + 1, message);
+    }
+    pthread_mutex_unlock(&(sim->write_lock));
 }
