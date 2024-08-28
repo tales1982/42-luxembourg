@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:45:31 by tales             #+#    #+#             */
-/*   Updated: 2024/08/21 22:10:10 by tales            ###   ########.fr       */
+/*   Updated: 2024/08/21 22:33:39 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void sleep_for(long long time, t_simulation *sim)
         usleep(500);  // Verificações mais frequentes
     }
 
-    //printf("Sleep ended after %lld ms\n", time_diff(start_time, get_current_time()));  // Debug log
+printf("Sleep ended after %lld ms\n", time_diff(start_time, get_current_time()));  // Debug log
 }
 
 

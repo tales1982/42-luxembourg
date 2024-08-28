@@ -32,7 +32,7 @@ void	initialize_images(t_data *data)
 	void			*sprite_sheet;
 	t_sprite_dim	dim;
 
-	load_image(&sprite_sheet, data->mlx, "./img/pacMan.xpm", data);
+	load_image(&sprite_sheet, data->mlx, "./img/hero.xpm", data);
 	dim.width = data->img_width / 3;
 	dim.height = data->img_height / 4;
 	initialize_direction_images(data, sprite_sheet, dim);

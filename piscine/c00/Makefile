@@ -18,7 +18,8 @@ SRC = $(SRCDIR)/main.c \
 	  $(SRCDIR)/ex03/ft_print_numbers.c \
 	  $(SRCDIR)/ex04/ft_is_negative.c \
 	  $(SRCDIR)/ex05/ft_print_comb.c \
-	  $(SRCDIR)/ex06/ft_print_comb2.c
+	  $(SRCDIR)/ex06/ft_print_comb2.c \
+	  $(SRCDIR)/ex07/ft_putnbr.c \
 
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 

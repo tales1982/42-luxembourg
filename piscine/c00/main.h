@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 16:14:12 by tales             #+#    #+#             */
-/*   Updated: 2024/08/18 19:45:04 by tales            ###   ########.fr       */
+/*   Updated: 2024/08/22 21:20:34 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,6 @@ void	ft_is_negative(int n);
 void	ft_print_comb(void);
 // ex06 ft_print_comb2
 void	ft_print_comb2(void);
+// ex07 ft_putnbr
+void ft_putnbr(int nb);
 #endif
