@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:45:31 by tales             #+#    #+#             */
-/*   Updated: 2024/08/21 22:33:39 by tales            ###   ########.fr       */
+/*   Updated: 2024/08/29 21:28:59 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,19 +57,16 @@ void sleep_for(long long time, t_simulation *sim)
         usleep(500);  // Verificações mais frequentes
     }
 
-printf("Sleep ended after %lld ms\n", time_diff(start_time, get_current_time()));  // Debug log
 }
-
-
-
-
-
 void log_action(t_simulation *sim, int id, char *message)
 {
     pthread_mutex_lock(&(sim->write_lock));
     if (!sim->someone_died)
     {
-        printf("%lld %d %s\n", get_current_time() - sim->start_time, id + 1, message);
+        printf("%3lld %d %s\n", get_current_time() - sim->start_time, id + 1, message);
     }
     pthread_mutex_unlock(&(sim->write_lock));
 }
+
+
+

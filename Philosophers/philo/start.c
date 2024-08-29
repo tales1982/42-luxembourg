@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:34:53 by tales             #+#    #+#             */
-/*   Updated: 2024/08/21 21:01:12 by tales            ###   ########.fr       */
+/*   Updated: 2024/08/29 21:15:05 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int init_simulation(t_simulation *sim, char **argv)
     if (sim->num_philos == 1)
     {
         sim->philos[0].left_fork_id = 0;
-        sim->philos[0].right_fork_id = -1;  // Only one fork available
+        sim->philos[0].right_fork_id = -1;  
     }
 
     if (init_mutexes(sim))
