@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 17:45:31 by tales             #+#    #+#             */
-/*   Updated: 2024/08/29 21:28:59 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/01 10:24:46 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,15 @@ void sleep_for(long long time, t_simulation *sim)
 void log_action(t_simulation *sim, int id, char *message)
 {
     pthread_mutex_lock(&(sim->write_lock));
+    //printf("Debug: Before log_action check\n");
     if (!sim->someone_died)
     {
         printf("%3lld %d %s\n", get_current_time() - sim->start_time, id + 1, message);
     }
     pthread_mutex_unlock(&(sim->write_lock));
+    //printf("Debug: After log_action check\n");
 }
+
 
 
 
