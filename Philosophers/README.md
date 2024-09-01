@@ -138,4 +138,4 @@ Exemplo de Execução:
 ## Considerações Finais
 - Este projeto simula o comportamento de filósofos em um cenário de concorrência, abordando problemas como deadlocks e race conditions. Cada função foi cuidadosamente implementada para evitar problemas de concorrência e garantir que o comportamento esperado seja seguido.
 
-###Sinta-se à vontade para modificar ou melhorar o código conforme necessário!
+### Sinta-se à vontade para modificar ou melhorar o código conforme necessário!
