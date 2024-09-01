@@ -47,6 +47,7 @@ long long	time_diff(long long start, long long end)
 {
 	return (end - start);
 }
+
 void	sleep_for(long long time, t_simulation *sim)
 {
 	long long	start_time;
@@ -59,6 +60,7 @@ void	sleep_for(long long time, t_simulation *sim)
 		usleep(500);
 	}
 }
+
 void	log_action(t_simulation *sim, int id, char *message)
 {
 	pthread_mutex_lock(&(sim->write_lock));

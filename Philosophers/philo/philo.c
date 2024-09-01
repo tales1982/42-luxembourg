@@ -59,7 +59,6 @@ void	*philo_thread(void *arg)
 	}
 	return (NULL);
 }
-#include "philo.h"
 
 int	main(int argc, char **argv)
 {
@@ -75,13 +74,3 @@ int	main(int argc, char **argv)
 		return (handle_error(3));
 	return (0);
 }
-
-/*
-	./philo 1 800 200 200 --> O filósofo não deveria comer e deveria morrer.
-	./philo 5 800 200 200 --> Nenhum filósofo deveria morrer.
-	./philo 5 800 200 200 7 --> Nenhum filósofo deve morrer e a simulação deve parar quando todos os filósofos tiverem comido pelo menos 7 vezes.
-	./philo 4 410 200 200 --> Nenhum filósofo deveria morrer.
-	./philo 4 310 200 100 --> Um filósofo deve morrer.
-	Teste com 2 filósofos e verifique os diferentes tempos: uma morte adiada em mais de 10 ms é inaceitável.
-
- */

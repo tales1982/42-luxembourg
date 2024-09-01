@@ -22,6 +22,5 @@ int	handle_error(int error_code)
 		printf("Error: Thread creation failed\n");
 	else if (error_code == 4)
 		printf("Error: Memory allocation failed\n");
-
 	return (error_code);
 }

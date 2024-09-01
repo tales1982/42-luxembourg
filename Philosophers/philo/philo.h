@@ -20,7 +20,7 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-struct s_simulation;
+struct	s_simulation;
 
 typedef struct s_philosopher
 {

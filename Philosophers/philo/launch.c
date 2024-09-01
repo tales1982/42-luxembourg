@@ -16,9 +16,10 @@ void	print_philos_states(t_simulation *sim)
 {
 	int	i;
 
+	i = 0;
 	pthread_mutex_lock(&(sim->write_lock));
 	printf("\n[Current state of philosophers]:\n");
-	for (i = 0; i < sim->num_philos; i++)
+	while (i < sim->num_philos)
 	{
 		printf("Philosopher %d: ", i + 1);
 		if (time_diff(sim->philos[i].last_meal_time,
@@ -32,6 +33,7 @@ void	print_philos_states(t_simulation *sim)
 			printf("sleeping\n");
 		else
 			printf("thinking\n");
+		i++;
 	}
 	pthread_mutex_unlock(&(sim->write_lock));
 }
@@ -53,7 +55,6 @@ void	check_death(t_simulation *sim, t_philosopher *philos)
 		usleep(1000);
 	}
 }
-#include "philo.h"
 
 int	check_philo_death(t_simulation *sim, t_philosopher *philo, int i)
 {

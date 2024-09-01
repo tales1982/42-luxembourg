@@ -18,6 +18,7 @@ void	mark_all_full(t_simulation *sim)
 	sim->all_full = 1;
 	pthread_mutex_unlock(&(sim->meal_check));
 }
+
 void	cleanup_simulation(t_simulation *sim, t_philosopher *philos)
 {
 	int	i;
