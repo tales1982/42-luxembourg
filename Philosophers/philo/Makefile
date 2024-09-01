@@ -6,7 +6,7 @@
 #    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/11 22:14:52 by tales             #+#    #+#              #
-#    Updated: 2024/08/13 17:53:04 by tales            ###   ########.fr        #
+#    Updated: 2024/09/01 11:12:06 by tales            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,9 @@ SRC		= philo.c \
 		msg_error.c \
 		start.c \
 		utils.c  \
+		philo_utils.c  \
+		philo_actions.c \
+		simulation.c \
 		
 OBJS	= $(SRC:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:06:14 by tales             #+#    #+#             */
-/*   Updated: 2024/08/21 20:52:55 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/01 11:33:41 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,38 @@ void					sleep_for(long long time, t_simulation *sim);
 int						launch_simulation(t_simulation *sim);
 void					cleanup_simulation(t_simulation *sim,
 							t_philosopher *philos);
+/*
+** ----- start.c -----
+*/
 
+int						init_mutexes(t_simulation *sim);
+int						init_simulation(t_simulation *sim, char **argv);
+/*
+** ----- philo_utils.c -----
+*/
+void					log_action(t_simulation *sim, int id, char *message);
+long long				time_diff(long long start, long long end);
+void					sleep_for(long long time, t_simulation *sim);
+void					mark_all_full(t_simulation *sim);
+void					philo_eats(t_philosopher *philo);
 
+/*
+** ----- simulation.c -----
+*/
+void					cleanup_simulation(t_simulation *sim,
+							t_philosopher *philos);
+void					check_death_and_full(t_simulation *sim,
+							t_philosopher *philos);
+int						launch_simulation(t_simulation *sim);
+/*
+** ----- philo.c -----
+*/
+void					philo_dines(t_philosopher *philo);
+void					*philo_thread(void *arg);
+
+void					philo_sleeps_and_thinks(t_philosopher *philo);
+int						check_philo_death(t_simulation *sim,
+							t_philosopher *philo, int i);
+int						check_all_philos_full(t_simulation *sim,
+							t_philosopher *philos);
 #endif
