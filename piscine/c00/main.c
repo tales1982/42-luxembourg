@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 16:13:09 by tales             #+#    #+#             */
-/*   Updated: 2024/08/22 21:22:54 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/01 16:31:09 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,12 @@ int	main(void)
 	ft_print_comb2();
 	ft_putchar('\n');
 	ft_putchar('\n');
-	printf(YELLOW "***************** 06 : ft_putnbr ***********************\033[0m\n");
+	printf(YELLOW "***************** 07 : ft_putnbr ***********************\033[0m\n");
 	ft_putnbr(42);
+	ft_putchar('\n');
+	ft_putchar('\n');
+	printf(YELLOW "***************** 08 : ft_print_combn ******************\033[0m\n");
+	ft_print_combn(2);
 	ft_putchar('\n');
 	ft_putchar('\n');
 

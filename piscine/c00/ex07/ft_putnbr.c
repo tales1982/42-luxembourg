@@ -6,11 +6,11 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 21:17:36 by tales             #+#    #+#             */
-/*   Updated: 2024/08/22 21:29:48 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/01 16:31:38 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
+#include "../main.h"
 
 void	ft_putnbr(int nb)
 {

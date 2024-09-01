@@ -6,11 +6,11 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 19:43:41 by tales             #+#    #+#             */
-/*   Updated: 2024/08/18 21:25:20 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/01 16:15:06 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
+#include "../main.h"
 
 void	ft_print_combination(int i, int j)
 {

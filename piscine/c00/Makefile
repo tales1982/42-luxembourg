@@ -20,6 +20,7 @@ SRC = $(SRCDIR)/main.c \
 	  $(SRCDIR)/ex05/ft_print_comb.c \
 	  $(SRCDIR)/ex06/ft_print_comb2.c \
 	  $(SRCDIR)/ex07/ft_putnbr.c \
+	  $(SRCDIR)/ex08/ft_print_combn.c \
 
 OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 

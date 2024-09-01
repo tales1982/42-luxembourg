@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 16:14:12 by tales             #+#    #+#             */
-/*   Updated: 2024/08/22 21:20:34 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/01 16:34:49 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,7 @@ void	ft_print_comb(void);
 // ex06 ft_print_comb2
 void	ft_print_comb2(void);
 // ex07 ft_putnbr
-void ft_putnbr(int nb);
+void	ft_putnbr(int nb);
+// ex08 ft_print_combn
+void	ft_print_combn(int n);
 #endif
