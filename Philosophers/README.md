@@ -135,7 +135,7 @@ Exemplo de Execução:
 - **launch_simulation**:
 - Inicializa a simulação, cria as threads de filósofos e aguarda o término da simulação, seja por morte ou por todos estarem satisfeitos.
 
-##Considerações Finais
+## Considerações Finais
 - Este projeto simula o comportamento de filósofos em um cenário de concorrência, abordando problemas como deadlocks e race conditions. Cada função foi cuidadosamente implementada para evitar problemas de concorrência e garantir que o comportamento esperado seja seguido.
 
 ###Sinta-se à vontade para modificar ou melhorar o código conforme necessário!
