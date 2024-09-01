@@ -6,11 +6,11 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 16:37:26 by tales             #+#    #+#             */
-/*   Updated: 2024/08/18 19:45:41 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/01 16:44:03 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../main.h"
+#include "c00.h"
 
 // Version 01
 void	ft_print_alphabet(void)
