@@ -33,11 +33,11 @@ Capítulo III: Parte Obrigatória
 ***Funções externas***: readline, rl_clear_history, rl_on_new_line, rl_replace_line, rl_redisplay, add_history, printf, malloc, free, write, access, open, read, close, fork, wait, waitpid, wait3, wait4, signal, sigaction, sigemptyset, sigaddset, kill, exit, getcwd, chdir, stat, lstat, fstat, unlink, execve, dup, dup2, pipe, opendir, readdir, closedir, strerror, perror, isatty, ttyname, ttyslot, ioctl, getenv, tcsetattr, tcgetattr, tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs
 ***Libft autorizada***: Sim
 
-Descrição:
+- Descrição:
 Escreva um shell.
 Seu shell deve:
 
-Exibir um prompt enquanto aguarda um novo comando.
+- Exibir um prompt enquanto aguarda um novo comando.
 Ter um histórico funcional.
 Buscar e executar o executável correto (com base na variável PATH ou usando um caminho relativo ou absoluto).
 Evitar o uso de mais de uma variável global para indicar um sinal recebido. Considere as implicações: essa abordagem garante que seu manipulador de sinais não acesse suas principais estruturas de dados. Tenha cuidado. Esta variável global não pode fornecer qualquer outra informação ou acesso a dados além do número de um sinal recebido. Portanto, o uso de estruturas do tipo "norm" no escopo global é proibido.
@@ -56,15 +56,15 @@ Manipular variáveis de ambiente ($ seguido de uma sequência de caracteres), qu
 Manipular $? que deve se expandir para o status de saída do pipeline em primeiro plano executado mais recentemente.
 Manipular ctrl-C, ctrl-D e ctrl-\ que devem se comportar como no bash.
 No modo interativo:
-ctrl-C exibe um novo prompt em uma nova linha.
-ctrl-D sai do shell.
-ctrl-\ não faz nada.
-Seu shell deve implementar os seguintes comandos internos:
-echo com a opção -n
-cd com apenas um caminho relativo ou absoluto
-pwd sem opções
-export sem opções
-unset sem opções
-env sem opções ou argumentos
-exit sem opções
-A função readline() pode causar vazamentos de memória. Você não precisa corrigi-los. Mas isso não significa que o seu próprio código, sim, o código que você escreveu, pode ter vazamentos de memória. Você deve se limitar à descrição do enunciado. Qualquer coisa que não seja solicitada não é necessária. Se você tiver alguma dúvida sobre um requisito, tome o bash como referência.
+1. ctrl-C exibe um novo prompt em uma nova linha.
+2. ctrl-D sai do shell.
+3. ctrl-\ não faz nada.
+4. Seu shell deve implementar os seguintes comandos internos:
+5. echo com a opção -n
+6. cd com apenas um caminho relativo ou absoluto
+7. pwd sem opções
+8. export sem opções
+9. unset sem opções
+10. env sem opções ou argumentos
+11. exit sem opções
+- A função readline() pode causar vazamentos de memória. Você não precisa corrigi-los. Mas isso não significa que o seu próprio código, sim, o código que você escreveu, pode ter vazamentos de memória. Você deve se limitar à descrição do enunciado. Qualquer coisa que não seja solicitada não é necessária. Se você tiver alguma dúvida sobre um requisito, tome o bash como referência.
