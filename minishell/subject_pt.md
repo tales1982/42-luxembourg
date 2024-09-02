@@ -12,9 +12,7 @@
 
 - Capítulo I: Introdução A existência dos shells está ligada à própria existência da TI. Na época, todos os desenvolvedores concordaram que comunicar-se com um computador usando interruptores alinhados de 1/0 era extremamente irritante. Era lógico que eles tivessem a ideia de criar um software para se comunicar com um computador usando linhas de comando interativas em uma linguagem um pouco próxima à linguagem humana. Graças ao Minishell, você poderá viajar no tempo e voltar aos problemas que as pessoas enfrentavam quando o Windows não existia.
 
-- Capítulo II: Instruções Comuns
-
-Seu projeto deve ser escrito em C.
+- Capítulo II: Instruções Comuns seu projeto deve ser escrito em C.
 Seu projeto deve ser escrito de acordo com a Norm. Se você tiver arquivos/funções bônus, eles serão incluídos na verificação da Norm, e você receberá 0 se houver um erro de Norm.
 Suas funções não devem sair inesperadamente (falha de segmentação, erro de barramento, double free, etc.), exceto em comportamentos indefinidos. Se isso acontecer, seu projeto será considerado não funcional e receberá 0 durante a avaliação.
 Todo espaço de memória alocado no heap deve ser liberado corretamente quando necessário. Nenhum vazamento de memória será tolerado.
