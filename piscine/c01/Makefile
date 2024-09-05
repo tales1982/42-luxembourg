@@ -6,7 +6,7 @@
 #    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/01 16:38:10 by tales             #+#    #+#              #
-#    Updated: 2024/09/01 17:32:21 by tales            ###   ########.fr        #
+#    Updated: 2024/09/02 20:27:31 by tales            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ OBJDIR = obj
 # Arquivos fonte e objetos
 SRC = $(SRCDIR)/main.c \
       $(SRCDIR)/ex00/ft_ft.c \
-#      $(SRCDIR)/ex01/ 
+      $(SRCDIR)/ex01/ft_ultimate_ft.c \
 #	  $(SRCDIR)/ex02/ 
 #	  $(SRCDIR)/ex03/ 
 #	  $(SRCDIR)/ex04/ 

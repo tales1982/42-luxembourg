@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 16:49:03 by tales             #+#    #+#             */
-/*   Updated: 2024/09/01 17:30:09 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/02 20:27:59 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,44 +14,53 @@
 
 int	main(void)
 {
-    //printf(GREEN "####  version-1  ####\033[0m\n");
-    //printf(GREEN "####  version-2  ####\033[0m\n");
+	// printf(GREEN "####  version-1  ####\033[0m\n");
+	// printf(GREEN "####  version-2  ####\033[0m\n");
 	printf(YELLOW "******************** 00 : ft_ft ******************************\033[0m\n");
-    int a;
-    ft_ft(&a);  // Passa o endereço de 'a' para a função
-    printf("%d", a);
+	int a;
+	ft_ft(&a); // Passa o endereço de 'a' para a função
+	printf("%d", a);
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 01 : ft_ultimate_ft **********************\033[0m\n");
-	//ft_ultimate_ft();
-	printf("\n");
+	int n = 0;
+	int *p1 = &n;
+	int **p2 = &p1;
+	int ***p3 = &p2;
+	int ****p4 = &p3;
+	int *****p5 = &p4;
+	int ******p6 = &p5;
+	int *******p7 = &p6;
+	int ********p8 = &p7;
+	ft_ultimate_ft(&p8);
+	printf("%d\n", n);
 	printf("\n");
 	printf(YELLOW "******************** 02 : ft_swap ****************************\033[0m\n");
-    //ft_swap();
+	// ft_swap();
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 03 : ft_div_mod *************************\033[0m\n");
-	//ft_div_mod();
+	// ft_div_mod();
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 04 : ft_ultimate_div_mod ****************\033[0m\n");
-	//ft_ultimate_div_mod();
+	// ft_ultimate_div_mod();
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 05 : ft_putstr **************************\033[0m\n");
-	//ft_putstr();
+	// ft_putstr();
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 06 : ft_strlen **************************\033[0m\n");
-	//ft_strlen();
+	// ft_strlen();
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 07 : ft_rev_int_tab *********************\033[0m\n");
-	//ft_rev_int_tab();
+	// ft_rev_int_tab();
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 08 : ft_sort_int_tab ********************\033[0m\n");
-	//ft_sort_int_tab();
+	// ft_sort_int_tab();
 	printf("\n");
 	printf("\n");
 
