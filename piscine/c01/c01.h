@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 16:41:16 by tales             #+#    #+#             */
-/*   Updated: 2024/09/02 20:04:33 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/06 21:49:25 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ void	ft_ft(int *nbr);
 // ex01
 void	ft_ultimate_ft(int *********nbr);
 // ex02
-
+void	ft_swap(int *a, int *b);
 // ex03
-
+void	ft_div_mod(int a, int b, int *div, int *mod);
 // ex04
 
 // ex05

@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 16:49:03 by tales             #+#    #+#             */
-/*   Updated: 2024/09/02 20:27:59 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/06 22:10:10 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,20 @@ int	main(void)
 	printf("%d\n", n);
 	printf("\n");
 	printf(YELLOW "******************** 02 : ft_swap ****************************\033[0m\n");
-	// ft_swap();
+	int swap_a = 10;
+	int swap_b = 20;
+	printf("A = %d **** B = %d \n", swap_a, swap_b);
+	ft_swap(&swap_a, &swap_b);
+	printf("A = %d **** B = %d \n", swap_a, swap_b);
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 03 : ft_div_mod *************************\033[0m\n");
-	// ft_div_mod();
+	int div_mod_a = 10;
+	int div_mod_b = 3;
+	int div;
+	int mod;
+	ft_div_mod(div_mod_a, div_mod_b, &div, &mod);
+	printf("Divisão: %d, Resto: %d\n", div, mod);
 	printf("\n");
 	printf("\n");
 	printf(YELLOW "******************** 04 : ft_ultimate_div_mod ****************\033[0m\n");
