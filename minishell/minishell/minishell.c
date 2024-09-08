@@ -54,12 +54,13 @@ char *search_path(char *cmd, char **envp)
     char *env_path = NULL;
     char *token = NULL;
     char *full_path = malloc(1024);
+    int i = 0;
 
     if (!full_path)  // Verifica se o malloc falhou
         return NULL;
 
     // Busca a variável PATH no ambiente
-    for (int i = 0; envp[i]; i++) {
+    while (envp[i]) {
         if (strncmp(envp[i], "PATH=", 5) == 0) {
             env_path = strdup(envp[i] + 5);  // Faz uma cópia da variável PATH
             if (!env_path) {  // Verifica se o strdup falhou
@@ -68,6 +69,7 @@ char *search_path(char *cmd, char **envp)
             }
             break;
         }
+        i++;
     }
 
     if (!env_path) {
@@ -90,6 +92,7 @@ char *search_path(char *cmd, char **envp)
     free(env_path);  // Libera a cópia da variável PATH
     return NULL;
 }
+
 
 // Função para configurar o pipe
 void set_pipe(int has_pipe, int *fd, int end)
