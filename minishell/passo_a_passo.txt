@@ -1,0 +1,39 @@
+Para começar o projeto Minishell, é importante ter uma boa base em alguns conceitos essenciais. 
+Aqui estão os principais tópicos que você deve estudar e entender antes de mergulhar no código:
+
+1. Fundamentos de Shell e Comandos do Unix
+Comandos básicos: ls, cd, echo, pwd, export, unset, etc.
+Redirecionamento: Como funcionam os redirecionamentos de entrada (<), saída (>, >>) e pipes (|).
+Variáveis de ambiente: Como manipular e usar variáveis como PATH e outras que o shell utiliza.
+
+2. Processos e Execução no Unix/Linux
+Fork e Execve: Estude como o fork() cria novos processos e como o execve() substitui o processo atual por um novo.
+Waitpid: Como o shell espera que os processos terminem.
+Pipes: Entenda como funciona a comunicação entre processos via pipes.
+
+3. Gerenciamento de Sinais
+Como lidar com sinais como SIGINT (CTRL+C), SIGQUIT (CTRL+), e EOF (CTRL+D).
+Como capturar sinais e tratá-los de maneira apropriada no shell.
+
+4. Análise Léxica e Parsing
+O shell precisa interpretar os comandos que o usuário digita. Você vai precisar escrever um parser que divide a linha de comando em tokens, identificando comandos, argumentos, redirecionamentos, etc.
+
+5. Built-ins
+Entenda quais built-ins (como cd, echo, exit) você precisa implementar e a lógica por trás deles, pois eles não são executados como processos externos, mas internamente pelo shell.
+
+6. Gestão de Memória
+Gerenciamento eficiente de memória com malloc, free, e evitando vazamentos de memória é essencial para o Minishell.
+Passos Iniciais para o Projeto:
+Leia o PDF do projeto: Isso vai te dar uma visão geral de todas as funcionalidades obrigatórias e bônus.
+Entenda o fork e execve: Esses são o coração da execução de comandos no shell.
+Comece com um MVP (Produto Mínimo Viável): Comece simples, fazendo o shell executar comandos básicos (por exemplo, ls ou echo).
+Teste constantemente: Certifique-se de testar o shell com diferentes inputs e cenários.
+Compreender esses conceitos vai te ajudar a estruturar o projeto e atacar cada parte com mais confiança. Se precisar de ajuda com alguma parte específica, estou aqui para te guiar!
+
+
+
+
+
+
+
+
