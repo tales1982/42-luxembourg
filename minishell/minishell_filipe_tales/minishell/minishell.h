@@ -6,45 +6,59 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 12:37:50 by tales             #+#    #+#             */
-/*   Updated: 2024/09/08 12:55:32 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/08 13:42:19 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-#include <string.h>
-#include <unistd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+# include <string.h>
+# include <unistd.h>
+# include <signal.h>
+# include <stdio.h>
+# include <sys/wait.h>
+# include <stdlib.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
-//environ é utilizado para passar as variáveis de ambiente ao comando que está sendo executado. 
 extern char **environ;
 
 /*
 ** ----- ft_error.c -----
 */
-
-
-/*
-** ----- ft_...........c -----
-*/
+int	err(char *str);
 
 /*
-** ----- ft_...........c -----
+** ----- path.c -----
 */
+char	*search_path(char *cmd, char **envp);
 
 /*
-** ----- ft_...........c -----
+** ----- exec_cmd.c -----
 */
+int	exec(char **argv, int i, char **envp);
+void	set_pipe(int has_pipe, int *fd, int end);
 
 /*
-** ----- ft_...........c -----
+** ----- signal_handler.c -----
 */
+void	handle_sigint(int sig);
+
+/*
+** ----- utils.c -----
+*/
+int	cd(char **argv, int i);
+
+/*
+** ----- ft_print_ascii.c -----
+*/
+void print_ascii(void);
+
+/*
+** ----- free_resources.c -----
+*/
+void free_resources(char *input, char **argv, char *cmd_path);
 
 #endif
