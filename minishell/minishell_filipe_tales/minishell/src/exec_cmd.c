@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 13:27:13 by tales             #+#    #+#             */
-/*   Updated: 2024/09/08 13:36:10 by tales            ###   ########.fr       */
+/*   Updated: 2024/09/24 22:06:31 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	exec(char **argv, int i, char **envp)
 	char	*cmd_path;
 
 	int has_pipe, fd[2], pid, status;
+	
 	has_pipe = argv[i] && !strcmp(argv[i], "|");
 	if (!has_pipe && !strcmp(*argv, "cd"))
 		return (cd(argv, i));
