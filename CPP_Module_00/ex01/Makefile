@@ -4,19 +4,25 @@ NAME = PhoneBook
 # Compilador e flags
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+CPPFLAGS = -Iinclude  # Adiciona o diretório 'include' para arquivos de cabeçalho
+
+# Diretório dos arquivos
+SRCDIR = src
 
 # Arquivos
-SRCS = PhoneBook.cpp
+SRCS = $(SRCDIR)/PhoneBook.cpp \
+       $(SRCDIR)/Contact.cpp \
+       $(SRCDIR)/main.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Regras
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $(NAME) $(OBJS)
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(SRCDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS)
