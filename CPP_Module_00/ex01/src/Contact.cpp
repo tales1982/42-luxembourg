@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 06:55:52 by tales             #+#    #+#             */
-/*   Updated: 2024/11/08 08:33:58 by tales            ###   ########.fr       */
+/*   Updated: 2024/11/08 12:23:16 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,57 +16,20 @@ Contact::Contact() {
     // Inicialização, se necessário
 }
 
-// Destrutor
 Contact::~Contact() {
     // Limpeza, se necessário
 }
 
-
-void    Contact::setFirstName(std::string firstName)
-{
+void Contact::setAllInfo(const std::string &firstName, const std::string &lastName,
+                         const std::string &nickName, const std::string &phoneNumber,
+                         const std::string &darkestSecret) {
     _firstName = firstName;
-}
-void    Contact::setLastName(std::string lastName)
-{
     _lastName = lastName;
-}
-void    Contact::setNickName(std::string nickName)
-{
     _nickName = nickName;
-}
-void    Contact::setPhoneNumber(std::string phoneNumber)
-{
     _phoneNumber = phoneNumber;
-}
-void    Contact::setDarkestSecret(std::string darkestSecret)
-{
     _darkestSecret = darkestSecret;
 }
 
-std::string Contact::getFirstName()
-{
-    return _firstName;
-}
-std::string Contact::getLastName()
-{
-    return _lastName;
-}
-
-std::string Contact::getNickName()
-{
-    return _nickName;
-}
-std::string Contact::getPhoneNumber()
-{
-    return _phoneNumber;
-}
-
-std::string Contact::getDarkestSecret()
-{
-    return _darkestSecret;
-}
-
-// Implementação do método para retornar todos os dados como uma única string
 std::string Contact::getAllInfo() const {
     return "First Name: " + _firstName + "\n" +
            "Last Name: " + _lastName + "\n" +

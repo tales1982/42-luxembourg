@@ -12,7 +12,9 @@ SRCDIR = src
 # Arquivos
 SRCS = $(SRCDIR)/PhoneBook.cpp \
        $(SRCDIR)/Contact.cpp \
-       $(SRCDIR)/main.cpp
+       $(SRCDIR)/main.cpp \
+	   $(SRCDIR)/utils.cpp
+
 OBJS = $(SRCS:.cpp=.o)
 
 # Regras
