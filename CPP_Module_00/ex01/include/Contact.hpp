@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 06:55:46 by tales             #+#    #+#             */
-/*   Updated: 2024/11/08 12:21:50 by tales            ###   ########.fr       */
+/*   Updated: 2024/11/10 17:16:53 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #define CONTACT_HPP
 
 #include <string>
+#include <limits>
+
 
 class Contact {
 public:
@@ -24,6 +26,11 @@ public:
                     const std::string &nickName, const std::string &phoneNumber,
                     const std::string &darkestSecret);
     std::string getAllInfo() const;
+    public:
+    std::string getFirstName() const { return _firstName; }
+    std::string getLastName() const { return _lastName; }
+    std::string getNickName() const { return _nickName; }
+
 
 private:
     std::string _firstName;
