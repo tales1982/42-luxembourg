@@ -19,11 +19,11 @@ int main() {
     PhoneBook phoneBook;
     std::string option;
 
-    do { 
-        phoneBook.printMenu();  // Exibe o menu
+    do {
+        phoneBook.printMenu();
 
         std::cout << "Enter a command (ADD, SEARCH, EXIT): ";
-        std::cin >> option;  // Lê a opção antes de verificar
+        std::cin >> option; // Usa std::cin para ler uma palavra
 
         if(option == "ADD") {
             std::string firstName;
@@ -32,16 +32,18 @@ int main() {
             std::string phoneNumber;
             std::string darkestSecret;
 
+            std::cin.ignore(); // Limpa o buffer antes de ler as linhas completas
+
             std::cout << "First Name: ";
-            std::cin >> firstName;
+            std::getline(std::cin, firstName);
             std::cout << "Last Name: ";
-            std::cin >> lastName;
+            std::getline(std::cin, lastName);
             std::cout << "Nick Name: ";
-            std::cin >> nickName;
+            std::getline(std::cin, nickName);
             std::cout << "Phone Number: ";
-            std::cin >> phoneNumber;
+            std::getline(std::cin, phoneNumber);
             std::cout << "Darkest Secret: ";
-            std::cin >> darkestSecret;
+            std::getline(std::cin, darkestSecret);
 
             phoneBook.addContact(firstName, lastName, nickName, phoneNumber, darkestSecret);
         }
@@ -49,7 +51,7 @@ int main() {
             phoneBook.printContacts();
         }
         else if(option == "EXIT") {
-            break; 
+            break;
         }
         else {
             std::cout << "Invalid option" << std::endl;
@@ -58,3 +60,4 @@ int main() {
 
     return 0;
 }
+
