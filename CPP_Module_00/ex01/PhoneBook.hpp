@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PhoneBook.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 08:01:25 by tales             #+#    #+#             */
-/*   Updated: 2024/11/08 12:42:58 by tales            ###   ########.fr       */
+/*   Updated: 2024/11/12 14:57:28 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ public:
                     const std::string &darkestSecret);
     void printContacts() const;
     void    printMenu();
+    bool isEmpty() const;
 
 private:
     Contact _contacts[MAX_CONTACTS]; // Array para armazenar contatos

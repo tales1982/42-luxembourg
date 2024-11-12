@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 15:13:52 by tales             #+#    #+#             */
-/*   Updated: 2024/11/10 17:38:34 by tales            ###   ########.fr       */
+/*   Updated: 2024/11/12 15:06:56 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/PhoneBook.hpp"
-#include "../include/Contact.hpp"
+#include "PhoneBook.hpp"
+#include "Contact.hpp"
 
 void PhoneBook::printMenu()
 {
@@ -64,7 +64,7 @@ void PhoneBook::printContacts() const
     {
         std::cin.clear();                                                   // Clear the error flag on cin
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore remaining input
-        std::cout << "Invalid index. Please enter a valid number." << std::endl;
+        std::cout << "\033[31mInvalid index. Please enter a valid number.\033[0m" << std::endl;
     }
     else
     {
@@ -72,3 +72,5 @@ void PhoneBook::printContacts() const
                   << _contacts[index - 1].getAllInfo() << std::endl;
     }
 }
+
+

@@ -4,16 +4,12 @@ NAME = PhoneBook
 # Compilador e flags
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
-CPPFLAGS = -Iinclude  # Adiciona o diretório 'include' para arquivos de cabeçalho
-
-# Diretório dos arquivos
-SRCDIR = src
 
 # Arquivos
-SRCS = $(SRCDIR)/PhoneBook.cpp \
-       $(SRCDIR)/Contact.cpp \
-       $(SRCDIR)/main.cpp \
-	   $(SRCDIR)/utils.cpp
+SRCS = PhoneBook.cpp \
+       Contact.cpp \
+       main.cpp \
+       utils.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
@@ -21,10 +17,10 @@ OBJS = $(SRCS:.cpp=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $(NAME) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
 
-$(SRCDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS)
@@ -36,3 +32,4 @@ re: fclean all
 
 # Phony para evitar conflito com arquivos de mesmo nome
 .PHONY: all clean fclean re
+

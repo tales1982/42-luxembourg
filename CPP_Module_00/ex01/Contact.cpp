@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Contact.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 06:55:52 by tales             #+#    #+#             */
-/*   Updated: 2024/11/10 17:15:50 by tales            ###   ########.fr       */
+/*   Updated: 2024/11/12 14:06:44 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/Contact.hpp"
+#include "Contact.hpp"
 
 Contact::Contact() {
     // Inicialização, se necessário

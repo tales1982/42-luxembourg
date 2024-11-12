@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   PhoneBook.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 08:07:34 by tales             #+#    #+#             */
-/*   Updated: 2024/11/08 15:36:46 by tales            ###   ########.fr       */
+/*   Updated: 2024/11/12 15:00:54 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/PhoneBook.hpp" 
-#include "../include/Contact.hpp"
+#include "PhoneBook.hpp" 
+#include "Contact.hpp"
 
 PhoneBook::PhoneBook() : _contactCount(0), _oldestContactIndex(0) {
     // Inicialização dos atributos, se necessário
@@ -39,4 +39,8 @@ void PhoneBook::addContact(const std::string &firstName, const std::string &last
     }
 }
 
+
+bool PhoneBook::isEmpty() const {
+    return _contactCount == 0; // Retorna true se não houver contatos
+}
 
