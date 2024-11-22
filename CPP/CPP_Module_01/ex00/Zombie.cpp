@@ -3,28 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   Zombie.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 11:30:36 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/11/12 12:57:57 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/11/22 19:50:55 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Zombie.hpp"
 
-
-Zombie::Zombie(/* args */)
+Zombie::Zombie(std::string name)
 {
-    
+	this->_name = name;
+	std::cout << "Zombie \"" << _name << "\" created" << std::endl;
 }
 
 Zombie::~Zombie()
 {
-
+	std::cout << "Zombie \"" << _name << "\" destroyed" << std::endl;
 }
 
-Zombie *Zombie::zombieHorde(int N, std::string name)
+void Zombie::announce()
 {
-    return nullptr;
+	std::cout << _name << ": BraiiiiiiinnnzzzZ..." << std::endl;
 }
 

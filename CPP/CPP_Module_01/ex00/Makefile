@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+         #
+#    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/12 12:59:14 by tlima-de          #+#    #+#              #
-#    Updated: 2024/11/12 12:59:33 by tlima-de         ###   ########.fr        #
+#    Updated: 2024/11/22 20:04:59 by tales            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,8 @@ C++ = c++
 C++_FLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic
 INFILES = 	main.cpp\
 			Zombie.cpp\
+			newZombie.cpp\
+			randomChump.cpp
 
 OBJFILES = $(INFILES:.cpp=.o)
 
