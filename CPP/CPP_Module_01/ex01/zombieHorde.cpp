@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   zombieHorde.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 12:54:51 by tlima-de          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/12/01 10:16:16 by tales            ###   ########.fr       */
-=======
-/*   Updated: 2024/11/22 20:14:49 by tales            ###   ########.fr       */
->>>>>>> b21490d1858790a17896a3ac2af906c3de60d84e
+/*   Created: 2024/12/01 10:23:05 by tales             #+#    #+#             */
+/*   Updated: 2024/12/01 10:48:40 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Zombie.hpp"
 
-int main(void)
+Zombie *zombieHorde(int N, std::string name)
 {
-	Zombie *newZombie1;
-	
-	newZombie1 = newZombie("New Zombie");
-	newZombie1->announce();
-	randomChump("Random Zombie");
-	delete newZombie1;
-	return (0);
+    Zombie *zombies;
+    
+    zombies = new Zombie[N];
+
+    for (size_t i = 0; i < N; i++)
+    {
+            zombies[i] = Zombie(name);
+    }
+    return (zombies);
+    
 }

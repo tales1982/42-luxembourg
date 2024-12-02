@@ -1,28 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   HumanA.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 12:54:51 by tlima-de          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/12/01 10:16:16 by tales            ###   ########.fr       */
-=======
-/*   Updated: 2024/11/22 20:14:49 by tales            ###   ########.fr       */
->>>>>>> b21490d1858790a17896a3ac2af906c3de60d84e
+/*   Created: 2024/12/01 11:27:08 by tales             #+#    #+#             */
+/*   Updated: 2024/12/01 12:30:21 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Zombie.hpp"
+#ifndef HUMANA_HPP
+# define HUMANA_HPP
 
-int main(void)
+#include "Weapon.hpp"
+#include <string>
+#include <iostream>
+
+class HumanA
 {
-	Zombie *newZombie1;
-	
-	newZombie1 = newZombie("New Zombie");
-	newZombie1->announce();
-	randomChump("Random Zombie");
-	delete newZombie1;
-	return (0);
-}
+	private:
+		std::string _name;
+		Weapon &_weapon;
+	public:
+		// Constructors
+		HumanA(std::string name, Weapon &weapon);
+		~HumanA();
+
+		// Member functions
+		void attack();
+};
+
+#endif
