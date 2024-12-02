@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 20:29:53 by tales             #+#    #+#             */
-/*   Updated: 2024/12/02 20:38:21 by tales            ###   ########.fr       */
+/*   Updated: 2024/12/02 21:55:05 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,13 @@ void Harl::complain(std::string level) {
     switch (index) {
         case 0:
             debug();
+            // fallthrough
         case 1:
             info();
+            // fallthrough
         case 2:
             warning();
+            // fallthrough
         case 3:
             error();
             break;
