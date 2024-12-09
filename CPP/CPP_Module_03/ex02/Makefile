@@ -5,13 +5,15 @@
 #                                                     +:+ +:+         +:+      #
 #    By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/12/05 22:08:58 by tales             #+#    #+#              #
-#    Updated: 2024/12/09 13:17:46 by tlima-de         ###   ########.fr        #
+#    Created: 2024/12/09 13:02:31 by tlima-de          #+#    #+#              #
+#    Updated: 2024/12/09 16:46:40 by tlima-de         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+
+
 # Nome do executável
-NAME = ClapTrap
+NAME = FragTrap
 
 # Compilador
 CXX = c++
@@ -21,7 +23,9 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
 # Arquivos de origem e objetos
 SRCS =	main.cpp\
-		ClapTrap.cpp \
+		ScavTrap.cpp\
+		ClapTrap.cpp\
+		FragTrap.cpp\
 		
 OBJS = $(SRCS:.cpp=.o)
 

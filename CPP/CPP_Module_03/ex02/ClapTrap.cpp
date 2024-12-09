@@ -6,7 +6,7 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 15:26:33 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/12/09 16:20:37 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/12/09 16:21:15 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ ClapTrap::ClapTrap(std::string name) : _name(name), _hitPoints(10), _energyPoint
 {
     std::cout << "ClapTrap Constructor for the name " << _name << " called" << std::endl;
 }
+
 
 //construtor sem parametro e inicializo as variaveis.
 ClapTrap::ClapTrap() : _name("default"), _hitPoints(10), _energyPoints(10), _attackDamage(0)
