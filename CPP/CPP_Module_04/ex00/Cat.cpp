@@ -3,18 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Cat.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 11:27:18 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/12/10 16:14:20 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/12/10 20:17:51 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Cat.hpp"
+#include"Cat.hpp"
 
 // Construtor padrão
-Cat::Cat() : Animal("Cat") // Inicializa diretamente o tipo
+Cat::Cat() : Animal() // Inicializa diretamente o tipo
 {
+    this->_type = "Cat";
     std::cout << BLUE << "Parameter constructor initialized. " << "Class Cat." << RESET << std::endl;
 };
 
@@ -29,9 +30,9 @@ Cat::Cat(std::string name)
 Cat::Cat(const Cat &copy) : Animal(copy)
 {
     this->_type = copy._type;
-    std::cout << BLUE << "Copy constructor initialized. "
-                         "Class CAT."
-              << RESET << std::endl;
+    std::cout << BLUE << "Copy constructor initialized. Class CAT."<< RESET << std::endl;
+                         
+             
 };
 
 // Operador de atribuição
@@ -52,5 +53,5 @@ Cat::~Cat()
 
 void Cat::makeSound() const 
 {
-    std::cout  << "Miau Miau. "  YELLOW << "Class Cat." << RESET << std::endl;
+    std::cout << YELLOW << this->getType() << " says: **Meeeoow**" << RESET << std::endl;
 };

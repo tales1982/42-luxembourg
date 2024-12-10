@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Dog.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 11:27:11 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/12/10 15:50:54 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/12/10 19:35:00 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 #ifndef DOG_HPP
 #define DOG_HPP
 
-#include <iostream>
-#include <string>
 #include "Animal.hpp"
 
 class Dog : public Animal
 {
 private:
+    // Private Members
 public:
     Dog();                          // padrao
     Dog(std::string name);          // com parametros

@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   Dog.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 11:27:03 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/12/10 16:14:28 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/12/10 20:11:36 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "Dog.hpp"
+#include"Dog.hpp"
 
 // Construtor padrão
-Dog::Dog() : Animal("Dog") // Inicializa diretamente o tipo
+Dog::Dog() : Animal()
 {
+    this->_type = "Dog";
     std::cout << BLUE << "Parameter constructor initialized. " << "Class Dog." << RESET << std::endl;
 };
 
@@ -29,10 +30,9 @@ Dog::Dog(std::string name)
 // Construtor de cópia
 Dog::Dog(const Dog &copy) : Animal(copy) 
 {
-    this->_type = copy._type;
-    std::cout << BLUE << "Copy constructor initialized. "
-                         "Class Dog."
-              << RESET << std::endl;
+    //this->_type = copy._type;
+    std::cout << BLUE << "Copy constructor initialized. Class Dog."<< RESET << std::endl;
+    //*this = copy;      
 };
 
 // Operador de atribuição
@@ -53,5 +53,5 @@ Dog::~Dog()
 
 void Dog::makeSound() const 
 {
-    std::cout  << "HAUU HAUU. "  YELLOW << "Class Dog." << RESET << std::endl;
+    std::cout  <<  YELLOW << this->getType() << " says: **Woof**"  << "Class Dog." << RESET << std::endl;
 };

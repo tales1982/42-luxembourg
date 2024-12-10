@@ -3,18 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 11:18:41 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/12/10 15:51:47 by tlima-de         ###   ########.fr       */
+/*   Updated: 2024/12/10 19:32:21 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Animal.hpp"
-#include "Dog.hpp"
 #include "Cat.hpp"
+#include "Dog.hpp"
 #include "WrongAnimal.hpp"
 #include "WrongCat.hpp"
+
 
 int main() {
     const Animal* j = new Dog();
