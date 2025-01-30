@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/05 18:38:19 by tlima-de          #+#    #+#              #
-#    Updated: 2024/06/05 18:38:25 by tlima-de         ###   ########.fr        #
+#    Updated: 2025/01/30 19:43:49 by tales            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,21 +64,14 @@ $(NAME): $(OBJS)
 # Default rule
 all: $(NAME)
 
-# Roda o valgrind
+# Run Valgrind check
 check: $(NAME)
 	@valgrind --leak-check=full ./$(NAME) $(MAP_FILE)
 
 # Rule for cleaning up
 fclean:
-	@if [ ! -d $(LIBFT_PATH) ]; then \
-		echo "Directory $(LIBFT_PATH) does not exist."; \
-	else \
+	@if [ -d $(LIBFT_PATH) ]; then \
 		$(MAKE) -C $(LIBFT_PATH) fclean; \
-	fi
-	@if [ ! -d $(MINILIBX_PATH) ]; then \
-		echo "Directory $(MINILIBX_PATH) does not exist."; \
-	else \
-		$(MAKE) -C $(MINILIBX_PATH) clean; \
 	fi
 	@$(RM) $(NAME) $(OBJS)
 	@echo "Clean completed."
