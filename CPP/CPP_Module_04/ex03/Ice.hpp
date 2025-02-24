@@ -1,26 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongCat.cpp                                       :+:      :+:    :+:   */
+/*   Ice.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:25:20 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:10 by tales            ###   ########.fr       */
+/*   Created: 2024/12/17 14:22:31 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:39:57 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WrongCat.hpp"
+#ifndef ICE_HPP
+# define ICE_HPP
 
-// Construtor
-WrongCat::WrongCat()
-{
-    type = "WrongCat"; // Define o tipo como "WrongCat"
-    std::cout << "Construtor de WrongCat chamado!" << std::endl;
-}
+# include "AMateria.hpp"
 
-// Destrutor
-WrongCat::~WrongCat()
+// Classe concreta Ice
+class Ice : public AMateria
 {
-    std::cout << "Destrutor de WrongCat chamado!" << std::endl;
-}
+public:
+    Ice();
+    Ice(Ice const &other);
+    Ice &operator=(Ice const &other);
+    virtual ~Ice();
+
+    // Clona a matéria
+    virtual AMateria* clone() const;
+
+    // Usa a matéria Ice
+    virtual void use(ICharacter& target);
+};
+
+#endif

@@ -1,38 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongAnimal.hpp                                    :+:      :+:    :+:   */
+/*   AAnimal.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:34:48 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:05 by tales            ###   ########.fr       */
+/*   Created: 2024/12/11 16:36:20 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:38:00 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WRONGANIMAL_HPP
-# define WRONGANIMAL_HPP
+#ifndef AANIMAL_HPP
+# define AANIMAL_HPP
 
-# include <string>
 # include <iostream>
+# include <string>
 
-class WrongAnimal
+class AAnimal
 {
 protected:
-    std::string type; // Tipo do animal
+    std::string _type; // Tipo do animal
 
 public:
     // Construtor padrão
-    WrongAnimal();
+    AAnimal();
 
-    // Destrutor
-    ~WrongAnimal();
+    // Construtor de cópia
+    AAnimal(const AAnimal& other);
 
-    // Função para obter o tipo do animal
+    // Operador de atribuição
+    AAnimal& operator=(const AAnimal& other);
+
+    // Destrutor virtual
+    virtual ~AAnimal();
+
+    // Funções membros
+    virtual void makeSound() const = 0; // Método virtual p/ classe abstrata
     std::string getType() const;
-
-    // Método para emitir som
-    void makeSound() const;
 };
 
 #endif

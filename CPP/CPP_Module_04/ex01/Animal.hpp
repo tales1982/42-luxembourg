@@ -1,38 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongAnimal.hpp                                    :+:      :+:    :+:   */
+/*   Animal.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:34:48 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:05 by tales            ###   ########.fr       */
+/*   Created: 2024/12/11 16:36:20 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:36:38 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WRONGANIMAL_HPP
-# define WRONGANIMAL_HPP
+#ifndef ANIMAL_HPP
+# define ANIMAL_HPP
 
-# include <string>
 # include <iostream>
+# include <string>
 
-class WrongAnimal
+class Animal
 {
 protected:
-    std::string type; // Tipo do animal
+    std::string _type; // Tipo do animal
 
 public:
     // Construtor padrão
-    WrongAnimal();
+    Animal();
 
-    // Destrutor
-    ~WrongAnimal();
+    // Construtor de cópia
+    Animal(const Animal& other);
 
-    // Função para obter o tipo do animal
+    // Operador de atribuição
+    Animal& operator=(const Animal& other);
+
+    // Destrutor virtual
+    virtual ~Animal();
+
+    // Funções membros
+    virtual void makeSound() const; // Método virtual para som
     std::string getType() const;
-
-    // Método para emitir som
-    void makeSound() const;
 };
 
 #endif

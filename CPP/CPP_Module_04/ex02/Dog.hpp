@@ -1,38 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongAnimal.hpp                                    :+:      :+:    :+:   */
+/*   Dog.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:34:48 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:05 by tales            ###   ########.fr       */
+/*   Created: 2024/12/11 16:30:47 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:38:27 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WRONGANIMAL_HPP
-# define WRONGANIMAL_HPP
+#ifndef DOG_HPP
+# define DOG_HPP
 
-# include <string>
-# include <iostream>
+# include "AAnimal.hpp"
+# include "Brain.hpp" 
 
-class WrongAnimal
+class Dog : public AAnimal
 {
-protected:
-    std::string type; // Tipo do animal
+private:
+	Brain* _brain;  // Atributo exclusivo Dog
 
 public:
     // Construtor padrão
-    WrongAnimal();
+    Dog();
+
+    // Construtor de cópia
+    Dog(const Dog& other);
+
+    // Operador de atribuição
+    Dog& operator=(const Dog& other);
 
     // Destrutor
-    ~WrongAnimal();
+    ~Dog();
 
-    // Função para obter o tipo do animal
-    std::string getType() const;
-
-    // Método para emitir som
+    // Sobrescrevendo o método makeSound
     void makeSound() const;
+	Brain* getBrain() const;
 };
 
 #endif

@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongCat.cpp                                       :+:      :+:    :+:   */
+/*   ICharacter.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:25:20 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:10 by tales            ###   ########.fr       */
+/*   Created: 2024/12/17 14:30:38 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:40:03 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WrongCat.hpp"
+#ifndef ICHARACTER_HPP
+# define ICHARACTER_HPP
 
-// Construtor
-WrongCat::WrongCat()
-{
-    type = "WrongCat"; // Define o tipo como "WrongCat"
-    std::cout << "Construtor de WrongCat chamado!" << std::endl;
-}
+# include <string>
 
-// Destrutor
-WrongCat::~WrongCat()
+class AMateria;
+
+class ICharacter
 {
-    std::cout << "Destrutor de WrongCat chamado!" << std::endl;
-}
+public:
+    virtual ~ICharacter() {}
+    virtual std::string const &getName() const = 0;
+    virtual void equip(AMateria* m) = 0;
+    virtual void unequip(int idx) = 0;
+    virtual void use(int idx, ICharacter& target) = 0;
+};
+
+#endif

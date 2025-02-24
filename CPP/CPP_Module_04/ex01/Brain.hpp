@@ -1,26 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongCat.cpp                                       :+:      :+:    :+:   */
+/*   Brain.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:25:20 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:10 by tales            ###   ########.fr       */
+/*   Created: 2024/12/13 16:44:22 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:36:46 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WrongCat.hpp"
+#ifndef BRAIN_HPP
+# define BRAIN_HPP
 
-// Construtor
-WrongCat::WrongCat()
-{
-    type = "WrongCat"; // Define o tipo como "WrongCat"
-    std::cout << "Construtor de WrongCat chamado!" << std::endl;
-}
+# include <string>
+# include <iostream>
 
-// Destrutor
-WrongCat::~WrongCat()
+class Brain
 {
-    std::cout << "Destrutor de WrongCat chamado!" << std::endl;
-}
+private:
+    std::string ideas[100]; // Array de 100 ideias
+
+public:
+    Brain();
+    Brain(const Brain& other);
+    Brain& operator=(const Brain& other);
+    ~Brain();
+
+    void setIdea(int index, const std::string& idea);
+    std::string getIdea(int index) const;
+};
+
+#endif

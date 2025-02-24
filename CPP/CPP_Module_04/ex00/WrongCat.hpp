@@ -5,29 +5,25 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/10 15:52:32 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/12/10 19:37:47 by tales            ###   ########.fr       */
+/*   Created: 2024/12/11 15:27:01 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:36:14 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WRONGCAT_HPP
-#define WRONGCAT_HPP
+# define WRONGCAT_HPP
 
-#include "WrongAnimal.hpp"
+# include "WrongAnimal.hpp"
 
+// Classe derivada WrongCat
 class WrongCat : public WrongAnimal
 {
-private:
-    // Private Members
 public:
-    WrongCat();                               // padrao
-    WrongCat(std::string name);               // com parametros
-    WrongCat(const WrongCat &copy);           // copia ex; A = B obj A recerber dados obj B
-    WrongCat &operator=(const WrongCat &src); // copia por operador
+    // Construtor
+    WrongCat();
 
-    // destructor
+    // Destrutor
     ~WrongCat();
-    void makeSound() const;
 };
 
 #endif

@@ -5,32 +5,47 @@
 #                                                     +:+ +:+         +:+      #
 #    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/12/04 16:51:28 by sanweber          #+#    #+#              #
-#    Updated: 2025/02/24 10:35:57 by tales            ###   ########.fr        #
+#    Created: 2024/12/17 14:13:36 by sanweber          #+#    #+#              #
+#    Updated: 2025/02/24 10:40:16 by tales            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CXX = c++
+NAME = materia
+
+# Compilador e flags
+CXX = clang++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-# Arquivos
-SRC = main.cpp Animal.cpp Cat.cpp Dog.cpp WrongAnimal.cpp WrongCat.cpp
-OBJ = $(SRC:.cpp=.o)
-TARGET = polymorphisme
+# Arquivos fonte
+SRCS = main.cpp \
+       AMateria.cpp \
+       Ice.cpp \
+       Cure.cpp \
+       Character.cpp \
+       MateriaSource.cpp
 
-# Regras
-all: $(TARGET)
+# Arquivos objeto
+OBJS = $(SRCS:.cpp=.o)
 
-$(TARGET): $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJ)
+# Regra padrão
+all: $(NAME)
 
+# Regra para criar o executável
+$(NAME): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+
+# Regra para compilar os arquivos fonte em objeto
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Limpar os arquivos objeto
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJS)
 
+# Limpar tudo (objetos e executável)
 fclean: clean
-	rm -f $(TARGET)
+	rm -f $(NAME)
 
+# Recompilar do zero
 re: fclean all
+

@@ -1,46 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Animal.cpp                                         :+:      :+:    :+:   */
+/*   AAnimal.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/11 16:32:10 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:35:15 by tales            ###   ########.fr       */
+/*   Updated: 2025/02/24 10:37:56 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Animal.hpp"
+#include "AAnimal.hpp"
 
-Animal::Animal() : _type("Animal")
+AAnimal::AAnimal() : _type("AAnimal")
 {
-    std::cout << "Construtor de Animal chamado!" << std::endl;
+    std::cout << "Construtor de AAnimal chamado!" << std::endl;
 }
 
-Animal::Animal(const Animal& other) : _type(other._type)
+AAnimal::AAnimal(const AAnimal& other) : _type(other._type)
 {
-    std::cout << "Construtor de cópia de Animal chamado!" << std::endl;
+    std::cout << "Construtor de cópia de AAnimal chamado!" << std::endl;
 }
 
-Animal& Animal::operator=(const Animal& other)
+AAnimal& AAnimal::operator=(const AAnimal& other)
 {
     if (this != &other) 
         _type = other._type;
-    std::cout << "Operador de atribuição de Animal chamado!" << std::endl;
+    std::cout << "Operador de atribuição de AAnimal chamado!" << std::endl;
     return *this;
 }
 
-Animal::~Animal()
+AAnimal::~AAnimal()
 {
-    std::cout << "Destrutor de Animal chamado!" << std::endl;
+    std::cout << "Destrutor de AAnimal chamado!" << std::endl;
 }
 
-void Animal::makeSound() const
+void AAnimal::makeSound() const
 {
     std::cout << "Animal faz um som genérico!" << std::endl;
 }
 
-std::string Animal::getType() const
+std::string AAnimal::getType() const
 {
     return _type;
 }

@@ -1,26 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongCat.cpp                                       :+:      :+:    :+:   */
+/*   WrongAnimal.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:25:20 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:10 by tales            ###   ########.fr       */
+/*   Created: 2024/12/11 15:34:48 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:37:20 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WrongCat.hpp"
+#ifndef WRONGANIMAL_HPP
+# define WRONGANIMAL_HPP
 
-// Construtor
-WrongCat::WrongCat()
-{
-    type = "WrongCat"; // Define o tipo como "WrongCat"
-    std::cout << "Construtor de WrongCat chamado!" << std::endl;
-}
+# include <string>
+# include <iostream>
 
-// Destrutor
-WrongCat::~WrongCat()
+class WrongAnimal
 {
-    std::cout << "Destrutor de WrongCat chamado!" << std::endl;
-}
+protected:
+    std::string type; // Tipo do animal
+
+public:
+    // Construtor padrão
+    WrongAnimal();
+
+    // Destrutor
+    ~WrongAnimal();
+
+    // Função para obter o tipo do animal
+    std::string getType() const;
+
+    // Método para emitir som
+    void makeSound() const;
+};
+
+#endif

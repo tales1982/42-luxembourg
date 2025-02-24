@@ -3,32 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   Cat.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/10 11:27:28 by tlima-de          #+#    #+#             */
-/*   Updated: 2024/12/10 14:20:03 by tlima-de         ###   ########.fr       */
+/*   Created: 2024/12/11 16:26:37 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:35:33 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CAT_PP
-#define CAT_HPP
+#ifndef CAT_HPP
+# define CAT_HPP
 
-#include <iostream>
-#include <string>
-#include "Animal.hpp"
+# include "Animal.hpp"
 
-class Cat: public Animal
+class Cat : public Animal
 {
-private:
 public:
-    Cat();                          // padrao
-    Cat(std::string name);          // com parametros
-    Cat(const Cat &copy);           // copia ex; A = B obj A recerber dados obj B
-    Cat &operator=(const Cat &src); // copia por operador
+    // Construtor padrão
+    Cat();
 
-    // destructor
+    // Construtor de cópia
+    Cat(const Cat& other);
+
+    // Operador de atribuição
+    Cat& operator=(const Cat& other);
+
+    // Destrutor
     ~Cat();
-    void makeSound()const;
+
+    // Sobrescrevendo o método makeSound
+    void makeSound() const;
 };
 
 #endif

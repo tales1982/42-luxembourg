@@ -1,26 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongCat.cpp                                       :+:      :+:    :+:   */
+/*   Cure.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:25:20 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:10 by tales            ###   ########.fr       */
+/*   Created: 2024/12/17 14:27:04 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:39:45 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WrongCat.hpp"
+#ifndef CURE_HPP
+# define CURE_HPP
 
-// Construtor
-WrongCat::WrongCat()
-{
-    type = "WrongCat"; // Define o tipo como "WrongCat"
-    std::cout << "Construtor de WrongCat chamado!" << std::endl;
-}
+# include "AMateria.hpp"
 
-// Destrutor
-WrongCat::~WrongCat()
+// Classe concreta Cure
+class Cure : public AMateria
 {
-    std::cout << "Destrutor de WrongCat chamado!" << std::endl;
-}
+public:
+    Cure();
+    Cure(Cure const &other);
+    Cure &operator=(Cure const &other);
+    virtual ~Cure();
+
+    // Clona a matéria
+    virtual AMateria* clone() const;
+
+    // Usa a matéria Cure
+    virtual void use(ICharacter& target);
+};
+
+#endif

@@ -1,26 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WrongCat.cpp                                       :+:      :+:    :+:   */
+/*   WrongCat.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:25:20 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:10 by tales            ###   ########.fr       */
+/*   Created: 2024/12/11 15:27:01 by sanweber          #+#    #+#             */
+/*   Updated: 2025/02/24 10:38:56 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WrongCat.hpp"
+#ifndef WRONGCAT_HPP
+# define WRONGCAT_HPP
 
-// Construtor
-WrongCat::WrongCat()
-{
-    type = "WrongCat"; // Define o tipo como "WrongCat"
-    std::cout << "Construtor de WrongCat chamado!" << std::endl;
-}
+# include "WrongAnimal.hpp"
 
-// Destrutor
-WrongCat::~WrongCat()
+// Classe derivada WrongCat
+class WrongCat : public WrongAnimal
 {
-    std::cout << "Destrutor de WrongCat chamado!" << std::endl;
-}
+public:
+    // Construtor
+    WrongCat();
+
+    // Destrutor
+    ~WrongCat();
+};
+
+#endif
