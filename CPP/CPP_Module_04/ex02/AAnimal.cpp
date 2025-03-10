@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AAnimal.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 16:32:10 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:37:56 by tales            ###   ########.fr       */
+/*   Created: 2024/12/11 16:32:10 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:11:04 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,33 +14,33 @@
 
 AAnimal::AAnimal() : _type("AAnimal")
 {
-    std::cout << "Construtor de AAnimal chamado!" << std::endl;
+	std::cout << YELLOW << "Constructeur de AAnimal appelé !" << RESET << std::endl;
 }
 
-AAnimal::AAnimal(const AAnimal& other) : _type(other._type)
+AAnimal::AAnimal(const AAnimal &other) : _type(other._type)
 {
-    std::cout << "Construtor de cópia de AAnimal chamado!" << std::endl;
+	std::cout << YELLOW << "Constructeur de copie de AAnimal appelé !" << RESET << std::endl;
 }
 
-AAnimal& AAnimal::operator=(const AAnimal& other)
+AAnimal &AAnimal::operator=(const AAnimal &other)
 {
-    if (this != &other) 
-        _type = other._type;
-    std::cout << "Operador de atribuição de AAnimal chamado!" << std::endl;
-    return *this;
+	if (this != &other)
+		_type = other._type;
+	std::cout << YELLOW << "Opérateur d'affectation de AAnimal appelé !" << RESET << std::endl;
+	return (*this);
 }
 
 AAnimal::~AAnimal()
 {
-    std::cout << "Destrutor de AAnimal chamado!" << std::endl;
+	std::cout << YELLOW << "Destructeur de AAnimal appelé !" << RESET << std::endl;
 }
 
 void AAnimal::makeSound() const
 {
-    std::cout << "Animal faz um som genérico!" << std::endl;
+	std::cout << YELLOW << "AAnimal fait un son générique !" << RESET << std::endl;
 }
 
 std::string AAnimal::getType() const
 {
-    return _type;
+	return (_type);
 }

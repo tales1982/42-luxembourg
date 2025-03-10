@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Animal.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 16:36:20 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:35:22 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:10:20 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:05:11 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,31 @@
 # include <iostream>
 # include <string>
 
+// Definindo as macros para as cores
+# define RED "\033[31m"
+# define GREEN "\033[32m"
+# define YELLOW "\033[33m"
+# define BLUE "\033[34m"
+# define CYAN "\033[36m"
+# define MAGENTA "\033[35m"
+# define RESET "\033[0m"
+
 class Animal
 {
-protected:
-    std::string _type; // Tipo do animal
+  protected:
+	std::string type;
 
-public:
-    // Construtor padrão
-    Animal();
+  public:
+	Animal();
 
-    // Construtor de cópia
-    Animal(const Animal& other);
+	Animal(const Animal &other);
 
-    // Operador de atribuição
-    Animal& operator=(const Animal& other);
+	Animal &operator=(const Animal &other);
 
-    // Destrutor virtual
-    virtual ~Animal();
+	virtual ~Animal();
 
-    // Funções membros
-    virtual void makeSound() const; // Método virtual para som
-    std::string getType() const;
+	virtual void makeSound() const;
+	std::string getType() const;
 };
 
 #endif

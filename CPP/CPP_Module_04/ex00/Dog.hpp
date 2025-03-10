@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Dog.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 16:30:47 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:35:42 by tales            ###   ########.fr       */
+/*   Created: 2024/12/11 16:30:47 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:06:13 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,16 @@
 
 class Dog : public Animal
 {
-public:
-    // Construtor padrão
-    Dog();
+  public:
+	Dog();
 
-    // Construtor de cópia
-    Dog(const Dog& other);
+	Dog(const Dog &other);
 
-    // Operador de atribuição
-    Dog& operator=(const Dog& other);
+	Dog &operator=(const Dog &other);
 
-    // Destrutor
-    ~Dog();
+	~Dog();
 
-    // Sobrescrevendo o método makeSound
-    void makeSound() const;
+	void makeSound() const;
 };
 
 #endif

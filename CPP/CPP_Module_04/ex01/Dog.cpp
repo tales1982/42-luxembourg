@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Dog.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 16:28:49 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:37:00 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:19:05 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:09:05 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,38 +14,39 @@
 
 Dog::Dog() : _brain(new Brain())
 {
-    _type = "Dog";
-    std::cout << "Construtor de Dog chamado!" << std::endl;
+	_type = "Dog";
+	std::cout << CYAN << "Constructeur de Dog appelé !" << RESET << std::endl;
 }
 
-Dog::Dog(const Dog& other) : Animal(other), _brain(new Brain(*other._brain))
+Dog::Dog(const Dog &other) : Animal(other), _brain(new Brain(*other._brain))
 {
-    std::cout << "Construtor de cópia de Dog chamado!" << std::endl;
+	std::cout << CYAN << "Constructeur de copie de Dog appelé !" << RESET << std::endl;
 }
 
-Dog& Dog::operator=(const Dog& other)
+Dog &Dog::operator=(const Dog &other)
 {
-    if (this != &other)
-	{	
-        Animal::operator=(other);
-		*_brain = *other._brain;  // Copia profunda
+	if (this != &other)
+	{
+		Animal::operator=(other);
+		*_brain = *other._brain;
 	}
-    std::cout << "Operador de atribuição de Dog chamado!" << std::endl;
-    return *this;
+	std::cout << CYAN << "Opérateur d'affectation de Dog appelé !" << RESET << std::endl;
+	return (*this);
 }
 
 Dog::~Dog()
 {
-	delete _brain;
-    std::cout << "Destrutor de Dog chamado!" << std::endl;
+	delete	_brain;
+
+	std::cout << CYAN << "Destructeur de Dog appelé !" << RESET << std::endl;
 }
 
 void Dog::makeSound() const
 {
-    std::cout << "Dog faz: Woof! Woof!" << std::endl;
+	std::cout << CYAN << "Dog fait : Woof ! Woof !" << RESET << std::endl;
 }
 
-Brain* Dog::getBrain() const
+Brain *Dog::getBrain() const
 {
-    return _brain;
+	return (_brain);
 }

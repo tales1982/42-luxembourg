@@ -3,24 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   WrongCat.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:25:20 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:36:10 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:13:44 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:06:49 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WrongCat.hpp"
 
-// Construtor
 WrongCat::WrongCat()
 {
-    type = "WrongCat"; // Define o tipo como "WrongCat"
-    std::cout << "Construtor de WrongCat chamado!" << std::endl;
+	type = MAGENTA "WrongCat" RESET;
+	std::cout << MAGENTA << "Constructeur de WrongCat appelé !" << RESET << std::endl;
 }
 
-// Destrutor
 WrongCat::~WrongCat()
 {
-    std::cout << "Destrutor de WrongCat chamado!" << std::endl;
+	std::cout << MAGENTA << "Destructeur de WrongCat appelé !" << RESET << std::endl;
 }

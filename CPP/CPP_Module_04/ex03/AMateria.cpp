@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AMateria.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:20:52 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:39:24 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:50:31 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 15:53:40 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 AMateria::AMateria(std::string const &type) : _type(type)
 {
-    std::cout << "AMateria do tipo " << _type << " criada!" << std::endl;
+    std::cout << GREEN << "AMateria de type " << _type << " créée !" << RESET << std::endl;
 }
 
 AMateria::~AMateria()
 {
-    std::cout << "AMateria do tipo " << _type << " destruída!" << std::endl;
+    std::cout << GREEN <<  "AMateria de type " << _type << " détruite !" << RESET << std::endl;
 }
 
 std::string const &AMateria::getType() const
@@ -27,7 +27,7 @@ std::string const &AMateria::getType() const
     return _type;
 }
 
-void AMateria::use(ICharacter& target)
+void AMateria::use(ICharacter &target)
 {
-    std::cout << "* Usa AMateria no personagem " << target.getName() << " *" << std::endl;
+    std::cout << GREEN << "* Utilise AMateria sur le personnage " << RESET << target.getName() << " *" << std::endl;
 }

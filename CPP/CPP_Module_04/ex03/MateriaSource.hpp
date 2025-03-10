@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   MateriaSource.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:37:11 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:40:25 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:51:28 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/01/06 13:51:29 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MATERIASOURCE_HPP
 # define MATERIASOURCE_HPP

@@ -3,19 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Ice.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:22:31 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:39:57 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:51:03 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/01/06 13:52:43 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ICE_HPP
-# define ICE_HPP
+#define ICE_HPP
 
-# include "AMateria.hpp"
+#include "AMateria.hpp"
 
-// Classe concreta Ice
 class Ice : public AMateria
 {
 public:
@@ -24,11 +23,9 @@ public:
     Ice &operator=(Ice const &other);
     virtual ~Ice();
 
-    // Clona a matéria
-    virtual AMateria* clone() const;
+    virtual AMateria *clone() const;
 
-    // Usa a matéria Ice
-    virtual void use(ICharacter& target);
+    virtual void use(ICharacter &target);
 };
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cat.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 16:21:43 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:38:13 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:40:19 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:13:54 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,38 +14,39 @@
 
 Cat::Cat() : _brain(new Brain())
 {
-    _type = "Cat";
-    std::cout << "Construtor de Cat chamado!" << std::endl;
+	_type = "Cat";
+	std::cout << RED << "Constructeur de Cat appelé !" << RESET << std::endl;
 }
 
-Cat::Cat(const Cat& other) : AAnimal(other), _brain(new Brain(*other._brain))
+Cat::Cat(const Cat &other) : AAnimal(other), _brain(new Brain(*other._brain))
 {
-    std::cout << "Construtor de cópia de Cat chamado!" << std::endl;
+	std::cout << RED << "Constructeur de copie de Cat appelé !" << RESET << std::endl;
 }
 
-Cat& Cat::operator=(const Cat& other)
+Cat &Cat::operator=(const Cat &other)
 {
-    if (this != &other)
-	{	
-        AAnimal::operator=(other);
-		*_brain = *other._brain; // Copia profunda
+	if (this != &other)
+	{
+		AAnimal::operator=(other);
+		*_brain = *other._brain; // Copie profonde
 	}
-    std::cout << "Operador de atribuição de Cat chamado!" << std::endl;
-    return *this;
+	std::cout << RED << "Opérateur d'affectation de Cat appelé !" << RESET << std::endl;
+	return (*this);
 }
 
 Cat::~Cat()
 {
-	delete _brain;
-    std::cout << "Destrutor de Cat chamado!" << std::endl;
+	delete	_brain;
+
+	std::cout << RED << "Destructeur de Cat appelé !" << RESET << std::endl;
 }
 
 void Cat::makeSound() const
 {
-    std::cout << "Cat faz: Meowww! Meowww!" << std::endl;
+	std::cout << RED << "Cat fait : Meowww ! Meowww !" << RESET << std::endl;
 }
 
-Brain* Cat::getBrain() const
+Brain *Cat::getBrain() const
 {
-    return _brain;
+	return (_brain);
 }

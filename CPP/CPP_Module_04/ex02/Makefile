@@ -3,12 +3,13 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
+#    By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/12/04 16:51:28 by sanweber          #+#    #+#              #
-#    Updated: 2025/02/24 10:38:36 by tales            ###   ########.fr        #
+#    Created: 2025/01/06 13:40:43 by tlima-de          #+#    #+#              #
+#    Updated: 2025/01/06 13:40:44 by tlima-de         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Dog.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 16:30:47 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:37:04 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:19:10 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:09:10 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,24 @@
 # define DOG_HPP
 
 # include "Animal.hpp"
-# include "Brain.hpp" 
+# include "Brain.hpp"
 
 class Dog : public Animal
 {
-private:
-	Brain* _brain;  // Atributo exclusivo Dog
+  private:
+	Brain *_brain;
 
-public:
-    // Construtor padrão
-    Dog();
+  public:
+	Dog();
 
-    // Construtor de cópia
-    Dog(const Dog& other);
+	Dog(const Dog &other);
 
-    // Operador de atribuição
-    Dog& operator=(const Dog& other);
+	Dog &operator=(const Dog &other);
 
-    // Destrutor
-    ~Dog();
+	~Dog();
 
-    // Sobrescrevendo o método makeSound
-    void makeSound() const;
-	Brain* getBrain() const;
+	void makeSound() const;
+	Brain *getBrain() const;
 };
 
 #endif

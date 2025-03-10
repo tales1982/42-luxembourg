@@ -3,35 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   WrongAnimal.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:34:48 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:38:45 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:40:51 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 15:40:48 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WRONGANIMAL_HPP
-# define WRONGANIMAL_HPP
+#define WRONGANIMAL_HPP
 
-# include <string>
-# include <iostream>
+#include <string>
+#include <iostream>
+
+// Definindo as macros para as cores
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define CYAN    "\033[36m"  // Ciano
+#define MAGENTA "\033[35m"  // Magenta
+#define RESET   "\033[0m"   // Reseta a cor para o padrão
 
 class WrongAnimal
 {
 protected:
-    std::string type; // Tipo do animal
+    std::string type;
 
 public:
-    // Construtor padrão
     WrongAnimal();
 
-    // Destrutor
     ~WrongAnimal();
 
-    // Função para obter o tipo do animal
     std::string getType() const;
 
-    // Método para emitir som
     void makeSound() const;
 };
 

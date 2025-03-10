@@ -3,41 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   AMateria.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:19:04 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:39:29 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:50:35 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 15:52:11 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef AMATERIA_HPP
-# define AMATERIA_HPP
+#define AMATERIA_HPP
 
-# include <string>
-# include <iostream>
-# include "ICharacter.hpp"
+#include <string>
+#include <iostream>
+#include "ICharacter.hpp"
 
-// Classe abstrata AMateria
+// Definindo as macros para as cores
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define CYAN    "\033[36m"  // Ciano
+#define MAGENTA "\033[35m"  // Magenta
+#define RESET   "\033[0m"   // Reseta a cor para o padrão
+
 class AMateria
 {
 protected:
-    std::string _type; // Tipo da matéria
+    std::string _type;
 
 public:
-    // Construtor padrão com tipo
     AMateria(std::string const &type);
 
-    // Destrutor virtual
     virtual ~AMateria();
 
-    // Retorna o tipo da matéria
     std::string const &getType() const;
 
-    // Método puro virtual para clonar a matéria
-    virtual AMateria* clone() const = 0;
+    virtual AMateria *clone() const = 0;
 
-    // Usa a matéria em um personagem
-    virtual void use(ICharacter& target);
+    virtual void use(ICharacter &target);
 };
 
 #endif

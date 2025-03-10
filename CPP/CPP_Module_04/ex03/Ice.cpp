@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Ice.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:23:46 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:39:50 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:50:59 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:01:53 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,33 +14,33 @@
 
 Ice::Ice() : AMateria("ice")
 {
-    std::cout << "Ice criado!" << std::endl;
+    std::cout << RED << "Ice créé !" << RESET << std::endl;
 }
 
 Ice::Ice(Ice const &other) : AMateria(other)
 {
-    std::cout << "Ice copiado!" << std::endl;
+    std::cout << RED << "Ice copié !" << RESET << std::endl;
 }
 
 Ice &Ice::operator=(Ice const &other)
 {
-    if (this != &other) 
+    if (this != &other)
         _type = other._type;
-    std::cout << "Operador de atribuição de Ice chamado!" << std::endl;
+    std::cout << RED << "Opérateur d'affectation de Ice appelé !" << RESET << std::endl;
     return *this;
 }
 
 Ice::~Ice()
 {
-    std::cout << "Ice destruído!" << std::endl;
+    std::cout << RED << "Ice détruit !" << std::endl;
 }
 
-AMateria* Ice::clone() const
+AMateria *Ice::clone() const
 {
     return new Ice(*this);
 }
 
-void Ice::use(ICharacter& target)
+void Ice::use(ICharacter &target)
 {
-    std::cout << "* shoots an ice bolt at " << target.getName() << " *" << std::endl;
+    std::cout << RED << "* tire un éclair de glace sur " << target.getName() << " *" << RESET << std::endl;
 }

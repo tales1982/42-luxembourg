@@ -3,45 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:18:43 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:37:08 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:19:14 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:09:16 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Animal.hpp"
-#include "Dog.hpp"
 #include "Cat.hpp"
+#include "Dog.hpp"
 #include "WrongAnimal.hpp"
 #include "WrongCat.hpp"
 
-int main()
+int	main(void)
 {
-    // Criando um array de animais
-    Animal* animals[4];
+	Animal *animals[4];
 
-    // Metade Dogs e metade Cats
-    for (int i = 0; i < 2; i++)
-        animals[i] = new Dog();
-    for (int i = 2; i < 4; i++)
-        animals[i] = new Cat();
+	for (int i = 0; i < 2; i++)
+		animals[i] = new Dog();
+	for (int i = 2; i < 4; i++)
+		animals[i] = new Cat();
 
-    // Exibindo sons dos animais
-    for (int i = 0; i < 4; i++)
-        animals[i]->makeSound();
+	for (int i = 0; i < 4; i++)
+		animals[i]->makeSound();
 
-    // Limpando memória
-    for (int i = 0; i < 4; i++)
-        delete animals[i];
+	for (int i = 0; i < 4; i++)
+		delete animals[i];
 
-    const WrongAnimal* wrongMeta = new WrongAnimal();
-    const WrongAnimal* wrongCat = new WrongCat();
-    std::cout << wrongCat->getType() << " " << std::endl;
-    wrongMeta->makeSound(); // Som genérico de WrongAnimal
-    wrongCat->makeSound();  // Som genérico de WrongAnimal, não foi sobrescrito
-    delete wrongMeta;
-    delete wrongCat;
+	const WrongAnimal *wrongMeta = new WrongAnimal();
+	const WrongAnimal *wrongCat = new WrongCat();
+	std::cout << wrongCat->getType() << " " << std::endl;
+	wrongMeta->makeSound();
+	wrongCat->makeSound();
+	delete wrongMeta;
+	delete wrongCat;
 
-    return 0;
+	return (0);
 }

@@ -3,31 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   IMateriaSource.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:46:13 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:40:07 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:51:11 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/01/06 13:52:31 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IMATERIASOURCE_HPP
-# define IMATERIASOURCE_HPP
+#define IMATERIASOURCE_HPP
 
-# include <string>
-# include "AMateria.hpp"
+#include <string>
+#include "AMateria.hpp"
 
-// Interface para a classe MateriaSource
 class IMateriaSource
 {
 public:
-    // Destrutor virtual para destruição adequada ao deletar objetos derivados
     virtual ~IMateriaSource() {}
 
-    // Adiciona um modelo de AMateria à fonte de Materia
-    virtual void learnMateria(AMateria* m) = 0;
+    virtual void learnMateria(AMateria *m) = 0;
 
-    // Cria uma nova Materia com base no tipo fornecido
-    virtual AMateria* createMateria(std::string const & type) = 0;
+    virtual AMateria *createMateria(std::string const &type) = 0;
 };
 
 #endif

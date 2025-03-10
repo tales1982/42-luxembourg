@@ -3,26 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   WrongCat.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:27:01 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:38:56 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:41:00 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/01/06 13:50:22 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WRONGCAT_HPP
-# define WRONGCAT_HPP
+#define WRONGCAT_HPP
 
-# include "WrongAnimal.hpp"
+#include "WrongAnimal.hpp"
 
-// Classe derivada WrongCat
 class WrongCat : public WrongAnimal
 {
 public:
-    // Construtor
     WrongCat();
 
-    // Destrutor
     ~WrongCat();
 };
 

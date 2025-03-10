@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ICharacter.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:30:38 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:40:03 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:51:06 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/01/06 13:52:35 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ICHARACTER_HPP
-# define ICHARACTER_HPP
+#define ICHARACTER_HPP
 
-# include <string>
+#include <string>
 
 class AMateria;
 
@@ -22,9 +22,9 @@ class ICharacter
 public:
     virtual ~ICharacter() {}
     virtual std::string const &getName() const = 0;
-    virtual void equip(AMateria* m) = 0;
+    virtual void equip(AMateria *m) = 0;
     virtual void unequip(int idx) = 0;
-    virtual void use(int idx, ICharacter& target) = 0;
+    virtual void use(int idx, ICharacter &target) = 0;
 };
 
 #endif

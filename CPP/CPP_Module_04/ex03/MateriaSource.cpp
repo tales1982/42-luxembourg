@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MateriaSource.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:38:19 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:40:21 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:51:24 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/10 10:33:16 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,41 @@
 
 MateriaSource::MateriaSource()
 {
-    for (int i = 0; i < 4; ++i)
+    int i;
+    
+    i = 0;
+    while ( i < 4 ){
         _sources[i] = 0;
-    std::cout << "MateriaSource criado!" << std::endl;
+        ++i;
+    }
+        
+    std::cout << MAGENTA << "MateriaSource créé !" << RESET << std::endl;
 }
 
 MateriaSource::MateriaSource(MateriaSource const &other)
 {
-    for (int i = 0; i < 4; ++i)
+    int i;
+    
+    i= 0;
+    while ( i < 4){
         _sources[i] = other._sources[i] ? other._sources[i]->clone() : 0;
+        ++i;
+    }
+       
 }
 
 MateriaSource &MateriaSource::operator=(MateriaSource const &other)
 {
+    int i;
+    
+    i = 0;
     if (this != &other)
-   	{
-        for (int i = 0; i < 4; ++i)
-	   	{
+    {
+        while ( i < 4 )
+        {
             delete _sources[i];
             _sources[i] = other._sources[i] ? other._sources[i]->clone() : 0;
+            ++i;
         }
     }
     return *this;
@@ -40,29 +56,44 @@ MateriaSource &MateriaSource::operator=(MateriaSource const &other)
 
 MateriaSource::~MateriaSource()
 {
-    for (int i = 0; i < 4; ++i)
+    int i;
+    
+    i = 0;
+    while ( i < 4){
         delete _sources[i];
-    std::cout << "MateriaSource destruído!" << std::endl;
+        ++i;
+    }
+        
+    std::cout << MAGENTA << "MateriaSource détruit !" << RESET << std::endl;
 }
 
-void MateriaSource::learnMateria(AMateria* m)
+void MateriaSource::learnMateria(AMateria *m)
 {
-    for (int i = 0; i < 4; ++i)
-   	{
+
+    int i;
+    
+    i = 0;
+    while ( i < 4)
+    {
         if (!_sources[i])
-	   	{
+        {
             _sources[i] = m;
             break;
         }
+        ++i;
     }
 }
 
-AMateria* MateriaSource::createMateria(std::string const &type)
+AMateria *MateriaSource::createMateria(std::string const &type)
 {
-    for (int i = 0; i < 4; ++i)
-   	{
+    int i;
+    
+    i = 0;
+    while ( i < 4)
+    {
         if (_sources[i] && _sources[i]->getType() == type)
             return _sources[i]->clone();
+        ++i;
     }
     return 0;
 }

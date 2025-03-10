@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 15:18:43 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:38:31 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:40:38 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:14:33 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,25 @@
 
 int main()
 {
-    // Criando um array de animais
-    const AAnimal* animals[4];
 
-    // Metade Dogs e metade Cats
+    const AAnimal *animals[4];
+
     for (int i = 0; i < 2; i++)
         animals[i] = new Dog();
     for (int i = 2; i < 4; i++)
         animals[i] = new Cat();
 
-    // Exibindo sons dos animais
     for (int i = 0; i < 4; i++)
         animals[i]->makeSound();
 
-    // Limpando memória
     for (int i = 0; i < 4; i++)
         delete animals[i];
 
-    const WrongAnimal* wrongMeta = new WrongAnimal();
-    const WrongAnimal* wrongCat = new WrongCat();
+    const WrongAnimal *wrongMeta = new WrongAnimal();
+    const WrongAnimal *wrongCat = new WrongCat();
     std::cout << wrongCat->getType() << " " << std::endl;
-    wrongMeta->makeSound(); // Som genérico de WrongAnimal
-    wrongCat->makeSound();  // Som genérico de WrongAnimal, não foi sobrescrito
+    wrongMeta->makeSound();
+    wrongCat->makeSound();
     delete wrongMeta;
     delete wrongCat;
 

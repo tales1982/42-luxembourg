@@ -3,17 +3,18 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
+#    By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/12/17 14:13:36 by sanweber          #+#    #+#              #
-#    Updated: 2025/02/24 10:40:16 by tales            ###   ########.fr        #
+#    Created: 2025/01/06 13:51:19 by tlima-de          #+#    #+#              #
+#    Updated: 2025/03/10 10:16:14 by tlima-de         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 NAME = materia
 
 # Compilador e flags
-CXX = clang++
+CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
 # Arquivos fonte

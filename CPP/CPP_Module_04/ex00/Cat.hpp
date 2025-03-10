@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cat.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/11 16:26:37 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:35:33 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:11:29 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:04:44 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,16 @@
 
 class Cat : public Animal
 {
-public:
-    // Construtor padrão
-    Cat();
+  public:
+	Cat();
 
-    // Construtor de cópia
-    Cat(const Cat& other);
+	Cat(const Cat &other);
 
-    // Operador de atribuição
-    Cat& operator=(const Cat& other);
+	Cat &operator=(const Cat &other);
 
-    // Destrutor
-    ~Cat();
+	~Cat();
 
-    // Sobrescrevendo o método makeSound
-    void makeSound() const;
+	void makeSound() const;
 };
 
 #endif

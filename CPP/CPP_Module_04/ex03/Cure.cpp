@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cure.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 14:28:18 by sanweber          #+#    #+#             */
-/*   Updated: 2025/02/24 10:39:41 by tales            ###   ########.fr       */
+/*   Created: 2025/01/06 13:50:51 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/03/05 16:02:42 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,33 +14,33 @@
 
 Cure::Cure() : AMateria("cure")
 {
-    std::cout << "Cure criado!" << std::endl;
+    std::cout << YELLOW << "Cure créé !" << RESET << std::endl;
 }
 
 Cure::Cure(Cure const &other) : AMateria(other)
 {
-    std::cout << "Cure copiado!" << std::endl;
+    std::cout << YELLOW << "Cure copié !" << RESET << std::endl;
 }
 
 Cure &Cure::operator=(Cure const &other)
 {
-    if (this != &other) 
+    if (this != &other)
         _type = other._type;
-    std::cout << "Operador de atribuição de Cure chamado!" << std::endl;
+    std::cout << YELLOW << "Opérateur d'affectation de Cure appelé !" << RESET << std::endl;
     return *this;
 }
 
 Cure::~Cure()
 {
-    std::cout << "Cure destruído!" << std::endl;
+    std::cout << YELLOW << "Cure détruit !" << RESET << std::endl;
 }
 
-AMateria* Cure::clone() const
+AMateria *Cure::clone() const
 {
     return new Cure(*this);
 }
 
-void Cure::use(ICharacter& target)
+void Cure::use(ICharacter &target)
 {
-    std::cout << "* heals " << target.getName() << "'s wounds *" << std::endl;
+    std::cout << YELLOW << "* soigne les blessures de " << target.getName() << " *" << RESET << std::endl;
 }
