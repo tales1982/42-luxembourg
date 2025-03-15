@@ -6,13 +6,12 @@
 #    By: jcluzet <jcluzet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/20 02:26:11 by jcluzet           #+#    #+#              #
-#    Updated: 2022/09/02 00:19:31 by jcluzet          ###   ########.fr        #
+#    Updated: 2022/09/03 22:53:09 by jcluzet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-FILE='repeat_alpha.c'
-ASSIGN='repeat_alpha/repeat_alpha.c'
-
+FILE='microshell.c'
+ASSIGN='microshell/microshell.c'
 
 index=0
 
@@ -21,165 +20,74 @@ then
     rm traceback
 fi
 
+cp .system/grading/test.sh rendu/
+
 cd .system/grading
-gcc -o source $FILE
-./source | cat -e > sourcexam       #TESTING
-rm source
+{
+	gcc -Wall -Wextra -Werror $FILE
+} &>/dev/null
+{
+cp a.out ../../rendu/a.out
+} &>/dev/null
+
 cd ../../rendu
+touch sourcexam
+touch finalexam
+sh test.sh &> sourcexam       #TESTING VRAI
 {
-gcc -o final $ASSIGN
-}  &>../.system/grading/traceback
+rm a.out
+} &>/dev/null
 {
-./final | cat -e > finalexam        #TESTING
-mv finalexam ../.system/grading/
-rm final
-}  &>/dev/null
-cd ../.system/grading
-DIFF=$(diff sourcexam finalexam)
-echo "" >> traceback
-if [ "$DIFF" != "" ]
-then
-		index=$(($index + 1))
-		cat sourcexam >> traceback
-		if [ -e finalexam ]
-		then
-		cat finalexam >> traceback
-		else
-		echo "" >> traceback
-		fi
-		echo "-------" >> traceback
-fi
-rm finalexam
+gcc -Wall -Wextra -Werror $ASSIGN
+}  &>.dev
+sh test.sh &> finalexam        #TESTING STUD
+# {
+# }  &>/dev/null
 
 
 
-gcc -o source $FILE
-./source abc | cat -e > sourcexam    #TESTING
-rm source
-cd ../../rendu
-{
-gcc -o final $ASSIGN
-./final abc | cat -e > finalexam     #TESTING
-mv finalexam ../.system/grading/
-rm final
-}  &>/dev/null
-cd ../.system/grading
 DIFF=$(diff sourcexam finalexam)
 if [ "$DIFF" != "" ]
 then
-		index=$(($index + 1))
-		cat sourcexam >> traceback
-		if [ -e finalexam ]
+        echo "----------------8<-------------[ START TEST " >> traceback
+		if [ -e a.out ]
 		then
-		cat finalexam >> traceback
+        printf "        💻 ALL TESTS: \n\n$(cat ../.system/grading/test.sh)\n" >> traceback
+        printf "\n\n        🔎 YOUR OUTPUT:\n" >> traceback
+        cat finalexam >> traceback
+        printf "\n\n        🗝 EXPECTED OUTPUT:\n" >> traceback
+		cat sourcexam >> traceback
 		else
-		echo "" >> traceback
+		printf "        🔎 YOUR OUTPUT:\n" >> traceback
+        # cat finalexam >> traceback
+        printf "\n";
+        echo "$(cat .dev)" >> traceback
+        rm .dev
+		printf "\n        ❌ COMPILATION ERROR\n" >> traceback
 		fi
-		echo "-------" >> traceback
+        echo "----------------8<------------- END TEST ]" >> traceback
+		index=$((index+1))
 fi
-rm finalexam
-
-
-
-gcc -o source $FILE
-./source "Alex." | cat -e > sourcexam    #TESTING
-rm source
-cd ../../rendu
+# exit
 {
-gcc -o final $ASSIGN
-./final "Alex." | cat -e > finalexam     #TESTING
-mv finalexam ../.system/grading/
-rm final
-}  &>/dev/null
-cd ../.system/grading
-DIFF=$(diff sourcexam finalexam)
-if [ "$DIFF" != "" ]
-then
-		index=$(($index + 1))
-		cat sourcexam >> traceback
-		if [ -e finalexam ]
-		then
-		cat finalexam >> traceback
-		else
-		echo "" >> traceback
-		fi
-		echo "-------" >> traceback
-fi
+mv traceback ../traceback
+}	&>/dev/null
+
 rm finalexam
-
-
-
-
-gcc -o source $FILE
-./source 'abacadaba 42!' | cat -e > sourcexam    #TESTING
-rm source
-cd ../../rendu
 {
-gcc -o final $ASSIGN
-./final 'abacadaba 42!' | cat -e > finalexam     #TESTING
-mv finalexam ../.system/grading/
-rm final
-}  &>/dev/null
+rm sourcexam
+rm a.out
+rm .dev
+} &>/dev/null
+rm test.sh
+
 cd ../.system/grading
-DIFF=$(diff sourcexam finalexam)
-if [ "$DIFF" != "" ]
-then
-		index=$(($index + 1))
-		cat sourcexam >> traceback
-		if [ -e finalexam ]
-		then
-		cat finalexam >> traceback
-		else
-		echo "" >> traceback
-		fi
-		echo "-------" >> traceback
-fi
-rm finalexam
 
-
-
-
-gcc -o source $FILE
-./source "" | cat -e > sourcexam    #TESTING
-rm source
-cd ../../rendu
-{
-gcc -o final $ASSIGN
-./final "" | cat -e > finalexam     #TESTING
-mv finalexam ../.system/grading/
-rm final
-}  &>/dev/null
-cd ../.system/grading
-DIFF=$(diff sourcexam finalexam)
-if [ "$DIFF" != "" ]
-then
-		index=$(($index + 1))
-		cat sourcexam >> traceback
-		if [ -e finalexam ]
-		then
-		cat finalexam >> traceback
-		else
-		echo "" >> traceback
-		fi
-		echo "-------" >> traceback
-fi
-rm finalexam
-
-
-
-
-
-
-
-
-
+#mv .system/tester.sh .system/grading/tester.sh
 
 
 if [ $index -eq 0 ]
 then
+	echo "OK"
 	touch passed
 fi
-{
-mv traceback ../../traceback
-}	&>/dev/null
-rm sourcexam
