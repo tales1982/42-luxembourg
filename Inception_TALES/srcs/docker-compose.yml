@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    networks:
+      - my_net
+
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    environment:
+      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_USER=${WP_DB_USER}
+      - WORDPRESS_DB_PASSWORD=${WP_DB_PASS}
+      - WORDPRESS_DB_NAME=${WP_DB_NAME}
+    depends_on:
+      - mariadb
+    networks:
+      - my_net
+
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASS}
+      - MYSQL_DATABASE=${WP_DB_NAME}
+      - MYSQL_USER=${WP_DB_USER}
+      - MYSQL_PASSWORD=${WP_DB_PASS}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - my_net
+
+networks:
+  my_net:
+    driver: bridge
+
+volumes:
+  mariadb_data:
