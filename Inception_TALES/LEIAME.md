@@ -329,9 +329,9 @@ Expor somente a porta 443 para o NGINX com TLS.
 - Usuários do WordPress:
 Criar 2 usuários:   
 
- - - Um admin (cujo username não contém “admin”).
+    - Um admin (cujo username não contém “admin”).
 
- - - Um usuário comum.
+    - Um usuário comum.
 
 - Domínio Local:
 Configurar um domínio local (login.42.fr) apontando para sua VM/localhost.
@@ -351,9 +351,9 @@ Para a criação do usuário admin, garanta que o username não contenha “admi
 - Makefile:
 Crie um Makefile para facilitar os comandos:
 
-- - docker-compose build
+    - docker-compose build
 
-- - docker-compose up -d
+    - docker-compose up -d
 
 - Acesso:
 Após subir os containers, acesse o domínio configurado (por exemplo, https://tales.42.fr)   
@@ -361,3 +361,26 @@ no navegador e conclua a instalação/configuração do WordPress.
 
 Seguindo esses passos e atenções, você cumprirá todos os requisitos do projeto Inception,   
 implementando boas práticas de segurança, persistência de dados e comunicação entre os serviços.
+#
+
+# Próximos Passos
+Rebuild das imagens:
+
+```bash
+make build
+```
+### Subir os containers:
+Em seguida:
+
+```bash
+make up
+Verificar logs:
+```
+### Confira os logs para confirmar que os erros foram resolvidos:
+
+```bash
+docker logs wordpress
+```
+```basch
+docker logs mariadb
+```
