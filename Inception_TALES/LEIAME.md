@@ -384,3 +384,20 @@ docker logs wordpress
 ```basch
 docker logs mariadb
 ```
+# Executar
+
+- para montar a imagem:
+```shell
+  make build
+```
+- Para subir todos de vers:
+```shell
+  docker-compose up -d
+```
+- Para derrumar todos
+```shell
+  docker-compose down --volumes
+```
+- Localhost   
+https://tlima-de.42.fr/
+

@@ -59,3 +59,6 @@ Equivale a fclean + all.
 
 - Dessa forma, você segue as exigências do enunciado (estrutura de diretórios, cada serviço em seu container, volumes para persistência, TLS no NGINX, etc.) e cumpre o projeto Inception.
 
+# DOCS
+## https://hub.docker.com/_/wordpress
+## https://github.com/docker-library/wordpress/blob/master/wp-config-docker.php

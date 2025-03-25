@@ -47,10 +47,11 @@ services:
     depends_on:
       - mariadb
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_HOST: mariadb
+      WORDPRESS_DB_HOST: mariadb:3306 # host do banco #
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: 123456
+      WORDPRESS_DB_NAME: wordpress_db
+      WORDPRESS_DEBUG: true
     networks:
       - inception_net
     expose:

@@ -6,21 +6,22 @@ NAME = inception
 
 # Caminho para o docker-compose
 COMPOSE_FILE = srcs/docker-compose.yml
+ENV_FILE = srcs/.env
 
 # Alvo principal: constrói e sobe os containers
 all: up
 
 # Constrói as imagens Docker (chamando o docker-compose)
 build:
-	docker-compose -f $(COMPOSE_FILE) build
+	docker-compose --env-file ${ENV_FILE} -f $(COMPOSE_FILE) build
 
 # Sobe (inicia) os containers em segundo plano
 up:
-	docker-compose -f $(COMPOSE_FILE) up -d
+	docker-compose ${ENV_FILE} -f $(COMPOSE_FILE) up -d
 
 # Desce (para) os containers
 down:
-	docker-compose -f $(COMPOSE_FILE) down
+	docker-compose ${ENV_FILE} -f $(COMPOSE_FILE) down
 
 # Limpa containers, redes e volumes
 clean:
