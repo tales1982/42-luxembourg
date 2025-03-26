@@ -1,0 +1,36 @@
+##########################################
+###     CONFIGURACAO DO SERVIDOR       ###
+##########################################
+
+# srcs/requirements/nginx/conf/default.conf
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name tlima-de.42.fr;;
+
+    # Configuração dos certificados TLS
+    ssl_certificate     /etc/nginx/ssl/server.crt;
+    ssl_certificate_key /etc/nginx/ssl/server.key;
+
+    # Permitir apenas TLSv1.2 e TLSv1.3
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # Define a raiz do site - os arquivos do WordPress estão neste volume
+    root /var/www/html;
+    index index.php index.html;
+
+    # Regras para tratar as requisições
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    # Processamento de arquivos PHP via FastCGI
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass wordpress:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}

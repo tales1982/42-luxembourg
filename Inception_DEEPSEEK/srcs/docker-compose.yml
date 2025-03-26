@@ -1,0 +1,74 @@
+version: "3.8"
+
+volumes:
+  wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      device: ${HOST_DATA_PATH}/wordpress  # O caminho base vem da variável do .env
+      o: bind
+      type: none
+  mariadb:
+    name: mariadb
+    driver: local
+    driver_opts:
+      device: ${HOST_DATA_PATH}/mysql  # O caminho base vem da variável do .env
+      o: bind
+      type: none
+
+networks:
+  inception_net:
+    driver: bridge
+
+services:
+  mariadb:
+    build: ./requirements/mariadb
+    image: inception_mariadb
+    container_name: mariadb
+    volumes:
+      - mariadb:/var/lib/mysql
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    networks:
+      - inception_net
+    restart: on-failure
+
+  wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
+    container_name: wordpress
+    volumes:
+      - wordpress:/var/www/html
+    depends_on:
+      - mariadb
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: mariadb
+    networks:
+      - inception_net
+    expose:
+      - "9000"
+    restart: on-failure
+
+  nginx:
+    build: ./requirements/nginx
+    image: nginx
+    container_name: nginx
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}  # Usa a variável do .env ou host
+    volumes:
+      - wordpress:/var/www/html
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    networks:
+      - inception_net
+    restart: on-failure
