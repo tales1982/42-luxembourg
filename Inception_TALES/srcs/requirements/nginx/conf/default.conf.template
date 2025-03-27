@@ -1,15 +1,6 @@
-##########################################
-###     CONFIGURACAO DO SERVIDOR       ###
-##########################################
-
-# srcs/requirements/nginx/conf/default.conf
-
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name __DOMAIN_NAME__;
-
-    # Nome do servidor - substitua 'login' pelo seu login (ex.: tales.42.fr)
     server_name tlima-de.42.fr;
 
     # Configuração dos certificados TLS

@@ -20,7 +20,7 @@ up:
 
 # Desce (para) os containers
 down:
-	docker-compose -f $(COMPOSE_FILE) down
+	docker-compose -f $(COMPOSE_FILE) down 
 
 # Limpa containers, redes e volumes
 clean:

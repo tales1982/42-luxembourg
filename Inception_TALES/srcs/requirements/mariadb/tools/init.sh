@@ -24,8 +24,6 @@ mysql -u root -p${MYSQL_ROOT_PASSWORD} <<-EOSQL
   ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 EOSQL
 
-#echo "Desligando o MariaDB..."
-#mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown || mysqladmin -u root shutdown
 
 echo "Subindo o servidor em primeiro plano..."
 exec mysqld

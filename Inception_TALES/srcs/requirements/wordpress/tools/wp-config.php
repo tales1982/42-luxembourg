@@ -6,7 +6,10 @@
  define( 'DB_PASSWORD', '123456' );
  define( 'DB_HOST', 'mariadb:3306' );
  define( 'WP_DEBUG_LOG', true );#para debugar no terminal usando o docker desktop
+
  
+$table_prefix = 'wp_';
+
 if ( ! defined( 'ABSPATH' ) ) {
     define( 'ABSPATH', __DIR__ . '/' );
 }

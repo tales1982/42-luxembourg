@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copia a configuração customizada do NGINX
-COPY conf/default.conf.template /etc/nginx/conf.d/default.conf.template
+COPY conf/default.conf.templatecd  /etc/nginx/conf.d/default.conf.template
 
 # Copia o script de entrypoint
 COPY tools/entrypoint.sh /docker-entrypoint.sh
