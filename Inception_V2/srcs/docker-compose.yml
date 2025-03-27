@@ -1,4 +1,37 @@
+version: "3.9"
+
 services:
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    volumes:
+      - ./requirements/nginx/conf:/etc/nginx/conf.d
+      - wordpress_files:/var/www/html
+      - ./requirements/nginx/tools:/etc/nginx/tools
+    networks:
+      - app-network
+    restart: always
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+    volumes:
+      - wordpress_files:/var/www/html
+    networks:
+      - app-network
+    restart: always
+    expose:
+      - "9000"
+  
   mariadb:
     build: ./requirements/mariadb
     container_name: mariadb
@@ -21,3 +54,4 @@ networks:
 
 volumes:
   db_data:
+  wordpress_files:
