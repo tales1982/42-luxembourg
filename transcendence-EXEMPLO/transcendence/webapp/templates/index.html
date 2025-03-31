@@ -1,0 +1,393 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<link rel="shortcut icon" href="{% static 'media/favicon.ico' %}" type="image/ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="{% static 'css/custom.css' %}" rel="stylesheet">
+		<title>Transcendence</title>
+	</head>
+	<body class="bg-black custom-font">
+		<noscript data-i18n="script_java"></noscript>
+		<video id="videoLaunch" class="position-absolute top-50 start-50 translate-middle w-100 h-100 fade show" autoplay muted loop>
+			<source src="{% static 'media/AnimatedLogo.mp4' %}" type="video/mp4">
+		</video>
+		<div id="menu" class="container-fluid d-none vh-100">
+			<div class="cursor-dot" data-cursor-dot></div>
+			<div class="cursor-outline" data-cursor-outline></div>
+			<h1 class="col-12 container-fluid text-center custom-h1 text-decoration-underline mb-5" onclick="backToMain()"><span class="custom-underline">TRANS</span><span class="text-light">CENDENCE</span></h1>
+
+			<!-- Buttons block -->
+			<div class="d-flex justify-content-center" id="menuButtons">
+				<div class="d-grid gap-3 col-6 mx-auto">
+					<button id="newGameButton" class="custom-btn btn btn-link tracking-in-expand" data-i18n="new_game"></button>
+					<button id="historyButton" class="custom-btn btn btn-link tracking-in-expand" data-i18n="history"></button>
+					<button id="creditsButton" class="custom-btn btn btn-link tracking-in-expand" data-i18n="credits"></button>
+				</div>
+			</div>
+
+			<!-- New Game block-->
+			<div id="newGameMenu" class="container d-none">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Pong</h5>
+								<p class="card-text" data-i18n="pong_description"></p>
+								<button id="pongButton" class="btn btn-outline-info" data-i18n="select_btn"></button>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Find the Exit</h5>
+								<p class="card-text" data-i18n="exit_description"></p>
+								<button id="findExitButton" class="btn btn-outline-info" data-i18n="select_btn"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonNG" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
+				</div>
+			</div>
+
+			<!-- Pong block -->
+			<div id="pongMenu" class="container d-none">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Versus</h5>
+								<p class="card-text" data-i18n="pong_versus"></p>
+								<div class="d-flex justify-content-around w-100 mb-3">
+									<select class="form-select form-select-sm me-2" id="pongVersusPlayer" onchange="updatePongPlayersVersus()">
+										<option selected data-i18n="players_choice"></option>
+										<option value="1" data-i18n="1_player"></option>
+										<option value="2" data-i18n="2_players"></option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
+										<option value="5" data-i18n="5_players"></option>
+									</select>
+									<select class="form-select form-select-sm ms-2" id="pongVersusAI" onchange="updatePongPlayersVersus()">
+										<option selected data-i18n="ai_choice"></option>
+										<option value="1" data-i18n="1_ai"></option>
+										<option value="2" data-i18n="2_ai"></option>
+										<option value="3" data-i18n="3_ai"></option>
+										<option value="4" data-i18n="4_ai"></option>
+									</select>
+								</div>
+								<button class="btn btn-outline-info" onclick="launchPongVersus()" data-i18n="play_btn"></button>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title" data-i18n="pong_tournament_title"></h5>
+								<p class="card-text" data-i18n="pong_tournament"></p>
+								<div class="d-flex justify-content-around w-100 mb-3">
+									<select class="form-select form-select-sm me-2" id="pongTournamentPlayer">
+										<option selected data-i18n="players_choice"></option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
+										<option value="5" data-i18n="5_players"></option>
+										<option value="6" data-i18n="6_players"></option>
+									</select>
+								</div>
+								<button class="btn btn-outline-info" onclick="launchPongTournament()" data-i18n="play_btn"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonPong" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
+				</div>
+			</div>
+
+			<!-- Pong - Versus IG -->
+			<div id="pongVersusIG" class="container d-none">
+				<canvas class="rounded mx-auto d-block webgl-display" id="webglPongVesus"></canvas>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonPongVersus" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
+				</div>
+			</div>
+
+			<!-- Pong - Tournament IG -->
+			<div id="pongTournamentIG" class="container d-none">
+				<canvas class="rounded mx-auto d-block webgl-display" id="webglPongTournament"></canvas>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonPongTournament" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
+				</div>
+			</div>
+
+			<!-- Find the exit block -->
+			<div id="findExitMenu" class="container d-none">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Solo</h5>
+								<p class="card-text" data-i18n="exit_solo"></p>
+								<div class="d-flex justify-content-around w-100 mb-3">
+									<select class="form-select form-select-sm me-2" id="exitSoloLevel">
+										<option selected data-i18n="number_level"></option>
+										<option value="1" data-i18n="1_level"></option>
+										<option value="2" data-i18n="2_levels"></option>
+										<option value="3" data-i18n="3_levels"></option>
+										<option value="5" data-i18n="5_levels"></option>
+										<option value="10" data-i18n="10_levels"></option>
+									</select>
+								</div>
+								<button class="btn btn-outline-info" onclick="launchExitSolo()" data-i18n="play_btn"></button>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Versus</h5>
+								<p class="card-text" data-i18n="exit_versus"></p>
+								<div class="d-flex justify-content-around w-100 mb-3">
+									<select class="form-select form-select-sm me-2" id="exitVersusPlayers">
+										<option selected data-i18n="players_choice"></option>
+										<option value="2" data-i18n="2_players"></option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
+									</select>
+									<select class="form-select form-select-sm ms-2" id="exitVersusLevel">
+										<option selected data-i18n="number_win"></option>
+										<option value="1" data-i18n="1_win"></option>
+										<option value="2" data-i18n="2_wins"></option>
+										<option value="3" data-i18n="3_wins"></option>
+										<option value="4" data-i18n="4_wins"></option>
+										<option value="5" data-i18n="5_wins"></option>
+									</select>
+								</div>
+								<div class="form-check form-switch">
+
+									<input class="form-check-input" type="checkbox" id="switchBonus" checked>
+									<label class="form-check-label" for="switchBonus" data-i18n="bonus_activation"></label>
+								</div>
+								<button class="btn btn-outline-info" onclick="launchExitVersus()" data-i18n="play_btn"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonFindExit" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
+				</div>
+			</div>
+
+			<!-- Find the Exit - Solo IG -->
+			<div id="findExitSoloIG" class="container d-none">
+					<canvas class="rounded mx-auto d-block webgl-display" id="webglExitSolo"></canvas>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonFindExitSolo" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
+				</div>
+			</div>
+
+			<!-- Find the Exit - Versus IG -->
+			<div id="findExitVersusIG" class="container d-none">
+				<canvas class="rounded mx-auto d-block webgl-display" id="webglExitVersus"></canvas>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonFindExitVersus" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
+				</div>
+			</div>
+
+			<!-- History block -->
+			<div id="historyMenu" class="container d-none">
+				<h2 class="mt-5 custom-h2" data-i18n="history_game"></h2>
+				<ul class="nav nav-tabs">
+					<li class="nav-item">
+						<button class="nav-link active" type="button" data-i18n="historyPongVersus"></button>
+					</li>
+					<li class="nav-item">
+						<button class="nav-link" type="button" data-i18n="historyPongTournament"></button>
+					</li>
+					<li class="nav-item">
+						<button class="nav-link" type="button" data-i18n="historyExitSolo"></button>
+					</li>
+					<li class="nav-item">
+						<button class="nav-link" type="button" data-i18n="historyExitVersus"></button>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade show active" id="historyPongVersus">
+						<table class ="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col" data-i18n="player_username"></th>
+									<th scope="col" data-i18n="rank"></th>
+									<th scope="col" data-i18n="participants"></th>
+									<th scope="col" data-i18n="date"></th>
+								</tr>
+							</thead>
+							<tbody id="historyPongVersusTableContainer">
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="historyPongTournament">
+						<table class ="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col" data-i18n="player_username"></th>
+									<th scope="col" data-i18n="rank"></th>
+									<th scope="col" data-i18n="participants"></th>
+									<th scope="col" data-i18n="date"></th>
+								</tr>
+							</thead>
+							<tbody id="historyPongTournamentTableContainer">
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="historyExitSolo">
+						<table class ="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col" data-i18n="player_username"></th>
+									<th scope="col" data-i18n="rank"></th>
+									<th scope="col" data-i18n="total_levels"></th>
+									<th scope="col" data-i18n="date"></th>
+								</tr>
+							</thead>
+							<tbody id="historyExitSoloTableContainer">
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="historyExitVersus">
+						<table class ="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col" data-i18n="player_username"></th>
+									<th scope="col" data-i18n="rank"></th>
+									<th scope="col" data-i18n="participants"></th>
+									<th scope="col" data-i18n="date"></th>
+								</tr>
+							</thead>
+							<tbody id="historyExitVersusTableContainer">
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonHistory" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
+				</div>
+			</div>
+
+			<!-- Credits block -->
+			<div id="creditsMenu" class="container d-none">
+				<div class="row justify-content-center mt-3">
+					<div class="col-md-3 col-sm-6 mb-4">
+						<img src="{% static 'media/berard-tron.png' %}" class="img-fluid" alt="berard">
+					</div>
+					<div class="col-md-3 col-sm-6 mb-4">
+						<img src="{% static 'media/fgrasset-tron.png' %}" class="img-fluid" alt="fgrasset">
+					</div>
+					<div class="col-md-3 col-sm-6 mb-4">
+						<img src="{% static 'media/lfabbiano-tron.png' %}" class="img-fluid" alt="lfabbiano">
+					</div>
+					<div class="col-md-3 col-sm-6 mb-4">
+						<img src="{% static 'media/thfavre-tron.png' %}" class="img-fluid" alt="thfavre">
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonCredits" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
+				</div>
+			</div>
+
+			<!-- Error 404 block -->
+			<div id="notFoundMenu" class="container d-none">
+				<img src="{% static '/media/404.png' %}" class="img-fluid rounded mx-auto d-block" alt="...">
+				<div class="d-flex justify-content-end">
+					<button id="notFoundButtonHS" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
+				</div>
+			</div>
+
+			<!-- Modal alerts -->
+			<div class="modal fade" id="errorModal" tabindex="-1">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" data-i18n="warning"></h5>
+						</div>
+						<div class="modal-body" id="errorMessage">Default message.</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" onclick="closeModal()" data-i18n="modal_btn"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Modal tournament -->
+			<div class="modal fade" id="tournamentModal" tabindex="-1">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" data-i18n="enter_player_names"></h5>
+						</div>
+						<div class="modal-body">
+							<form id="playerNamesForm"></form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" onclick="closeModal()" data-i18n="close_btn"></button>
+							<button type="button" class="btn btn-outline-info" onclick="submitPlayerNames()" data-i18n="start_btn"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Modal login -->
+			<div class="modal fade" id="usernameModal" tabindex="-1">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" data-i18n="modal_login"></h5>
+						</div>
+						<div class="modal-body">
+							<form id="usernameForm">
+								<!-- Need to add this for csrf token approval to send POST to Django -->
+								{% csrf_token %}
+								<div class="form-group">
+									<label for="userAlias" data-i18n="username"></label>
+									<input type="text" class="form-control" id="userAlias" required>
+								</div>
+								<button type="submit" class="btn btn-outline-info" data-i18n="register"></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Footer block -->
+			<footer class="footer text-center py-3 mt-auto">
+				<div class="container d-flex justify-content-between align-items-center">
+					<div class="dropdown">
+						<div>
+							<select id="dropdownLang" class="form-select custom-select" onchange="changeLanguage(this.value)">
+								<option value="en">English</option>
+								<option value="fr">Français</option>
+								<option value="de">Deutsch</option>
+							</select>
+						</div>
+					</div>
+					<span class="text-muted">© 2024 Transcendence - v14.1</span>
+					<button class="btn btn-primary custom-btn-footer" onclick="disconnectUser()" data-i18n="disconnect_btn"></button>
+				</div>
+			</footer>
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="{% static '/scriptJS/effects.js' %}"></script>
+	<script src="{% static '/scriptJS/cursor.js' %}"></script>
+	<script src="{% static '/scriptJS/exitOptions.js' %}"></script>
+	<script src="{% static '/scriptJS/pongOptions.js' %}"></script>
+	<script src="{% static '/scriptJS/translation.js' %}"></script>
+	<script src="{% static '/scriptJS/login.js' %}"></script>
+	<script src="{% static '/scriptJS/history.js' %}"></script>
+	<script src="{% static '/scriptJS/games.js' %}"></script>
+</html>

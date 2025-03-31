@@ -9,6 +9,10 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 
 # Copia a configuração customizada
 COPY conf/default.conf /etc/nginx/conf.d/
+# Copiar os certificados SSL para o container
+COPY tools/ssl/cert.pem /etc/ssl/certs/cert.pem
+COPY tools/ssl/key.pem /etc/ssl/private/key.pem
+
 
 EXPOSE 443
 
