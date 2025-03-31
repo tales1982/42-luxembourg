@@ -1,4 +1,5 @@
-FROM debian:buster
+FROM debian:bullseye 
+#Obrigatorio usar debian:bullseye
 
 # Instalação do PHP-FPM, PHP-MySQL e utilitários
 RUN apt-get update && apt-get install -y \
@@ -27,7 +28,7 @@ RUN mkdir -p /var/www/html && chown -R www-data:www-data /var/www/html
 RUN mkdir -p /run/php && chown -R www-data:www-data /run/php
 
 # Altera a configuração do PHP-FPM para escutar em TCP na porta 9000
-RUN sed -i 's/^listen = .*/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf
+RUN sed -i 's/^listen = .*/listen = 9000/' /etc/php/7.4/fpm/pool.d/www.conf
 
 # Copia o script de entrypoint para a imagem e torna-o executável
 COPY tools/docker-entrypoint.sh /usr/local/bin/

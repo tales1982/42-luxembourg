@@ -1,4 +1,5 @@
-FROM debian:buster
+FROM debian:bullseye 
+#Obrigatorio usar debian:bullseye
 
 # Instala o NGINX e openssl
 RUN apt-get update -y && apt-get install -y nginx openssl && \

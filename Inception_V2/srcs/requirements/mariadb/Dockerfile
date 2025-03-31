@@ -1,5 +1,5 @@
-# Imagem base
-FROM debian:buster
+FROM debian:bullseye 
+#Obrigatorio usar debian:bullseye
 
 # Instalação do MariaDB
 RUN apt-get update -y && apt-get install -y mariadb-server
