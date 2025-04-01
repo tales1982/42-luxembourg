@@ -1,13 +1,10 @@
-version: "3.9"
-
 services:
   nginx:
     build: ./requirements/nginx
     container_name: nginx
     volumes:
       - ./requirements/nginx/conf:/etc/nginx/conf.d
-      - wordpress_files:/var/www/html
-      - ./requirements/nginx/tools:/etc/nginx/tools
+      - wordpress:/var/www/html
     networks:
       - inception
     restart: always
@@ -15,7 +12,6 @@ services:
       - "443:443"
     depends_on:
       - wordpress
-
 
   wordpress:
     build: ./requirements/wordpress
@@ -26,7 +22,7 @@ services:
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
     volumes:
-      - wordpress_files:/var/www/html
+      - wordpress:/var/www/html
     networks:
       - inception
     restart: always
@@ -37,12 +33,12 @@ services:
     build: ./requirements/mariadb
     container_name: mariadb
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
-      - db_data:/var/lib/mysql
+      - mariadb:/var/lib/mysql
     networks:
       - inception
     restart: always
@@ -54,5 +50,16 @@ networks:
     driver: bridge
 
 volumes:
-  db_data:
-  wordpress_files:
+  wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/tales/data/wordpress
+
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/tales/data/mariadb
