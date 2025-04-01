@@ -17,7 +17,7 @@ COPY conf/nginx.conf /etc/nginx/conf.d/nginx.conf
 COPY tools/ssl/cert.pem /etc/ssl/certs/cert.pem
 COPY tools/ssl/key.pem /etc/ssl/private/key.pem
 
-EXPOSE 443
+EXPOSE 80 443
 
 # Inicia o NGINX em modo foreground
 CMD ["nginx", "-g", "daemon off;"]
