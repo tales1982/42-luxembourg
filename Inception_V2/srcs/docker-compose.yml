@@ -33,17 +33,31 @@ services:
     build: ./requirements/mariadb
     container_name: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+      #MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      #MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_root_password
+      - db_password
     volumes:
       - mariadb:/var/lib/mysql
+      - ../secrets/db_root_password.txt:/run/secrets/db_root_password:ro
+      - ../secrets/db_password.txt:/run/secrets/db_password:ro
     networks:
       - inception
     restart: always
     expose:
       - "3306"
+
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
+
 
 networks:
   inception:
@@ -55,11 +69,11 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/tales/data/wordpress
+      device: /home/tlima-de/data/wordpress
 
   mariadb:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/tales/data/mariadb
+      device: /home/tlima-de/data/mariadb

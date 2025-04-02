@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
 
+# Leia os secrets
+if [ -f /run/secrets/db_root_password ]; then
+    export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
+fi
+
+if [ -f /run/secrets/db_password ]; then
+    export MYSQL_PASSWORD=$(cat /run/secrets/db_password)
+fi
+
 echo "Iniciando o MariaDB..."
 
 # Iniciar o MariaDB em modo safe
