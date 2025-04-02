@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   nginx:
     build: ./requirements/nginx
@@ -16,11 +18,11 @@ services:
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
+    env_file:
+      - ../secrets/credentials.txt
     environment:
       WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_USER: ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
-      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      DOMAIN_NAME: ${DOMAIN_NAME}
     volumes:
       - wordpress:/var/www/html
     networks:
@@ -35,8 +37,6 @@ services:
     environment:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-      #MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      #MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
     secrets:
@@ -44,8 +44,6 @@ services:
       - db_password
     volumes:
       - mariadb:/var/lib/mysql
-      - ../secrets/db_root_password.txt:/run/secrets/db_root_password:ro
-      - ../secrets/db_password.txt:/run/secrets/db_password:ro
     networks:
       - inception
     restart: always
@@ -58,7 +56,6 @@ secrets:
   db_password:
     file: ../secrets/db_password.txt
 
-
 networks:
   inception:
     driver: bridge
@@ -70,7 +67,6 @@ volumes:
       type: none
       o: bind
       device: /home/tlima-de/data/wordpress
-
   mariadb:
     driver: local
     driver_opts:
