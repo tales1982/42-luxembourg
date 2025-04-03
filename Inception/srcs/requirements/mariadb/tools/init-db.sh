@@ -10,23 +10,23 @@ if [ -f /run/secrets/db_password ]; then
     export MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 fi
 
-echo "Iniciando o MariaDB..."
+echo "Starting MariaDB..."
 
 # Iniciar o MariaDB em modo safe
 mysqld_safe --user=mysql &
 
 # Aguardar o MariaDB iniciar
-echo "Aguardando o MariaDB iniciar..."
+echo "Waiting for MariaDB to start..."
 sleep 5
 
 # Verificar se o MariaDB está rodando
 if ! mysqladmin ping -u root --silent; then
-    echo "Erro: MariaDB não iniciou corretamente."
+    echo "Error: MariaDB did not start correctly."
     exit 1
 fi
 
 # Criar banco de dados e usuário
-echo "Criando banco de dados e usuário..."
+echo "Creating database and user..."
 mysql -u root -p"${MYSQL_ROOT_PASSWORD}" <<EOF
 CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
 CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
@@ -37,9 +37,9 @@ FLUSH PRIVILEGES;
 EOF
 
 # Parar o MariaDB iniciado anteriormente
-echo "Parando o MariaDB..."
+echo "Stopping MariaDB..."
 kill $(cat /run/mysqld/mysqld.pid)
 
 # Iniciar o MariaDB em modo foreground
-echo "Iniciando o MariaDB em modo foreground..."
+echo "Starting MariaDB in foreground mode..."
 exec mysqld --user=mysql
