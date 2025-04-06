@@ -3,15 +3,15 @@
 #                                                         :::      ::::::::    #
 #    tester.sh                                          :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jcluzet <jcluzet@student.42.fr>            +#+  +:+       +#+         #
+#    By: tfregni <tfregni@student.42berlin.de>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/20 02:26:11 by jcluzet           #+#    #+#              #
-#    Updated: 2022/09/03 22:53:09 by jcluzet          ###   ########.fr        #
+#    Updated: 2023/11/05 01:00:46 by tfregni          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-FILE='microshell.c'
-ASSIGN='microshell/microshell.c'
+MAIN='main.cpp'
+MAIN1='cpp_module00/main.cpp'
 
 index=0
 
@@ -20,74 +20,56 @@ then
     rm traceback
 fi
 
-cp .system/grading/test.sh rendu/
-
 cd .system/grading
-{
-	gcc -Wall -Wextra -Werror $FILE
-} &>/dev/null
-{
-cp a.out ../../rendu/a.out
-} &>/dev/null
-
+clang++ -Wall -Wextra -Werror -std=c++98 -o source $MAIN Warlock.cpp
+./source | cat -e > sourcexam       #TESTING
+rm source
+cp main.cpp ../../rendu/cpp_module00
 cd ../../rendu
-touch sourcexam
-touch finalexam
-sh test.sh &> sourcexam       #TESTING VRAI
 {
-rm a.out
-} &>/dev/null
+clang++ -Wall -Wextra -Werror -std=c++98 -o final $MAIN1 cpp_module00/Warlock.cpp
+}  &>../.system/grading/traceback
+rm -f cpp_module00/main.cpp
+# if there is a traceback file, exit this script
+# if [ -e ../.system/grading/traceback ]
+# then
+# 	mv ../.system/grading/traceback ../traceback
+# 	exit 1
+# fi
 {
-gcc -Wall -Wextra -Werror $ASSIGN
-}  &>.dev
-sh test.sh &> finalexam        #TESTING STUD
-# {
-# }  &>/dev/null
-
-
-
+./final | cat -e > finalexam        #TESTING
+mv finalexam ../.system/grading/
+rm final
+}  &>/dev/null
+cd ../.system/grading
 DIFF=$(diff sourcexam finalexam)
+# echo "" >> traceback
 if [ "$DIFF" != "" ]
 then
-        echo "----------------8<-------------[ START TEST " >> traceback
-		if [ -e a.out ]
+		index=$(($index + 1))
+		echo "<-------------- OUR OUTPUT ------------>" >> traceback
+		cat finalexam >> traceback
+		# echo '\n' >> traceback
+		if [ "$(cat finalexam)" != "" ]
 		then
-        printf "        💻 ALL TESTS: \n\n$(cat ../.system/grading/test.sh)\n" >> traceback
-        printf "\n\n        🔎 YOUR OUTPUT:\n" >> traceback
-        cat finalexam >> traceback
-        printf "\n\n        🗝 EXPECTED OUTPUT:\n" >> traceback
+		echo "<-------------- MUST BE : ------------>" >> traceback
 		cat sourcexam >> traceback
+		echo "<--------------    DIFF :   ------------>" >> traceback
+		# echo "DIFF : " >> traceback
+		echo "$DIFF" >> traceback
 		else
-		printf "        🔎 YOUR OUTPUT:\n" >> traceback
-        # cat finalexam >> traceback
-        printf "\n";
-        echo "$(cat .dev)" >> traceback
-        rm .dev
-		printf "\n        ❌ COMPILATION ERROR\n" >> traceback
+		echo "Compilation Error stop." >> traceback
+		printf "\nLittle reminder: Here you must have a Warlock.cpp & Warlock.hpp files." >> traceback
 		fi
-        echo "----------------8<------------- END TEST ]" >> traceback
-		index=$((index+1))
+		# echo '\n' >> traceback
 fi
-# exit
-{
-mv traceback ../traceback
-}	&>/dev/null
-
 rm finalexam
-{
-rm sourcexam
-rm a.out
-rm .dev
-} &>/dev/null
-rm test.sh
-
-cd ../.system/grading
-
-#mv .system/tester.sh .system/grading/tester.sh
-
 
 if [ $index -eq 0 ]
 then
-	echo "OK"
 	touch passed
 fi
+{
+mv traceback ../../traceback
+}	&>/dev/null
+rm sourcexam
