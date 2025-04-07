@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Bureaucrat.hpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/07 11:29:38 by tlima-de          #+#    #+#             */
+/*   Updated: 2025/04/07 11:31:14 by tlima-de         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BUREAUCRAT_HPP
 #define BUREAUCRAT_HPP
 
@@ -32,6 +44,8 @@ public:
 
 	void incrementGrade();
 	void decrementGrade();
+
+	
 
 	class GradeTooHighException : public std::exception {
 	public:
