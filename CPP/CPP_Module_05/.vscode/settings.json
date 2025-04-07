@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "*.page-template": "vue",
+        "*.layout-template": "vue",
+        "*.vue": "vue",
+        "typeinfo": "cpp",
+        "*.tcc": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "system_error": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}

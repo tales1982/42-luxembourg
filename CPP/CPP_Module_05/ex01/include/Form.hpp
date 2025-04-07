@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Form.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:29:45 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/07 12:03:34 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/04/07 18:34:59 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@ const std::string BLUE    = "\033[34m";
 const std::string MAGENTA = "\033[35m";
 const std::string CYAN    = "\033[36m";
 const std::string RESET   = "\033[0m";
+
+#include <iostream>
+#include <string>
+#include <stdexcept>
+#include"Bureaucrat.hpp"
 
 class Form{
     private:
@@ -43,7 +48,7 @@ class Form{
     int getGradeToSign() const;
     int getGradeToExecute() const;
 
-    void beSigned(const Bureaucrat& b)
+    void beSigned(const Bureaucrat& b);
 
     class GradeTooHighException : public std::exception {
         public:
@@ -56,7 +61,7 @@ class Form{
     };
 }
 
-std::ostream& operator<<(std::ostream& os, const Form& f);
-
+// Sobrecarga do operador <<
+std::ostream& operator<<(std::ostream& os, const Form& form);
 
 #endif

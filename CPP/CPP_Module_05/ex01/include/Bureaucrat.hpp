@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bureaucrat.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:29:38 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/07 11:31:14 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/04/07 18:29:48 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include "Form.hpp"
 
 // Cores ANSI como variáveis
 const std::string RED     = "\033[31m";
@@ -45,7 +46,7 @@ public:
 	void incrementGrade();
 	void decrementGrade();
 
-	
+	void signForm(Form& form) const; 
 
 	class GradeTooHighException : public std::exception {
 	public:
