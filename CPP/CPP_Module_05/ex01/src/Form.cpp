@@ -6,21 +6,21 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:30:08 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/13 15:55:22 by tales            ###   ########.fr       */
+/*   Updated: 2025/04/13 18:57:31 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Form.hpp"
 #include "../include/Bureaucrat.hpp"
-#include "../include/Color.hpp"
+
 
 Form::Form()
     : _name("Default"), _isSigned(false), _gradeToSign(150), _gradeToExecute(150)
 {
 }
 
-Form::Form(const std::string &name, bool isSigned, const int gradeToSign, const int gradeToExecute)
-    : _name(name), _isSigned(isSigned), _gradeToSign(gradeToSign), _gradeToExecute(gradeToExecute)
+Form::Form(const std::string &name, const int gradeToSign, const int gradeToExecute)
+    : _name(name), _gradeToSign(gradeToSign), _gradeToExecute(gradeToExecute)
 {
     if (gradeToSign < 1 || gradeToExecute < 1)
         throw GradeTooHighException();
@@ -28,7 +28,7 @@ Form::Form(const std::string &name, bool isSigned, const int gradeToSign, const 
         throw GradeTooLowException();
 }
 Form::Form(const Form &other) 
-    : _name(other._name), _isSigned(other._isSigned), _gradeToSign(other._gradeToSign), _gradeToExecute(other._gradeToExecute)
+    : _name(other._name), _gradeToSign(other._gradeToSign), _gradeToExecute(other._gradeToExecute)
 {
 }
 

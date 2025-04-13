@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:29:38 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/13 15:52:13 by tales            ###   ########.fr       */
+/*   Updated: 2025/04/13 18:43:43 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include <iostream>
 #include <string>
-#include "Color.hpp"
 #include "Form.hpp"
 
 class Bureaucrat {
