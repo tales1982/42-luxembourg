@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bureaucrat.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:30:01 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/07 11:31:13 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/04/13 16:06:12 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,19 @@ void Bureaucrat::decrementGrade() {
 		throw GradeTooLowException();
 	++_grade;
 }
+
+void Bureaucrat::signForm(Form& form) const
+{
+	try {
+		form.beSigned(*this);
+		std::cout << GREEN << _name << " signed " << form.getName() << RESET << std::endl;
+	}
+	catch (std::exception &e) {
+		std::cout << RED << _name << " couldn't sign " << form.getName()
+		          << " because " << e.what() << RESET << std::endl;
+	}
+}
+
 
 const char* Bureaucrat::GradeTooHighException::what() const throw() {
 	return "Grade too high!";

@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:29:38 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/07 18:29:48 by tales            ###   ########.fr       */
+/*   Updated: 2025/04/13 15:52:13 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,8 @@
 
 #include <iostream>
 #include <string>
-#include <stdexcept>
+#include "Color.hpp"
 #include "Form.hpp"
-
-// Cores ANSI como variáveis
-const std::string RED     = "\033[31m";
-const std::string GREEN   = "\033[32m";
-const std::string YELLOW  = "\033[33m";
-const std::string BLUE    = "\033[34m";
-const std::string MAGENTA = "\033[35m";
-const std::string CYAN    = "\033[36m";
-const std::string RESET   = "\033[0m";
 
 class Bureaucrat {
 private:
@@ -47,6 +38,7 @@ public:
 	void decrementGrade();
 
 	void signForm(Form& form) const; 
+	
 
 	class GradeTooHighException : public std::exception {
 	public:
