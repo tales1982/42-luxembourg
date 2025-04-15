@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Form.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:30:08 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/13 18:57:31 by tales            ###   ########.fr       */
+/*   Updated: 2025/04/15 14:10:11 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Form::Form()
 }
 
 Form::Form(const std::string &name, const int gradeToSign, const int gradeToExecute)
-    : _name(name), _gradeToSign(gradeToSign), _gradeToExecute(gradeToExecute)
+    : _name(name),_isSigned(false) ,_gradeToSign(gradeToSign), _gradeToExecute(gradeToExecute)
 {
     if (gradeToSign < 1 || gradeToExecute < 1)
         throw GradeTooHighException();
@@ -28,7 +28,7 @@ Form::Form(const std::string &name, const int gradeToSign, const int gradeToExec
         throw GradeTooLowException();
 }
 Form::Form(const Form &other) 
-    : _name(other._name), _gradeToSign(other._gradeToSign), _gradeToExecute(other._gradeToExecute)
+    : _name(other._name), _isSigned(other._isSigned),_gradeToSign(other._gradeToSign), _gradeToExecute(other._gradeToExecute)
 {
 }
 
