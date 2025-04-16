@@ -6,7 +6,7 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:30:08 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/15 14:10:11 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/04/16 09:50:47 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ const char *Form::GradeTooLowException::what() const throw()
 std::ostream& operator<<(std::ostream& out, const Form& form)
 {
     out << "Form: " << form.getName()
-        << ", signed: " << (form.isSigned() ? "yes" : "no")
+        << ", signed: " << (form.isSigned() ? "[yes]" : "[no]")
         << ", grade required to sign: " << form.getGradeToSign()
         << ", grade required to execute: " << form.getGradeToExecute();
     return out;

@@ -3,7 +3,7 @@
 // Construtor padrão
 Bureaucrat::Bureaucrat() : _name("Default"), _grade(150) {}
 
-// Construtor com nome e grade
+
 Bureaucrat::Bureaucrat(const std::string& name, int grade) : _name(name) {
 	if (grade < 1)
 		throw GradeTooHighException();
@@ -12,18 +12,17 @@ Bureaucrat::Bureaucrat(const std::string& name, int grade) : _name(name) {
 	_grade = grade;
 }
 
-// Construtor de cópia
+
 Bureaucrat::Bureaucrat(const Bureaucrat& other)
 	: _name(other._name), _grade(other._grade) {}
 
-// Operador de atribuição
 Bureaucrat& Bureaucrat::operator=(const Bureaucrat& other) {
 	if (this != &other)
-		this->_grade = other._grade; // _name é const e não pode ser reassinado
+		this->_grade = other._grade; 
 	return *this;
 }
 
-// Destrutor
+
 Bureaucrat::~Bureaucrat() {}
 
 const std::string& Bureaucrat::getName() const {

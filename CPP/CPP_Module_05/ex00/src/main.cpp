@@ -7,9 +7,9 @@ int main() {
 		Bureaucrat a("Alice", 2);
 		std::cout << GREEN << a << RESET << std::endl;
 		
-		a.incrementGrade(); // de 2 para 1
+		a.incrementGrade(); // of 2 to 1
 		std::cout << GREEN << a << RESET << std::endl;
-		a.incrementGrade(); // erro (vai para 0)
+		a.incrementGrade(); // erro (go to 0)
 		std::cout  << "================================"  << std::endl;
 	} catch (std::exception& e) {
 		std::cerr << RED << "Erro: " << e.what() << RESET << std::endl;
@@ -25,7 +25,7 @@ int main() {
 		std::cout << GREEN << b << RESET << std::endl;
 		b.decrementGrade(); 
 		std::cout << GREEN << b << RESET << std::endl;
-		//a.incrementGrade(); // erro (vai para 0)
+		//a.incrementGrade(); // erro (go to 0)
 		std::cout  << "================================"  << std::endl;
 	} catch (std::exception& e) {
 		std::cerr << RED << "Erro: " << e.what() << RESET << std::endl;
@@ -35,12 +35,12 @@ int main() {
 	std::cout  << "================================"  << std::endl;
 	std::cout  << "========== test Copy ==========="  << std::endl;
 
-	// Teste de cópia
+
 	Bureaucrat c("Carol", 100);
-	Bureaucrat d = c; // Construtor de cópia
+	Bureaucrat d = c; 
 	std::cout << YELLOW << d << RESET << std::endl;
 
-	// Teste de atribuição
+	
 	Bureaucrat e;
 	e = c;
 	std::cout << YELLOW << e << RESET << std::endl;
