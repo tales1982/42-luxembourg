@@ -6,7 +6,7 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 11:30:14 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/04/16 11:21:15 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/04/16 12:39:37 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 int main() {
     try {
-        std::cout << CYAN << "==== SHRUBBERY TEST ====" << RESET << std::endl;
+        std::cout << CYAN << "=========== SHRUBBERY TEST ==========" << RESET << std::endl;
         Bureaucrat bob("Bob", 100);
         ShrubberyCreationForm shrub("home");
 
@@ -32,7 +32,7 @@ int main() {
         bob.signForm(shrub);
         bob.executeForm(shrub);
 
-        std::cout << std::endl << CYAN << "==== ROBOTOMY TEST ====" << RESET << std::endl;
+        std::cout << std::endl << CYAN << "=========== ROBOTOMY TEST ===========" << RESET << std::endl;
         Bureaucrat rob("Rob", 40); // grade suficiente
         RobotomyRequestForm robot("Bender");
 
@@ -40,7 +40,7 @@ int main() {
         rob.signForm(robot);
         rob.executeForm(robot);  // pode falhar ou não, por chance
 
-        std::cout << std::endl << CYAN << "==== PRESIDENTIAL PARDON TEST ====" << RESET << std::endl;
+        std::cout << std::endl << CYAN << "===== PRESIDENTIAL PARDON TEST ======" << RESET << std::endl;
         Bureaucrat zaphod("Zaphod", 1); // grade máxima
         PresidentialPardonForm pardon("Suelen");
 
@@ -48,7 +48,7 @@ int main() {
         zaphod.signForm(pardon);
         zaphod.executeForm(pardon);
 
-        std::cout << std::endl << CYAN << "==== ERRO: RUN UNSIGNED FORM ====" << RESET << std::endl;
+        std::cout << std::endl << CYAN << "====== ERRO: RUN UNSIGNED FORM ======" << RESET << std::endl;
         Bureaucrat john("John", 1);
         ShrubberyCreationForm notSignedForm("forest");
 
