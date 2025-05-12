@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ScalarConverter.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 18:10:08 by tales             #+#    #+#             */
-/*   Updated: 2025/05/05 21:17:44 by tales            ###   ########.fr       */
+/*   Updated: 2025/05/12 13:28:53 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ScalarConverter.hpp"
-
 
 // =====================================================
 // 		Construtores/Destrutores
@@ -21,64 +20,83 @@ ScalarConverter::ScalarConverter(const ScalarConverter &) {}
 ScalarConverter &ScalarConverter::operator=(const ScalarConverter &) { return *this; }
 ScalarConverter::~ScalarConverter() {}
 
-
 // =====================================================
 // 		Funções auxiliares de verificação
 // =====================================================
-bool ScalarConverter::isInt(const std::string &s) {
+bool ScalarConverter::isInt(const std::string &s)
+{
     size_t i = 0;
-    if (s[i] == '+' || s[i] == '-') i++;
-    while (i < s.length() && std::isdigit(s[i])) i++;
+    if (s[i] == '+' || s[i] == '-')
+        i++;
+    while (i < s.length() && std::isdigit(s[i]))
+        i++;
     return (i == s.length());
 }
 
-bool ScalarConverter::isFloat(const std::string &s) {
-    if (s == "nanf" || s == "+inff" || s == "-inff") return true;
+bool ScalarConverter::isFloat(const std::string &s)
+{
+    if (s == "nanf" || s == "+inff" || s == "-inff")
+        return true;
     size_t i = 0;
-    if (s[i] == '+' || s[i] == '-') i++;
+    if (s[i] == '+' || s[i] == '-')
+        i++;
     bool dot = false, digit = false;
-    while (i < s.length() && (std::isdigit(s[i]) || s[i] == '.')) {
-        if (s[i] == '.') dot = true;
-        else digit = true;
+    while (i < s.length() && (std::isdigit(s[i]) || s[i] == '.'))
+    {
+        if (s[i] == '.')
+            dot = true;
+        else
+            digit = true;
         i++;
     }
     return (dot && digit && s[i] == 'f' && i + 1 == s.length());
 }
 
-bool ScalarConverter::isDouble(const std::string &s) {
-    if (s == "nan" || s == "+inf" || s == "-inf") return true;
+bool ScalarConverter::isDouble(const std::string &s)
+{
+    if (s == "nan" || s == "+inf" || s == "-inf")
+        return true;
     size_t i = 0;
-    if (s[i] == '+' || s[i] == '-') i++;
+    if (s[i] == '+' || s[i] == '-')
+        i++;
     bool dot = false, digit = false;
-    while (i < s.length() && (std::isdigit(s[i]) || s[i] == '.')) {
-        if (s[i] == '.') dot = true;
-        else digit = true;
+    while (i < s.length() && (std::isdigit(s[i]) || s[i] == '.'))
+    {
+        if (s[i] == '.')
+            dot = true;
+        else
+            digit = true;
         i++;
     }
     return (dot && digit && i == s.length());
 }
 
-
 // =====================================================
 // 		Função principal de conversão
 // =====================================================
-void ScalarConverter::convert(const std::string &literal) {
-    if (literal.length() == 1 && !std::isdigit(literal[0])) {
+void ScalarConverter::convert(const std::string &literal)
+{
+    if (literal.length() == 1 && std::isprint(static_cast<unsigned char>(literal[0])))
+    {
         convertFromChar(literal[0]);
     }
-    else if (isInt(literal)) {
+    else if (isInt(literal))
+    {
         int i = std::atoi(literal.c_str());
         convertFromInt(i);
     }
-    else if (isFloat(literal)) {
+    else if (isFloat(literal))
+    {
         float f = std::strtof(literal.c_str(), NULL);
         convertFromFloat(f);
     }
-    else if (isDouble(literal)) {
+    else if (isDouble(literal))
+    {
         double d = std::strtod(literal.c_str(), NULL);
         convertFromDouble(d);
     }
-    else {
+    else
+    {
         std::cout << "char: impossible" << std::endl;
         std::cout << "int: impossible" << std::endl;
         std::cout << "float: impossible" << std::endl;
@@ -86,18 +104,19 @@ void ScalarConverter::convert(const std::string &literal) {
     }
 }
 
-
 // =====================================================
 // 		Funções específicas de conversão
 // =====================================================
-void ScalarConverter::convertFromChar(char c) {
+void ScalarConverter::convertFromChar(char c)
+{
     std::cout << "char: '" << c << "'" << std::endl;
     std::cout << "int: " << static_cast<int>(c) << std::endl;
     std::cout << "float: " << std::fixed << std::setprecision(1) << static_cast<float>(c) << "f" << std::endl;
     std::cout << "double: " << std::fixed << std::setprecision(1) << static_cast<double>(c) << std::endl;
 }
 
-void ScalarConverter::convertFromInt(int i) {
+void ScalarConverter::convertFromInt(int i)
+{
     if (i < 0 || i > 127)
         std::cout << "char: impossible" << std::endl;
     else if (std::isprint(i))
@@ -110,7 +129,8 @@ void ScalarConverter::convertFromInt(int i) {
     std::cout << "double: " << std::fixed << std::setprecision(1) << static_cast<double>(i) << std::endl;
 }
 
-void ScalarConverter::convertFromFloat(float f) {
+void ScalarConverter::convertFromFloat(float f)
+{
     if (f < 0 || f > 127 || isnan(f) || isinf(f))
         std::cout << "char: impossible" << std::endl;
     else if (std::isprint(static_cast<int>(f)))
@@ -129,7 +149,8 @@ void ScalarConverter::convertFromFloat(float f) {
     std::cout << "double: " << std::fixed << std::setprecision(1) << static_cast<double>(f) << std::endl;
 }
 
-void ScalarConverter::convertFromDouble(double d) {
+void ScalarConverter::convertFromDouble(double d)
+{
     if (d < 0 || d > 127 || isnan(d) || isinf(d))
         std::cout << "char: impossible" << std::endl;
     else if (std::isprint(static_cast<int>(d)))

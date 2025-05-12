@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tales <tales@student.42.fr>                +#+  +:+       +#+         #
+#    By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/05 17:56:26 by tales             #+#    #+#              #
-#    Updated: 2025/05/05 20:47:08 by tales            ###   ########.fr        #
+#    Updated: 2025/05/12 13:32:42 by tlima-de         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ INCDIR = include
 OBJDIR = obj
 
 # Arquivos fontes
-SRC = $(SRCDIR)/ScalarConverter.cpp $(SRCDIR)/utils.cpp $(SRCDIR)/main.cpp
+SRC = $(SRCDIR)/ScalarConverter.cpp $(SRCDIR)/main.cpp
 
 # Objetos gerados
 OBJ = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
