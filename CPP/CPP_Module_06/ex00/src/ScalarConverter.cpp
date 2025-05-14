@@ -6,14 +6,14 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 18:10:08 by tales             #+#    #+#             */
-/*   Updated: 2025/05/12 13:28:53 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/05/14 10:22:31 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ScalarConverter.hpp"
 
 // =====================================================
-// 		Construtores/Destrutores
+// 		Builders/Destructors
 // =====================================================
 ScalarConverter::ScalarConverter() {}
 ScalarConverter::ScalarConverter(const ScalarConverter &) {}
@@ -21,7 +21,7 @@ ScalarConverter &ScalarConverter::operator=(const ScalarConverter &) { return *t
 ScalarConverter::~ScalarConverter() {}
 
 // =====================================================
-// 		Funções auxiliares de verificação
+// 		Verification auxiliary functions
 // =====================================================
 bool ScalarConverter::isInt(const std::string &s)
 {
@@ -72,7 +72,7 @@ bool ScalarConverter::isDouble(const std::string &s)
 }
 
 // =====================================================
-// 		Função principal de conversão
+// 		Main conversion function
 // =====================================================
 void ScalarConverter::convert(const std::string &literal)
 {
@@ -105,7 +105,7 @@ void ScalarConverter::convert(const std::string &literal)
 }
 
 // =====================================================
-// 		Funções específicas de conversão
+// 		Specific conversion functions
 // =====================================================
 void ScalarConverter::convertFromChar(char c)
 {

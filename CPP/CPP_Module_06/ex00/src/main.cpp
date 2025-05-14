@@ -6,14 +6,14 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 17:56:18 by tales             #+#    #+#             */
-/*   Updated: 2025/05/12 13:30:04 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/05/14 10:22:01 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ScalarConverter.hpp"
 #include <iostream>
 
-// Códigos de cor ANSI
+// COR ANSI CODES
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
 #define GREEN   "\033[32m"

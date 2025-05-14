@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ScalarConverter.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 18:04:33 by tales             #+#    #+#             */
-/*   Updated: 2025/05/05 21:05:14 by tales            ###   ########.fr       */
+/*   Updated: 2025/05/14 10:21:48 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@
 class ScalarConverter
 {
 private:
-	// Construtor, destrutor e operadores privados para impedir instanciação
+	// Builder, destructor and private operators to prevent instantiation
 	ScalarConverter();
 	ScalarConverter(const ScalarConverter &);
 	ScalarConverter &operator=(const ScalarConverter &);
 	~ScalarConverter();
 
 public:
-	// Método estático principal que será chamado a partir do main
+	// Main static method that will be called from the main
 	static void convert(const std::string &literal);
 	static bool isInt(const std::string &literal);
 	static bool isFloat(const std::string &literal);
