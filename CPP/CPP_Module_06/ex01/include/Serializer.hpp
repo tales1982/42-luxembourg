@@ -6,7 +6,7 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 11:58:49 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/05/14 10:15:36 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:40:25 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ class Serializer {
 private:
     Serializer();
     ~Serializer();
-    Serializer(const Serializer&);
-    Serializer& operator=(const Serializer&);
+    Serializer(const Serializer &other);
+    Serializer& operator=(const Serializer &other);
 
 public:
     static uintptr_t serialize(Data* ptr);

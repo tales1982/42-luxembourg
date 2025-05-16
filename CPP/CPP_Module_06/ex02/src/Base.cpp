@@ -6,12 +6,19 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 10:18:48 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/05/14 10:18:49 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:45:38 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 
-#include "Base.hpp"
+#ifndef BASE_HPP
+# define BASE_HPP
 
-Base::~Base() {}
+class Base
+{
+	public:
+		virtual ~Base();
+};
+
+#endif

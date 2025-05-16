@@ -6,7 +6,7 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 18:10:08 by tales             #+#    #+#             */
-/*   Updated: 2025/05/14 10:22:31 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:38:56 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 // 		Builders/Destructors
 // =====================================================
 ScalarConverter::ScalarConverter() {}
-ScalarConverter::ScalarConverter(const ScalarConverter &) {}
-ScalarConverter &ScalarConverter::operator=(const ScalarConverter &) { return *this; }
+ScalarConverter::ScalarConverter(const ScalarConverter &other) {(void)other;}
+ScalarConverter &ScalarConverter::operator=(const ScalarConverter &other){ if (this != &other){} return *this;}
 ScalarConverter::~ScalarConverter() {}
 
 // =====================================================

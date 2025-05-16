@@ -6,7 +6,7 @@
 /*   By: tlima-de <tlima-de@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 18:04:33 by tales             #+#    #+#             */
-/*   Updated: 2025/05/14 10:21:48 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:37:30 by tlima-de         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ class ScalarConverter
 private:
 	// Builder, destructor and private operators to prevent instantiation
 	ScalarConverter();
-	ScalarConverter(const ScalarConverter &);
-	ScalarConverter &operator=(const ScalarConverter &);
+	ScalarConverter(const ScalarConverter &other);
+	ScalarConverter &operator=(const ScalarConverter &other);
 	~ScalarConverter();
 
 public:
