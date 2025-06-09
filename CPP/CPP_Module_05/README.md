@@ -1,26 +1,138 @@
-# 🧠 42 Luxembourg - Modules C++
+# C++ - Module 05: Repetition and Exceptions
 
-Bienvenue dans mon dépôt de projets C++ réalisés dans le cadre du cursus de la [42 Luxembourg](https://42luxembourg.lu/).
+## 📌 Summary
 
-## 📚 À propos
+Este módulo tem como objetivo trabalhar com **exceções**, **formas (forms)**, e o **design de classes** seguindo o **Orthodox Canonical Form**.
 
-Ce dépôt contient les exercices et modules du programme C++ de l’école 42. Chaque module explore différents aspects du langage, allant des bases de la programmation orientée objet à la gestion de la mémoire et l’héritage multiple.
+---
 
-## 🗂️ Structure
+## 🧠 Chapter I - Introduction
 
-## CPP_Module_00/ CPP_Module_01/ CPP_Module_02/ ...
+- C++ é uma linguagem de propósito geral derivada do C.
+- Foco do módulo: **Programação Orientada a Objetos** (POO) em C++98.
+- Códigos devem ser compatíveis com o padrão `-std=c++98`.
 
-Chaque dossier représente un module contenant ses exercices numérotés (ex00, ex01, etc), avec les fichiers source, headers et Makefile associés.
+---
 
-## 🚀 Compilation
+## 📋 Chapter II - General Rules
 
-Accédez au dossier de l’exercice souhaité et exécutez :
+### ✅ Compilação
 
-```bash
-make
-```
+- Compilar com: `-Wall -Wextra -Werror`
+- Adicionar: `-std=c++98`
 
-Pour nettoyer les fichiers objets :
-```bash
-make fclean
-```
+### 🧱 Formatação
+
+- Diretórios: `ex00`, `ex01`, etc.
+- Arquivos devem seguir o padrão da classe: `ClassName.hpp`, `ClassName.cpp`.
+
+### ❌ Proibições
+
+- Proibido usar:
+  - `*printf()`, `*alloc()`, `free()`
+  - `using namespace <ns_name>`
+  - `friend` keyword
+  - STL (somente permitido nos módulos 08 e 09)
+
+### ✅ Permissões
+
+- Pode-se usar funções da biblioteca padrão do C++.
+- Classes devem seguir o **Orthodox Canonical Form**.
+- Headers devem ser independentes e conter include guards.
+
+---
+
+## 🧪 Chapter III - Exercise 00: Mommy, when I grow up, I want to be a bureaucrat!
+
+### 🗂️ Arquivos:
+
+- `Makefile`, `main.cpp`, `Bureaucrat.hpp`, `Bureaucrat.cpp`
+
+### 🎯 Objetivo:
+
+- Criar a classe `Bureaucrat`
+  - Atributos:
+    - `const std::string name`
+    - `int grade` (de 1 a 150)
+  - Exceções:
+    - `GradeTooHighException`
+    - `GradeTooLowException`
+  - Métodos:
+    - `getName()`, `getGrade()`
+    - `incrementGrade()`, `decrementGrade()`
+    - Sobrecarga do operador `<<`
+
+---
+
+## 📄 Chapter IV - Exercise 01: Form up, maggots!
+
+### 🗂️ Arquivos:
+
+- Arquivos do exercício 00 + `Form.hpp`, `Form.cpp`
+
+### 🎯 Objetivo:
+
+- Criar a classe `Form`
+
+  - Atributos:
+    - `const std::string name`
+    - `bool isSigned`
+    - `const int gradeToSign`
+    - `const int gradeToExecute`
+  - Métodos:
+    - `getName()`, `getIsSigned()`, `getGradeToSign()`, `getGradeToExecute()`
+    - `beSigned(Bureaucrat&)`
+    - Sobrecarga do operador `<<`
+- Atualizar `Bureaucrat` com método `signForm()`
+
+---
+
+## 🧾 Chapter V - Exercise 02: No, you need form 28B, not 28C...
+
+### 🗂️ Arquivos:
+
+- `Makefile`, `main.cpp`, `Bureaucrat.*`, `AForm.*`, `ShrubberyCreationForm.*`, `RobotomyRequestForm.*`, `PresidentialPardonForm.*`
+
+### 🎯 Objetivo:
+
+- Criar a classe abstrata `AForm`
+- Criar classes concretas:
+
+  - `ShrubberyCreationForm`:
+    - Cria arquivo `<target>_shrubbery` com árvores ASCII
+  - `RobotomyRequestForm`:
+    - Robomiza o `target` com sucesso 50% das vezes
+  - `PresidentialPardonForm`:
+    - Informa que o `target` foi perdoado por Zaphod Beeblebrox
+- Método `execute(Bureaucrat const & executor)` deve verificar:
+
+  - Se o formulário está assinado
+  - Se o executor tem nota suficiente
+- Adicionar em `Bureaucrat`:
+
+  - `executeForm(AForm const & form)`
+
+---
+
+## 👨‍💼 Chapter VI - Exercise 03: At least this beats coffee-making
+
+### 🗂️ Arquivos:
+
+- Arquivos anteriores + `Intern.hpp`, `Intern.cpp`
+
+### 🎯 Objetivo:
+
+- Criar classe `Intern`
+- Função principal: `makeForm(formName, target)`
+
+  - Retorna ponteiro para objeto de `Form`
+  - Imprime: `Intern creates <form>`
+  - Se nome do formulário não existir: erro explícito
+- ❌ **Evitar uso excessivo de `if/else`** — soluções desorganizadas não serão aceitas
+
+---
+
+## 📤 Chapter VII - Submission and Peer Evaluation
+
+- Submeter o projeto no repositório Git
+- Avaliação será feita apenas sobre os arquivos do repositório
