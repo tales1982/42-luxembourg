@@ -1,0 +1,118 @@
+🧠 1. Domínio Completo dos Módulos C++ (CPP Modules)
+✅ CPP Module 00 a 04 (Fundamentos)
+Classe vs struct
+
+Encapsulamento
+
+Canônicos (Constructor, Copy Constructor, Destructor, Operator=)
+
+Ponteiros e Referências
+
+Sobrecarga de funções e operadores
+
+Namespaces
+
+Const correctness
+
+Static members
+
+Casting (static_cast, dynamic_cast, etc.)
+
+✅ CPP Module 05
+Herança
+
+Classe abstrata
+
+Métodos virtuais
+
+Polimorfismo
+
+Downcasting / Upcasting
+
+Exceções (try, catch, throw)
+
+✅ CPP Module 06
+Conversão de tipos
+
+Parsing de std::string
+
+Validação de dados
+
+std::stringstream, std::atoi, std::atof, etc.
+
+Manejo de erros personalizados
+
+✅ CPP Module 07
+Templates
+
+Funções template e classes template
+
+Especialização de template
+
+Template instantiation
+
+✅ CPP Module 08
+STL (Standard Template Library)
+
+Containers:
+
+std::vector, std::list, std::deque, std::map, std::set
+
+Iteradores
+
+Algoritmos:
+
+std::find, std::sort, std::for_each, std::count
+
+Funções lambda
+
+✅ CPP Module 09
+Algoritmo de ordenação Ford-Johnson (merge-insert)
+
+Uso comparativo entre containers (vector vs deque)
+
+Cronometragem com clock() ou gettimeofday() (já que chrono é C++11)
+
+🛠️ 2. Ferramentas Esperadas
+Makefile
+
+Compilar com -std=c++98 -Wall -Wextra -Werror
+
+Organização de arquivos: .cpp, .hpp, main.cpp
+
+Proibição de funções C++11 (ex: auto, chrono, nullptr, etc.)
+
+⚠️ 3. O que é normalmente cobrado na prática
+Um programa em C++ com estrutura bem separada (classes, header, source).
+
+Lógica clara com uso correto de containers e classes.
+
+Código que compila sem warnings.
+
+Testes: saída esperada vs obtida (às vezes com script .sh)
+
+Mensagens de erro amigáveis e uso correto do std::cerr.
+
+📚 4. Materiais e treinos
+Refaça os exercícios do CPP Module 06 ao 09, inclusive comentários.
+
+Analise bem os exercícios RPN e PmergeMe, que são clássicos de prova.
+
+Treine parseamento de argumentos e manipulação de containers.
+
+Use diff para comparar a saída esperada e a do seu programa.
+
+🎯 Dicas finais
+Não tente usar nada fora do padrão C++98.
+
+Prepare seu .sh de testes com diff.
+
+Use ANSI colors apenas no main.cpp se quiser deixar mais visual.
+
+Valide todos os inputs: datas inválidas, valores negativos, etc.
+
+Tenha sua Makefile pronta para compilar tudo com as flags corretas.
+
+Se possível, revise alguns subject.pdf com calma e anote pontos-chave.
+
+
