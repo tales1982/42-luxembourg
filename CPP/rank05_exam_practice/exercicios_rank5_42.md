@@ -1,4 +1,3 @@
-
 # 🧙 Exercícios Preparatórios para o Exame Rank 05 - 42
 
 Este conjunto de exercícios foi criado para ajudá-lo a entender e praticar os conceitos necessários para o exame Rank 05 da 42. Os exercícios foram inspirados no conteúdo oficial, mas adaptados para serem mais didáticos e progressivos, com foco no aprendizado dos fundamentos antes da implementação completa.
@@ -28,33 +27,65 @@ Crie uma classe chamada `Warlock` com os seguintes requisitos:
 
 ---
 
-## 📦 Módulo 01 - Magia e Alvos
-
-### 🎯 Objetivo
-
-Introdução a herança e polimorfismo em C++. Criar feitiços e alvos que podem ser manipulados por um Warlock.
+## 📦 Módulo 01 — Magia e Alvos
 
 ### 🧪 Exercício: MagiaSimples
 
-1. Crie uma classe abstrata `ASpell` com:
+### 🧠 Objetivo do Exercício
 
-   - Atributos: `name`, `effects`
-   - Métodos: `getName()`, `getEffects()`, `clone()`
-2. Crie uma classe abstrata `ATarget` com:
+Este exercício tem como foco aplicar os fundamentos da Programação Orientada a Objetos em C++:
 
-   - Atributo: `type`
-   - Método: `getType()`, `clone()`
-3. Crie uma classe derivada `Fireball` de `ASpell`:
+* **Herança** : uso de classes base abstratas e classes derivadas (`ASpell`, `Fireball`, `ATarget`, `DummyTarget`)
+* **Polimorfismo** : chamadas a métodos virtuais por meio de ponteiros ou referências
+* **Encapsulamento e abstração** : proteção de atributos e organização lógica das funcionalidades
+* **Padrão Prototype** : via o método virtual puro `clone()`, para duplicar objetos polimorficamente
 
-   - Construtor define `name = "Fireball"` e `effects = "burns everything"`
-4. Crie uma classe derivada `DummyTarget` de `ATarget`:
+### ✅ O que você deve fazer:
 
-   - Construtor define `type = "training dummy"`
-5. Faça o Warlock lançar um feitiço:
+1. **Criar a classe abstrata `ASpell`** , representando um feitiço genérico:
 
-   - Ao lançar, imprime: `"name: casts spell on target"`
+* **Atributos** :
+  * `name`: nome do feitiço (ex: "Fireball")
+  * `effects`: descrição do efeito (ex: "burns everything")
+* **Métodos** :
+  * `getName()`: retorna o nome
+  * `getEffects()`: retorna o efeito
+  * `clone()`: método virtual puro que retorna uma cópia do objeto (ex: `new Fireball(*this)`)
+  * `launch(const ATarget&)`: método que chama `target.getHitBySpell(*this)`
 
----
+1. **Criar a classe abstrata `ATarget`** , representando um alvo genérico:
+
+* **Atributo** :
+  * `type`: tipo do alvo (ex: "training dummy")
+* **Métodos** :
+  * `getType()`: retorna o tipo
+  * `clone()`: método virtual puro
+  * `getHitBySpell(const ASpell&)`: imprime na tela: `"type has been effects!"`
+
+1. **Criar a classe `Fireball` derivada de `ASpell`** :
+
+* O construtor define:
+  * `name = "Fireball"`
+  * `effects = "burns everything"`
+* Implementa o método `clone()` corretamente.
+
+1. **Criar a classe `DummyTarget` derivada de `ATarget`** :
+
+* O construtor define:
+  * `type = "training dummy"`
+* Implementa o método `clone()` corretamente.
+
+1. **Simular o lançamento de um feitiço por um Warlock no `main()`** :
+
+* Criar uma instância de `Fireball` e `DummyTarget`
+* Imprimir:
+
+  ```bash
+  Fireball: casts spell on training dummy
+  training dummy has been burns everything!
+  ```
+
+  <hr>
 
 ## 📦 Módulo 02 - Clone e Gerenciamento de Feitiços
 

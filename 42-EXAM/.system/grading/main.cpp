@@ -1,21 +1,22 @@
 #include "Warlock.hpp"
+#include "Fwoosh.hpp"
+#include "Dummy.hpp"
+#include "ATarget.hpp"
+#include "ASpell.hpp"
 
 int main()
 {
-  std::string lol;
-  Warlock const richard("Richard", "Mistress of Magma");
+  Warlock richard("Richard", "the Titled");
+
+  Dummy bob;
+  Fwoosh* fwoosh = new Fwoosh();
+
+  richard.learnSpell(fwoosh);
+
   richard.introduce();
-  std::cout << richard.getName() << " - " << richard.getTitle() << std::endl;
+  richard.launchSpell("Fwoosh", bob);
 
-  Warlock* jack = new Warlock("Jack", "the Long");
-  jack->introduce();
-  jack->setTitle("the Mighty");
-  jack->introduce();
-
-  if (jack->getName() == "Jack")
-    std::cout << "getName is const" << std::endl;
-
-  delete jack;
-
-  return (0);
+  richard.forgetSpell("Fwoosh");
+  richard.launchSpell("Fwoosh", bob);
+  delete fwoosh;
 }
