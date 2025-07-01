@@ -22,3 +22,11 @@ private:
 };
 
 #endif
+
+/************************************************************************
+A classe Request:
+    - Recebe uma requisição HTTP bruta.
+    - Faz o parsing dela.
+    - Armazena os dados essenciais como método, path, versão e headers.
+    - Permite recuperar esses dados com métodos públicos.
+*************************************************************************/

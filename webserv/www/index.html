@@ -1,16 +1,19 @@
-<!--Pasta pública para arquivos HTML estáticos-->
-
 <!DOCTYPE html>
 <html>
 <head>
   <title>Webserv Test</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    input[type="text"] { padding: 8px; width: 200px; }
+    input[type="submit"] { padding: 8px 20px; }
+  </style>
 </head>
 <body>
   <h1>Servidor Webserv funcionando!</h1>
   <form method="POST" action="/upload">
-  <input type="text" name="mensagem" />
-  <input type="submit" value="Enviar" />
-</form>
-
+    <input type="text" name="mensagem" placeholder="Digite sua mensagem" />
+    <br><br>
+    <input type="submit" value="Enviar" />
+  </form>
 </body>
 </html>
