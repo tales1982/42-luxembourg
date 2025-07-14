@@ -5,10 +5,10 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -Iincludes
 
 SRC_DIR = src
 SRCS = $(SRC_DIR)/main.cpp \
-       $(SRC_DIR)/Server.cpp \
-       $(SRC_DIR)/Config.cpp \
-       $(SRC_DIR)/Request.cpp \
-       $(SRC_DIR)/Utils.cpp
+       #$(SRC_DIR)/Server.cpp \
+       #$(SRC_DIR)/Config.cpp \
+       #$(SRC_DIR)/Request.cpp \
+       #$(SRC_DIR)/Utils.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
