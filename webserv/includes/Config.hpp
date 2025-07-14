@@ -1,4 +1,4 @@
-// Config.hpp
+// include/Config.hpp
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
