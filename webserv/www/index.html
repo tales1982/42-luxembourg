@@ -1,11 +1,47 @@
 <!DOCTYPE html>
-<html>
-<head><title>Home</title></head>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Serveur WebServ - Bienvenue</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(120deg, #4b6cb7, #182848);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      background-color: rgba(0, 0, 0, 0.4);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+    .highlight {
+      color: #00ffcc;
+      font-weight: bold;
+    }
+  </style>
+</head>
 <body>
-  <h1>Servidor funcionando!</h1>
-  <form action="/upload" method="POST">
-    <input type="text" name="mensagem" placeholder="Escreva uma mensagem" />
-    <input type="submit" value="Enviar" />
-  </form>
+  <div class="container">
+    <h1>✅ Serveur en ligne avec succès !</h1>
+    <p>Félicitations, vous avez accédé à la racine du serveur <span class="highlight">WebServ</span>.</p>
+    <p>Ceci est un exercice de test. Essayez d'accéder à d'autres routes ou de tester différentes méthodes HTTP.</p>
+    <p>Bonne chance et bon apprentissage ! 🚀</p>
+  </div>
 </body>
 </html>
