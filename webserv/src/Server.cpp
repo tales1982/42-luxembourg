@@ -3,6 +3,7 @@
 #include <sstream>
 #include <arpa/inet.h> // inet_addr
 #include <sys/stat.h>  // mkdir
+#include <cstring>     // memset
 
 // Lê um arquivo do disco e retorna seu conteúdo como string
 std::string read_file(const std::string &path)
@@ -30,6 +31,8 @@ int ft_server(const ServerConfig &config)
     struct sockaddr_in addr;
     socklen_t addrlen = sizeof(addr);
     fd_set master_set, read_set;
+
+    const size_t MAX_UPLOAD_SIZE = 104857600; // 100 MB
 
     // Criação do socket
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -101,13 +104,21 @@ int ft_server(const ServerConfig &config)
         {
             if (FD_ISSET(fd, &read_set))
             {
-                char buffer[65536] = {0};
-                int n = read(fd, buffer, 65535);
+                char *buffer = new (std::nothrow) char[MAX_UPLOAD_SIZE];
+                if (!buffer)
+                {
+                    std::cerr << "Erro ao alocar memória para upload\n";
+                    continue;
+                }
+                memset(buffer, 0, MAX_UPLOAD_SIZE);
+
+                int n = read(fd, buffer, MAX_UPLOAD_SIZE - 1);
                 std::cout << "Raw POST content:\n"
                           << buffer << std::endl;
 
                 if (n < 0)
                 {
+                    delete[] buffer;
                     if (errno == EAGAIN || errno == EWOULDBLOCK)
                         continue;
                     std::cerr << "Read error on FD " << fd << std::endl;
@@ -116,6 +127,7 @@ int ft_server(const ServerConfig &config)
                 }
                 else if (n == 0)
                 {
+                    delete[] buffer;
                     std::cout << "Client disconnected. FD: " << fd << std::endl;
                     close(fd);
                     FD_CLR(fd, &master_set);
@@ -138,7 +150,6 @@ int ft_server(const ServerConfig &config)
                         {
                             std::string body = request.substr(body_pos + 4);
 
-                            // Extrai o conteúdo real ignorando cabeçalhos multipart
                             std::size_t file_start = body.find("\r\n\r\n");
                             std::size_t file_end = body.rfind("------");
 
@@ -146,11 +157,15 @@ int ft_server(const ServerConfig &config)
                             {
                                 std::string file_content = body.substr(file_start + 4, file_end - (file_start + 4));
 
-                                std::ofstream file("./uploads/uploaded_file.txt");
+                                std::ostringstream filename;
+                                filename << "./uploads/file_" << std::time(0); // Ex: file_1710771230
+                                std::ofstream file(filename.str().c_str(), std::ios::binary);
+
                                 if (file.is_open())
                                 {
-                                    file << file_content;
+                                    file.write(file_content.c_str(), file_content.size());
                                     file.close();
+
                                     std::string success = read_file(config.root + "/upload_success.html");
                                     std::ostringstream response;
                                     response << "HTTP/1.1 200 OK\r\n"
@@ -179,6 +194,7 @@ int ft_server(const ServerConfig &config)
                             write(fd, bad.c_str(), bad.length());
                         }
 
+                        delete[] buffer;
                         continue;
                     }
 
@@ -205,6 +221,8 @@ int ft_server(const ServerConfig &config)
                         std::string resStr = response.str();
                         write(fd, resStr.c_str(), resStr.length());
                     }
+
+                    delete[] buffer;
                 }
             }
         }

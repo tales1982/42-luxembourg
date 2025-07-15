@@ -15,6 +15,7 @@
 
 #include "Config.hpp"
 #include <iostream>
+#include <ctime>
 #include <cstring>
 #include <vector>
 #include <sys/socket.h>

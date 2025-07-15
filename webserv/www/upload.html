@@ -22,6 +22,7 @@
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
       text-align: center;
+      width: 350px;
     }
 
     h1 {
@@ -38,7 +39,8 @@
       width: 100%;
     }
 
-    input[type="submit"] {
+    input[type="submit"],
+    .home-button {
       padding: 10px 20px;
       background-color: #00ffcc;
       color: #000;
@@ -47,9 +49,13 @@
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s;
+      margin-top: 10px;
+      text-decoration: none;
+      display: inline-block;
     }
 
-    input[type="submit"]:hover {
+    input[type="submit"]:hover,
+    .home-button:hover {
       background-color: #00ddaa;
     }
   </style>
@@ -61,6 +67,7 @@
       <input type="file" name="fichier" required /><br />
       <input type="submit" value="Envoyer le fichier" />
     </form>
+    <a href="/" class="home-button">⬅ Retour à l'accueil</a>
   </div>
 </body>
 </html>
