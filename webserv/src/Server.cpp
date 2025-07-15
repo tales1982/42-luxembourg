@@ -43,6 +43,14 @@ std::string get_requested_path(const std::string &request)
     iss >> method >> path;
     return path;
 }
+// Gerar a pagina que vai mostra os documentos
+std::string replace_placeholder(std::string source, const std::string &placeholder, const std::string &value)
+{
+    size_t pos = source.find(placeholder);
+    if (pos != std::string::npos)
+        source.replace(pos, placeholder.length(), value);
+    return source;
+}
 
 std::string generate_autoindex(const std::string &dirPath, const std::string &urlPath)
 {
@@ -50,20 +58,25 @@ std::string generate_autoindex(const std::string &dirPath, const std::string &ur
     if (!dir)
         return "";
 
-    std::ostringstream html;
-    html << "<!DOCTYPE html><html><body><h1>Index of " << urlPath << "</h1><ul>";
-
+    std::ostringstream listHtml;
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL)
     {
         std::string name = entry->d_name;
         if (name == ".")
             continue;
-        html << "<li><a href=\"" << name << "\">" << name << "</a></li>";
+        listHtml << "<li><a href=\"" << name << "\">" << name << "</a></li>\n";
     }
     closedir(dir);
-    html << "</ul></body></html>";
-    return html.str();
+
+    // Lê o template HTML do autoindex
+    std::string templateHtml = read_file("www/autoindex_template.html");
+
+    // Substitui {{PATH}} e {{LIST}} no template
+    templateHtml = replace_placeholder(templateHtml, "{{PATH}}", urlPath);
+    templateHtml = replace_placeholder(templateHtml, "{{LIST}}", listHtml.str());
+
+    return templateHtml;
 }
 
 std::string get_mime_type(const std::string &path)
@@ -368,7 +381,7 @@ int ft_server(const ServerConfig &config)
                         {
                             std::string autoindexHtml = generate_autoindex(full_path, path);
                             std::ostringstream response;
-                            std::string mime = get_mime_type(full_path);
+                            std::string mime = "text/html";
                             response << "HTTP/1.1 200 OK\r\n"
                                      << "Content-Type: " << mime << "\r\n"
                                      << "Content-Length: " << autoindexHtml.length() << "\r\n"
@@ -392,18 +405,17 @@ int ft_server(const ServerConfig &config)
                     }
 
                     else
-{
-    std::ostringstream response;
-    std::string mime = get_mime_type(full_path);  // ✅ pega tipo correto
-    response << "HTTP/1.1 200 OK\r\n"
-             << "Content-Type: " << mime << "\r\n"
-             << "Content-Length: " << content.length() << "\r\n"
-             << "\r\n"
-             << content;
-    std::string resStr = response.str();
-    write(fd, resStr.c_str(), resStr.length());
-}
-
+                    {
+                        std::ostringstream response;
+                        std::string mime = get_mime_type(full_path); // ✅ pega tipo correto
+                        response << "HTTP/1.1 200 OK\r\n"
+                                 << "Content-Type: " << mime << "\r\n"
+                                 << "Content-Length: " << content.length() << "\r\n"
+                                 << "\r\n"
+                                 << content;
+                        std::string resStr = response.str();
+                        write(fd, resStr.c_str(), resStr.length());
+                    }
                 }
             }
         }
