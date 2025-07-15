@@ -41,6 +41,9 @@ para rodar o programa;
 ./webserv config/default.conf
 
 
+para ver todos os arquivos
+
+http://localhost:8080/all-uploads
 
 ### ✅ Próxima etapa essencial do projeto Webserv:
 

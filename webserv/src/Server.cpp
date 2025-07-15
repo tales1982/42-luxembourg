@@ -79,6 +79,36 @@ std::string generate_autoindex(const std::string &dirPath, const std::string &ur
     return templateHtml;
 }
 
+std::string generate_all_uploads_page()
+{
+    std::ostringstream combinedList;
+    const char *folders[] = {"./www/fotos/", "./www/pdfs/", "./www/othes/"};
+    const char *routes[] = {"/fotos/", "/pdfs/", "/othes/"};
+
+    for (int i = 0; i < 3; ++i)
+    {
+        DIR *dir = opendir(folders[i]);
+        if (!dir)
+            continue;
+
+        struct dirent *entry;
+        while ((entry = readdir(dir)) != NULL)
+        {
+            std::string name = entry->d_name;
+            if (name == "." || name == "..")
+                continue;
+            combinedList << "<li><a href=\"" << routes[i] << name << "\">" << name << "</a></li>\n";
+        }
+        closedir(dir);
+    }
+
+    std::string templateHtml = read_file("www/all_uploads_template.html");
+    templateHtml = replace_placeholder(templateHtml, "{{PATH}}", "/all-uploads");
+    templateHtml = replace_placeholder(templateHtml, "{{LIST}}", combinedList.str());
+
+    return templateHtml;
+}
+
 std::string get_mime_type(const std::string &path)
 {
     if (path.find(".html") != std::string::npos)
@@ -94,6 +124,16 @@ std::string get_mime_type(const std::string &path)
     if (path.find(".pdf") != std::string::npos)
         return "application/pdf";
     return "application/octet-stream";
+}
+
+std::string get_upload_dir_by_extension(const std::string &filename)
+{
+    if (filename.find(".jpg") != std::string::npos || filename.find(".jpeg") != std::string::npos || filename.find(".png") != std::string::npos)
+        return "./www/fotos/";
+    else if (filename.find(".pdf") != std::string::npos)
+        return "./www/pdfs/";
+    else
+        return "./www/othes/";
 }
 
 int ft_server(const ServerConfig &config)
@@ -152,7 +192,7 @@ int ft_server(const ServerConfig &config)
     FD_SET(server_fd, &master_set);
     max_fd = server_fd;
 
-    mkdir("./uploads", 0777); // Cria pasta de uploads
+    // mkdir("./uploads", 0777); // Cria pasta de uploads
 
     while (true)
     {
@@ -319,9 +359,27 @@ int ft_server(const ServerConfig &config)
                             {
                                 std::string file_content = body.substr(file_start + 4, file_end - (file_start + 4));
 
-                                std::ostringstream filename;
-                                filename << "./uploads/file_" << std::time(0); // Ex: file_1710771230
-                                std::ofstream file(filename.str().c_str(), std::ios::binary);
+                                std::ostringstream oss;
+                                oss << "file_" << std::time(0) << "_" << getpid();
+                                std::string inferred_name = oss.str();
+
+                                std::string extension = ".bin"; // padrão
+
+                                // tentativa de inferir a extensão
+                                if (body.find("Content-Type: image/jpeg") != std::string::npos)
+                                    extension = ".jpeg";
+                                else if (body.find("Content-Type: image/png") != std::string::npos)
+                                    extension = ".png";
+                                else if (body.find("Content-Type: application/pdf") != std::string::npos)
+                                    extension = ".pdf";
+
+                                // monta caminho final
+                                std::string final_name = inferred_name + extension;
+                                std::string dir = get_upload_dir_by_extension(final_name);
+                                mkdir(dir.c_str(), 0777); // cria diretório se necessário
+
+                                std::string full_path = dir + final_name;
+                                std::ofstream file(full_path.c_str(), std::ios::binary);
 
                                 if (file.is_open())
                                 {
@@ -369,6 +427,18 @@ int ft_server(const ServerConfig &config)
                     // --- GET padrão ---
                     if (path == "/")
                         path = "/index.html";
+
+                    if (path == "/all-uploads")
+                    {
+                        std::string page = generate_all_uploads_page();
+                        std::ostringstream response;
+                        response << "HTTP/1.1 200 OK\r\n"
+                                 << "Content-Type: text/html\r\n"
+                                 << "Content-Length: " << page.length() << "\r\n\r\n"
+                                 << page;
+                        write(fd, response.str().c_str(), response.str().length());
+                        continue;
+                    }
 
                     std::string full_path = config.root + path;
                     std::string content = read_file(full_path);
