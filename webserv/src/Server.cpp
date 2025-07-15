@@ -181,10 +181,10 @@ int ft_server(const ServerConfig &config)
                         std::string code_str, url;
                         ret >> code_str >> url;
 
-                        if (code_str == "301" && !url.empty())
+                        if ((code_str == "301" || code_str == "302" || code_str == "307" || code_str == "308") && !url.empty())
                         {
                             std::ostringstream response;
-                            response << "HTTP/1.1 301 Moved Permanently\r\n"
+                            response << "HTTP/1.1 " << code_str << " Redirect\r\n"
                                      << "Location: " << url << "\r\n"
                                      << "Content-Length: 0\r\n\r\n";
                             std::string resStr = response.str();
