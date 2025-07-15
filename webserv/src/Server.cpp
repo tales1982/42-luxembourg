@@ -6,14 +6,22 @@
 #include <cstring>     // memset
 
 // Função auxiliar para encontrar location matching
-const LocationConfig* match_location(const ServerConfig& config, const std::string& path) {
-    for (size_t i = 0; i < config.locations.size(); ++i) {
-        if (path.find(config.locations[i].path) == 0)
-            return &config.locations[i];
-    }
-    return NULL;
-}
+const LocationConfig *match_location(const ServerConfig &config, const std::string &path)
+{
+    const LocationConfig *bestMatch = NULL;
+    size_t bestLength = 0;
 
+    for (size_t i = 0; i < config.locations.size(); ++i)
+    {
+        const std::string &locPath = config.locations[i].path;
+        if (path.find(locPath) == 0 && locPath.length() > bestLength)
+        {
+            bestMatch = &config.locations[i];
+            bestLength = locPath.length();
+        }
+    }
+    return bestMatch;
+}
 
 // Lê um arquivo do disco e retorna seu conteúdo como string
 std::string read_file(const std::string &path)
@@ -161,7 +169,30 @@ int ft_server(const ServerConfig &config)
                     std::string method, path;
                     std::istringstream iss(request);
                     iss >> method >> path;
-                    
+                    const LocationConfig *loc = match_location(config, path);
+                    if (loc)
+                        std::cout << "Matched location: " << loc->path << std::endl;
+                    else
+                        std::cout << "No location matched!" << std::endl;
+
+                    if (loc && loc->directives.count("return"))
+                    {
+                        std::istringstream ret(loc->directives.at("return"));
+                        std::string code_str, url;
+                        ret >> code_str >> url;
+
+                        if (code_str == "301" && !url.empty())
+                        {
+                            std::ostringstream response;
+                            response << "HTTP/1.1 301 Moved Permanently\r\n"
+                                     << "Location: " << url << "\r\n"
+                                     << "Content-Length: 0\r\n\r\n";
+                            std::string resStr = response.str();
+                            write(fd, resStr.c_str(), resStr.length());
+                            delete[] buffer;
+                            continue;
+                        }
+                    }
 
                     // --- POST /upload ---
                     if (method == "POST" && path == "/upload")
