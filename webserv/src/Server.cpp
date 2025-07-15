@@ -5,6 +5,16 @@
 #include <sys/stat.h>  // mkdir
 #include <cstring>     // memset
 
+// Função auxiliar para encontrar location matching
+const LocationConfig* match_location(const ServerConfig& config, const std::string& path) {
+    for (size_t i = 0; i < config.locations.size(); ++i) {
+        if (path.find(config.locations[i].path) == 0)
+            return &config.locations[i];
+    }
+    return NULL;
+}
+
+
 // Lê um arquivo do disco e retorna seu conteúdo como string
 std::string read_file(const std::string &path)
 {
@@ -27,6 +37,16 @@ std::string get_requested_path(const std::string &request)
 
 int ft_server(const ServerConfig &config)
 {
+    std::cout << "✔ DEBUG: Exibindo blocos location lidos:\n";
+    for (size_t i = 0; i < config.locations.size(); ++i)
+    {
+        std::cout << "Location: " << config.locations[i].path << std::endl;
+        for (std::map<std::string, std::string>::const_iterator it = config.locations[i].directives.begin(); it != config.locations[i].directives.end(); ++it)
+        {
+            std::cout << "  " << it->first << " = " << it->second << std::endl;
+        }
+    }
+
     int server_fd, new_client, max_fd;
     struct sockaddr_in addr;
     socklen_t addrlen = sizeof(addr);
@@ -141,6 +161,7 @@ int ft_server(const ServerConfig &config)
                     std::string method, path;
                     std::istringstream iss(request);
                     iss >> method >> path;
+                    
 
                     // --- POST /upload ---
                     if (method == "POST" && path == "/upload")
