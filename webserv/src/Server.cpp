@@ -146,7 +146,6 @@ int ft_server(const ServerConfig &config)
 
                 if (n < 0)
                 {
-                    delete[] buffer;
                     if (errno == EAGAIN || errno == EWOULDBLOCK)
                         continue;
                     std::cerr << "Read error on FD " << fd << std::endl;
@@ -155,7 +154,6 @@ int ft_server(const ServerConfig &config)
                 }
                 else if (n == 0)
                 {
-                    delete[] buffer;
                     std::cout << "Client disconnected. FD: " << fd << std::endl;
                     close(fd);
                     FD_CLR(fd, &master_set);
@@ -170,6 +168,66 @@ int ft_server(const ServerConfig &config)
                     std::istringstream iss(request);
                     iss >> method >> path;
                     const LocationConfig *loc = match_location(config, path);
+                    if (loc && loc->directives.count("cgi_pass"))
+                    {
+                        std::string script_path = loc->directives.at("cgi_pass");
+
+                        int pipe_stdout[2];
+                        int pipe_stdin[2];
+                        pipe(pipe_stdout); // para ler o output do CGI
+                        pipe(pipe_stdin);  // para enviar o body
+
+                        pid_t pid = fork();
+                        if (pid == 0)
+                        {
+                            // Processo filho
+                            dup2(pipe_stdout[1], STDOUT_FILENO); // Redireciona stdout
+                            close(pipe_stdout[0]);           // Fecha leitura
+
+                            std::vector<std::string> envs;
+                            envs.push_back("REQUEST_METHOD=" + method);
+                            envs.push_back("PATH_INFO=" + path);
+                            envs.push_back("SCRIPT_NAME=" + script_path);
+                            envs.push_back("SERVER_PROTOCOL=HTTP/1.1");
+                            envs.push_back("GATEWAY_INTERFACE=CGI/1.1");
+
+                            // Monta vetor de C-strings para execve
+                            std::vector<char *> envp;
+                            for (size_t i = 0; i < envs.size(); ++i)
+                                envp.push_back(const_cast<char *>(envs[i].c_str()));
+                            envp.push_back(NULL);
+
+                            // Executa
+                            char *argv[] = {const_cast<char *>(script_path.c_str()), NULL};
+                            execve(script_path.c_str(), argv, &envp[0]);
+
+                            // Se execve falhar
+                            std::cerr << "Erro ao executar CGI\n";
+                            exit(1);
+                        }
+                        else
+                        {
+                            // Processo pai
+                            close(pipe_stdout[1]); // Fecha escrita
+
+                            char temp[4096];
+                            memset(temp, 0, sizeof(temp));
+                            int bytes = read(pipe_stdout[0], temp, sizeof(temp) - 1);
+                            close(pipe_stdout[0]);
+
+                            std::ostringstream response;
+                            response << "HTTP/1.1 200 OK\r\n"
+                                     << "Content-Type: text/html\r\n"
+                                     << "Content-Length: " << bytes << "\r\n"
+                                     << "\r\n"
+                                     << temp;
+                            std::string resStr = response.str();
+                            write(fd, resStr.c_str(), resStr.length());
+
+                            continue;
+                        }
+                    }
+
                     if (loc)
                         std::cout << "Matched location: " << loc->path << std::endl;
                     else
@@ -189,7 +247,6 @@ int ft_server(const ServerConfig &config)
                                      << "Content-Length: 0\r\n\r\n";
                             std::string resStr = response.str();
                             write(fd, resStr.c_str(), resStr.length());
-                            delete[] buffer;
                             continue;
                         }
                     }
@@ -252,8 +309,6 @@ int ft_server(const ServerConfig &config)
                             std::string bad = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n";
                             write(fd, bad.c_str(), bad.length());
                         }
-
-                        delete[] buffer;
                         continue;
                     }
 
