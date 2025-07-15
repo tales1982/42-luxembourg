@@ -4,6 +4,7 @@
 #include <arpa/inet.h> // inet_addr
 #include <sys/stat.h>  // mkdir
 #include <cstring>     // memset
+#include <dirent.h>    // para ler diretórios
 
 // Função auxiliar para encontrar location matching
 const LocationConfig *match_location(const ServerConfig &config, const std::string &path)
@@ -41,6 +42,45 @@ std::string get_requested_path(const std::string &request)
     std::string method, path;
     iss >> method >> path;
     return path;
+}
+
+std::string generate_autoindex(const std::string &dirPath, const std::string &urlPath)
+{
+    DIR *dir = opendir(dirPath.c_str());
+    if (!dir)
+        return "";
+
+    std::ostringstream html;
+    html << "<!DOCTYPE html><html><body><h1>Index of " << urlPath << "</h1><ul>";
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL)
+    {
+        std::string name = entry->d_name;
+        if (name == ".")
+            continue;
+        html << "<li><a href=\"" << name << "\">" << name << "</a></li>";
+    }
+    closedir(dir);
+    html << "</ul></body></html>";
+    return html.str();
+}
+
+std::string get_mime_type(const std::string &path)
+{
+    if (path.find(".html") != std::string::npos)
+        return "text/html";
+    if (path.find(".jpg") != std::string::npos || path.find(".jpeg") != std::string::npos)
+        return "image/jpeg";
+    if (path.find(".png") != std::string::npos)
+        return "image/png";
+    if (path.find(".css") != std::string::npos)
+        return "text/css";
+    if (path.find(".js") != std::string::npos)
+        return "application/javascript";
+    if (path.find(".pdf") != std::string::npos)
+        return "application/pdf";
+    return "application/octet-stream";
 }
 
 int ft_server(const ServerConfig &config)
@@ -182,7 +222,7 @@ int ft_server(const ServerConfig &config)
                         {
                             // Processo filho
                             dup2(pipe_stdout[1], STDOUT_FILENO); // Redireciona stdout
-                            close(pipe_stdout[0]);           // Fecha leitura
+                            close(pipe_stdout[0]);               // Fecha leitura
 
                             std::vector<std::string> envs;
                             envs.push_back("REQUEST_METHOD=" + method);
@@ -277,8 +317,9 @@ int ft_server(const ServerConfig &config)
 
                                     std::string success = read_file(config.root + "/upload_success.html");
                                     std::ostringstream response;
+                                    std::string mime = get_mime_type(config.root + "/upload_success.html");
                                     response << "HTTP/1.1 200 OK\r\n"
-                                             << "Content-Type: text/html\r\n"
+                                             << "Content-Type: " << mime << "\r\n"
                                              << "Content-Length: " << success.length() << "\r\n"
                                              << "\r\n"
                                              << success;
@@ -321,29 +362,48 @@ int ft_server(const ServerConfig &config)
 
                     if (content.empty())
                     {
-                        std::string error404 = read_file(config.error_404);
-                        std::ostringstream response;
-                        response << "HTTP/1.1 404 Not Found\r\n"
-                                 << "Content-Type: text/html\r\n"
-                                 << "Content-Length: " << error404.length() << "\r\n"
-                                 << "\r\n"
-                                 << error404;
-                        std::string resStr = response.str();
-                        write(fd, resStr.c_str(), resStr.length());
-                    }
-                    else
-                    {
-                        std::ostringstream response;
-                        response << "HTTP/1.1 200 OK\r\n"
-                                 << "Content-Type: text/html\r\n"
-                                 << "Content-Length: " << content.length() << "\r\n"
-                                 << "\r\n"
-                                 << content;
-                        std::string resStr = response.str();
-                        write(fd, resStr.c_str(), resStr.length());
+                        struct stat st;
+                        if (stat(full_path.c_str(), &st) == 0 && S_ISDIR(st.st_mode) &&
+                            loc && loc->directives.count("autoindex") && loc->directives.at("autoindex") == "on")
+                        {
+                            std::string autoindexHtml = generate_autoindex(full_path, path);
+                            std::ostringstream response;
+                            std::string mime = get_mime_type(full_path);
+                            response << "HTTP/1.1 200 OK\r\n"
+                                     << "Content-Type: " << mime << "\r\n"
+                                     << "Content-Length: " << autoindexHtml.length() << "\r\n"
+                                     << "\r\n"
+                                     << autoindexHtml;
+                            std::string resStr = response.str();
+                            write(fd, resStr.c_str(), resStr.length());
+                        }
+                        else
+                        {
+                            std::string error404 = read_file(config.error_404);
+                            std::ostringstream response;
+                            response << "HTTP/1.1 404 Not Found\r\n"
+                                     << "Content-Type: text/html\r\n"
+                                     << "Content-Length: " << error404.length() << "\r\n"
+                                     << "\r\n"
+                                     << error404;
+                            std::string resStr = response.str();
+                            write(fd, resStr.c_str(), resStr.length());
+                        }
                     }
 
-                    delete[] buffer;
+                    else
+{
+    std::ostringstream response;
+    std::string mime = get_mime_type(full_path);  // ✅ pega tipo correto
+    response << "HTTP/1.1 200 OK\r\n"
+             << "Content-Type: " << mime << "\r\n"
+             << "Content-Length: " << content.length() << "\r\n"
+             << "\r\n"
+             << content;
+    std::string resStr = response.str();
+    write(fd, resStr.c_str(), resStr.length());
+}
+
                 }
             }
         }
