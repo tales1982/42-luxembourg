@@ -178,8 +178,15 @@ int ft_server(const ServerConfig &config)
                                 }
                                 else
                                 {
-                                    std::string err = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n";
-                                    write(fd, err.c_str(), err.length());
+                                    std::string error500 = read_file(config.error_500);
+                                    std::ostringstream response;
+                                    response << "HTTP/1.1 500 Internal Server Error\r\n"
+                                             << "Content-Type: text/html\r\n"
+                                             << "Content-Length: " << error500.length() << "\r\n"
+                                             << "\r\n"
+                                             << error500;
+                                    std::string resStr = response.str();
+                                    write(fd, resStr.c_str(), resStr.length());
                                 }
                             }
                             else
@@ -207,8 +214,15 @@ int ft_server(const ServerConfig &config)
 
                     if (content.empty())
                     {
-                        std::string notfound = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
-                        write(fd, notfound.c_str(), notfound.length());
+                        std::string error404 = read_file(config.error_404);
+                        std::ostringstream response;
+                        response << "HTTP/1.1 404 Not Found\r\n"
+                                 << "Content-Type: text/html\r\n"
+                                 << "Content-Length: " << error404.length() << "\r\n"
+                                 << "\r\n"
+                                 << error404;
+                        std::string resStr = response.str();
+                        write(fd, resStr.c_str(), resStr.length());
                     }
                     else
                     {
