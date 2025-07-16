@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/16 12:31:30 by tales             #+#    #+#             */
+/*   Updated: 2025/07/16 12:31:31 by tales            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+
 #include "../include/server/Server.hpp"
 #include "../include/server/RequestHandler.hpp"
 #include "../include/server/ResponseBuilder.hpp"
@@ -125,7 +139,7 @@ int ft_server(const ServerConfig &config)
                 }
                 else if (n > 0)
                 {
-                    std::string request(buffer);
+                    std::string request(buffer, n);
                     std::cout << "Request from client FD " << fd << ":\n"
                               << request << std::endl;
 

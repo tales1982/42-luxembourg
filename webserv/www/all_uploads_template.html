@@ -1,26 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
   <title>Index of {{ PATH }}</title>
   <style>
     :root {
-      --bg-page: #f0f4f8;
+      --bg-page-start: #eef2f7;
+      --bg-page-end: #dfe4ea;
       --bg-box: #ffffff;
       --accent-start: #6a11cb;
       --accent-end: #2575fc;
       --text-main: #2d3436;
       --text-link: #2575fc;
-      --hover-bg: #e0e6f1;
+      --hover-bg: #f1f3f5;
+      --btn-gradient-start: #ff6a00;
+      --btn-gradient-end: #ee0979;
+      --btn-text: #ffffff;
+      --btn-hover-offset: 4px;
+      --box-shadow: 0 12px 32px rgba(0,0,0,0.08);
     }
-    * {
+
+    *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: linear-gradient(135deg, #17dd6a, #9ca521);
+     background: linear-gradient(120deg, #4ba1b7, #184830);
       color: var(--text-main);
       display: flex;
       justify-content: center;
@@ -28,46 +36,78 @@
       min-height: 100vh;
       padding: 2rem;
     }
+
     .container {
       background: var(--bg-box);
-      padding: 2rem 3rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      padding: 2.5rem 3rem;
+      border-radius: 16px;
+      box-shadow: var(--box-shadow);
       max-width: 600px;
       width: 100%;
+      text-align: center;
     }
+
     h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      margin-bottom: 1.75rem;
       background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      border-bottom: 2px solid var(--accent-end);
-      padding-bottom: 0.5rem;
+      border-bottom: 3px solid var(--accent-end);
+      padding-bottom: 0.75rem;
     }
+
     ul {
       list-style: none;
+      margin-bottom: 2rem;
     }
+
     li {
       margin: 0.75rem 0;
-      padding: 0.75rem 1rem;
-      background-color: #f9f9f9;
-      border-left: 4px solid var(--accent-start);
-      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      background-color: var(--bg-page-end);
+      border-left: 5px solid var(--accent-start);
+      border-radius: 8px;
       transition: background-color 0.2s, transform 0.2s;
     }
+
     li:hover {
       background-color: var(--hover-bg);
-      transform: translateX(6px);
+      transform: translateX(8px);
     }
+
     a {
       text-decoration: none;
       color: var(--text-link);
-      font-weight: 500;
+      font-weight: 600;
     }
+
     a:hover {
-      text-decoration: underline;
       color: var(--accent-end);
+      text-decoration: underline;
+    }
+
+    /* NOVO ESTILO DE BOTÃO */
+    .links {
+      margin-top: 1.5rem;
+    }
+
+    .links a {
+      display: inline-block;
+      padding: 0.75rem 1.75rem;
+      background: linear-gradient(45deg, var(--btn-gradient-start), var(--btn-gradient-end));
+      color: var(--btn-text);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .links a:hover {
+      transform: translateY(-var(--btn-hover-offset));
+      box-shadow: 0 12px 24px rgba(0,0,0,0.16);
     }
   </style>
 </head>
@@ -77,6 +117,9 @@
     <ul>
       {{LIST}}
     </ul>
+    <div class="links">
+      <a href="http://localhost:8080/">Aller vers la Home</a>
+    </div>
   </div>
 </body>
 </html>
