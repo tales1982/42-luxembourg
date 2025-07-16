@@ -3,7 +3,7 @@ import cgi
 import datetime
 
 # Définition des en-têtes
-#print("Content-Type: text/html; charset=utf-8")
+print("Content-Type: text/html; charset=utf-8")
 print()
 
 # Obtention de la date/heure actuelle

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 10:48:58 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/07/15 10:49:02 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/07/16 11:09:12 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "../include/Server.hpp"
-#include "../include/ConfigParser.hpp"
+#include "../include/server/Server.hpp"
+#include "../include/parser/ConfigParser.hpp"
 
 int main(int ac, char **av) {
     std::string configPath = (ac == 2) ? av[1] : "default.conf";

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlima-de <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 10:48:14 by tlima-de          #+#    #+#             */
-/*   Updated: 2025/07/15 10:48:19 by tlima-de         ###   ########.fr       */
+/*   Updated: 2025/07/16 11:11:27 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #pragma once
 
-#include "Config.hpp"
+#include "../config/Config.hpp"
 #include <iostream>
 #include <ctime>
 #include <cstring>

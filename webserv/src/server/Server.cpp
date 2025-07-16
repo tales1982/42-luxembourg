@@ -1,140 +1,12 @@
-#include "../include/Server.hpp"
+#include "../include/server/Server.hpp"
+#include "../include/server/RequestHandler.hpp"
+#include "../include/server/ResponseBuilder.hpp"
 #include <fstream>
 #include <sstream>
 #include <arpa/inet.h> // inet_addr
 #include <sys/stat.h>  // mkdir
 #include <cstring>     // memset
 #include <dirent.h>    // para ler diretórios
-
-// Função auxiliar para encontrar location matching
-const LocationConfig *match_location(const ServerConfig &config, const std::string &path)
-{
-    const LocationConfig *bestMatch = NULL;
-    size_t bestLength = 0;
-
-    for (size_t i = 0; i < config.locations.size(); ++i)
-    {
-        const std::string &locPath = config.locations[i].path;
-        if (path.find(locPath) == 0 && locPath.length() > bestLength)
-        {
-            bestMatch = &config.locations[i];
-            bestLength = locPath.length();
-        }
-    }
-    return bestMatch;
-}
-
-// Lê um arquivo do disco e retorna seu conteúdo como string
-std::string read_file(const std::string &path)
-{
-    std::ifstream file(path.c_str());
-    if (!file.is_open())
-        return "";
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
-}
-
-// Extrai o caminho da URL da requisição HTTP (ex: "/index.html")
-std::string get_requested_path(const std::string &request)
-{
-    std::istringstream iss(request);
-    std::string method, path;
-    iss >> method >> path;
-    return path;
-}
-// Gerar a pagina que vai mostra os documentos
-std::string replace_placeholder(std::string source, const std::string &placeholder, const std::string &value)
-{
-    size_t pos = source.find(placeholder);
-    if (pos != std::string::npos)
-        source.replace(pos, placeholder.length(), value);
-    return source;
-}
-
-std::string generate_autoindex(const std::string &dirPath, const std::string &urlPath)
-{
-    DIR *dir = opendir(dirPath.c_str());
-    if (!dir)
-        return "";
-
-    std::ostringstream listHtml;
-    struct dirent *entry;
-    while ((entry = readdir(dir)) != NULL)
-    {
-        std::string name = entry->d_name;
-        if (name == ".")
-            continue;
-        listHtml << "<li><a href=\"" << name << "\">" << name << "</a></li>\n";
-    }
-    closedir(dir);
-
-    // Lê o template HTML do autoindex
-    std::string templateHtml = read_file("www/autoindex_template.html");
-
-    // Substitui {{PATH}} e {{LIST}} no template
-    templateHtml = replace_placeholder(templateHtml, "{{PATH}}", urlPath);
-    templateHtml = replace_placeholder(templateHtml, "{{LIST}}", listHtml.str());
-
-    return templateHtml;
-}
-
-std::string generate_all_uploads_page()
-{
-    std::ostringstream combinedList;
-    const char *folders[] = {"./www/fotos/", "./www/pdfs/", "./www/othes/"};
-    const char *routes[] = {"/fotos/", "/pdfs/", "/othes/"};
-
-    for (int i = 0; i < 3; ++i)
-    {
-        DIR *dir = opendir(folders[i]);
-        if (!dir)
-            continue;
-
-        struct dirent *entry;
-        while ((entry = readdir(dir)) != NULL)
-        {
-            std::string name = entry->d_name;
-            if (name == "." || name == "..")
-                continue;
-            combinedList << "<li><a href=\"" << routes[i] << name << "\">" << name << "</a></li>\n";
-        }
-        closedir(dir);
-    }
-
-    std::string templateHtml = read_file("www/all_uploads_template.html");
-    templateHtml = replace_placeholder(templateHtml, "{{PATH}}", "/all-uploads");
-    templateHtml = replace_placeholder(templateHtml, "{{LIST}}", combinedList.str());
-
-    return templateHtml;
-}
-
-std::string get_mime_type(const std::string &path)
-{
-    if (path.find(".html") != std::string::npos)
-        return "text/html";
-    if (path.find(".jpg") != std::string::npos || path.find(".jpeg") != std::string::npos)
-        return "image/jpeg";
-    if (path.find(".png") != std::string::npos)
-        return "image/png";
-    if (path.find(".css") != std::string::npos)
-        return "text/css";
-    if (path.find(".js") != std::string::npos)
-        return "application/javascript";
-    if (path.find(".pdf") != std::string::npos)
-        return "application/pdf";
-    return "application/octet-stream";
-}
-
-std::string get_upload_dir_by_extension(const std::string &filename)
-{
-    if (filename.find(".jpg") != std::string::npos || filename.find(".jpeg") != std::string::npos || filename.find(".png") != std::string::npos)
-        return "./www/fotos/";
-    else if (filename.find(".pdf") != std::string::npos)
-        return "./www/pdfs/";
-    else
-        return "./www/othes/";
-}
 
 int ft_server(const ServerConfig &config)
 {
@@ -192,7 +64,7 @@ int ft_server(const ServerConfig &config)
     FD_SET(server_fd, &master_set);
     max_fd = server_fd;
 
-    // mkdir("./uploads", 0777); // Cria pasta de uploads
+    mkdir("./uploads", 0777); // Cria pasta de uploads
 
     while (true)
     {

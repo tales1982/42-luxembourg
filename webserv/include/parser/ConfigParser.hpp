@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Config.hpp"
+#include "../config/Config.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
