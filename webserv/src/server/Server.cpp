@@ -6,7 +6,7 @@
 /*   By: tales <tales@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 12:31:30 by tales             #+#    #+#             */
-/*   Updated: 2025/07/16 15:31:28 by tales            ###   ########.fr       */
+/*   Updated: 2025/07/16 17:33:50 by tales            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,14 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// Inicializa o servidor com base na configuração:
-// - Cria socket TCP não bloqueante
-// - Define opção SO_REUSEADDR para reuso de porta
-// - Realiza bind() ao endereço e porta
-// - Invoca listen() para começar a escuta
-// Retorna descritor do socket ou -1 em erro
+//////////////////////////////////////////////////////////
+// Inicializa o servidor com base na configuração:      //
+// - Cria socket TCP não bloqueante                     //
+// - Define opção SO_REUSEADDR para reuso de porta      //
+// - Realiza bind() ao endereço e porta                 //
+// - Invoca listen() para começar a escuta              //
+// Retorna descritor do socket ou -1 em erro            //
+//////////////////////////////////////////////////////////
 static int initialize_server(const ServerConfig &config, struct sockaddr_in &addr)
 {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -64,11 +66,14 @@ static int initialize_server(const ServerConfig &config, struct sockaddr_in &add
     return server_fd;
 }
 
-// Trata nova conexão de cliente:
-// - Accept no socket do servidor
-// - Configura o novo descritor como não bloqueante
-// - Adiciona ao conjunto de descritores master_set
-// - Atualiza max_fd
+
+//////////////////////////////////////////////////////////
+// Trata nova conexão de cliente:                       //
+// - Accept no socket do servidor                       //
+// - Configura o novo descritor como não bloqueante     //
+// - Adiciona ao conjunto de descritores master_set     //
+// - Atualiza max_fd                                    //
+//////////////////////////////////////////////////////////
 static int handle_new_connection(int server_fd, fd_set &master_set, int &max_fd, struct sockaddr_in &addr, socklen_t addrlen)
 {
     int new_client = accept(server_fd, (struct sockaddr *)&addr, &addrlen);
@@ -85,11 +90,11 @@ static int handle_new_connection(int server_fd, fd_set &master_set, int &max_fd,
         max_fd = new_client;
     return new_client;
 }
-
-
-// Envia resposta HTTP ao cliente:
-// - Monta status line, headers de tipo e tamanho
-// - Envia corpo da mensagem
+//////////////////////////////////////////////////////
+// Envia resposta HTTP ao cliente:                  //
+// - Monta status line, headers de tipo e tamanho   //
+// - Envia corpo da mensagem                        //
+//////////////////////////////////////////////////////
 static void send_response(int fd, const std::string &status, const std::string &content_type, const std::string &content)
 {
     std::ostringstream response;
@@ -102,12 +107,14 @@ static void send_response(int fd, const std::string &status, const std::string &
     write(fd, resStr.c_str(), resStr.length());
 }
 
-// Processa uploads multipart em /upload:
-// - Separa cabeçalhos do corpo
-// - Extrai arquivo entre delimitadores
-// - Gera nome e extensão baseado em Content-Type
-// - Cria diretório e salva arquivo
-// - Retorna página de sucesso ou erro 500
+//////////////////////////////////////////////////////////
+// Processa uploads multipart em /upload:               //
+// - Separa cabeçalhos do corpo                         //
+// - Extrai arquivo entre delimitadores                 //
+// - Gera nome e extensão baseado em Content-Type       //
+// - Cria diretório e salva arquivo                     //
+// - Retorna página de sucesso ou erro 500              //
+//////////////////////////////////////////////////////////
 static void handle_upload(int fd, const std::string &request, const ServerConfig &config)
 {
     std::size_t body_pos = request.find("\r\n\r\n");
@@ -160,19 +167,20 @@ static void handle_upload(int fd, const std::string &request, const ServerConfig
         send_response(fd, "500 Internal Server Error", "text/html", error500);
     }
 }
-
-// Processa requisição genérica de cliente:
-// - Analisa método e caminho
-// - Verifica diretivas CGI e executa script via fork+execve
-// - Trata redirecionamentos usando diretiva 'return'
-// - Chama handle_upload para POST /upload
-// - Serve index.html para raiz
-// - Gera página de todas as uploads (/all-uploads)
-// - Lê arquivo do sistema de arquivos ou gera autoindex para diretórios
-// - Retorna 200, 404 ou 500 conforme apropriado
+//////////////////////////////////////////////////////////////////////////////
+// Processa requisição genérica de cliente:                                 //
+// - Analisa método e caminho                                               //
+// - Verifica diretivas CGI e executa script via fork+execve                //
+// - Trata redirecionamentos usando diretiva 'return'                       //
+// - Chama handle_upload para POST /upload                                  //
+// - Serve index.html para raiz                                             //
+// - Gera página de todas as uploads (/all-uploads)                         //
+// - Lê arquivo do sistema de arquivos ou gera autoindex para diretórios    //
+// - Retorna 200, 404 ou 500 conforme apropriado                            //
+//////////////////////////////////////////////////////////////////////////////
 static void process_client_request(int fd, const std::string &request, const ServerConfig &config, fd_set &master_set)
 {
-    (void)master_set;
+    (void)&master_set;
     std::string method, path;
     std::istringstream iss(request);
     iss >> method >> path;
@@ -285,13 +293,15 @@ static void process_client_request(int fd, const std::string &request, const Ser
     }
 }
 
-// Função principal do servidor:
-// - Exibe configurações de locations para debug
-// - Inicializa socket e sets de descritores
-// - Cria diretório de uploads
-// - Loop de evento select() para aceitar ou ler dados de clientes
-// - Em leitura, aloca buffer, lê request e chama process_client_request
-// - Fecha conexões e limpa sets quando clientes desconectam ou erro
+//////////////////////////////////////////////////////////////////////////////
+// Função principal do servidor:                                            //
+// - Exibe configurações de locations para debug                            //
+// - Inicializa socket e sets de descritores                                //
+// - Cria diretório de uploads                                              //
+// - Loop de evento select() para aceitar ou ler dados de clientes          //
+// - Em leitura, aloca buffer, lê request e chama process_client_request    //
+// - Fecha conexões e limpa sets quando clientes desconectam ou erro        //
+//////////////////////////////////////////////////////////////////////////////
 int ft_server(const ServerConfig &config)
 {
     std::cout << "✔ DEBUG: Exibindo blocos location lidos:\n";

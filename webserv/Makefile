@@ -29,7 +29,7 @@ SRCS        = \
 	$(SRC_CONFIG)/ConfigParser.cpp \
 	$(SRC_SERVER)/Server.cpp \
 	$(SRC_SERVER)/RequestHandler.cpp \
-	$(SRC_SERVER)/ResponseBuilder.cpp
+	$(SRC_SERVER)/ResponseBuilder.cpp \
 
 # Objetos
 OBJS        = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
