@@ -78,9 +78,12 @@ std::string generate_autoindex(const std::string &dirPath, const std::string &ur
 
 std::string generate_all_uploads_page()
 {
-    std::ostringstream combinedList;
     const char *folders[] = {"./www/fotos/", "./www/pdfs/", "./www/othes/"};
-    const char *routes[] = {"/fotos/", "/pdfs/", "/othes/"};
+    const char *routes[]  = {"/fotos/", "/pdfs/", "/othes/"};
+    const char *titles[]  = {"📷 Fotos", "📄 PDFs", "📦 Outros Arquivos"};
+
+    std::ostringstream combinedList;
+    int total_files = 0;
 
     for (int i = 0; i < 3; ++i)
     {
@@ -88,20 +91,48 @@ std::string generate_all_uploads_page()
         if (!dir)
             continue;
 
+        combinedList << "<h2>" << titles[i] << "</h2>\n<ul>\n";
+
         struct dirent *entry;
         while ((entry = readdir(dir)) != NULL)
         {
             std::string name = entry->d_name;
             if (name == "." || name == "..")
                 continue;
-            combinedList << "<li><a href=\"" << routes[i] << name << "\">" << name << "</a></li>\n";
+
+            ++total_files;
+
+            std::string url = routes[i] + name;
+
+            // Detectar extensões para preview de imagem
+            std::string lower = name;
+            for (size_t j = 0; j < lower.size(); ++j)
+                lower[j] = std::tolower(lower[j]);
+
+            if (lower.find(".png") != std::string::npos || lower.find(".jpg") != std::string::npos || lower.find(".jpeg") != std::string::npos)
+            {
+                combinedList << "<li><img src=\"" << url
+                             << "\" alt=\"preview\" style=\"width:40px;height:auto;margin-right:10px;vertical-align:middle;border-radius:4px;\" />"
+                             << "<a href=\"" << url << "\">" << name << "</a></li>\n";
+            }
+            else
+            {
+                combinedList << "<li><a href=\"" << url << "\">" << name << "</a></li>\n";
+            }
         }
+
+        combinedList << "</ul>\n";
         closedir(dir);
     }
 
     std::string templateHtml = read_file("www/all_uploads_template.html");
     templateHtml = replace_placeholder(templateHtml, "{{PATH}}", "/all-uploads");
     templateHtml = replace_placeholder(templateHtml, "{{LIST}}", combinedList.str());
+
+    // Substituir {{COUNT}} pelo número total de arquivos
+    std::ostringstream countStr;
+    countStr << total_files;
+    templateHtml = replace_placeholder(templateHtml, "{{COUNT}}", countStr.str());
 
     return templateHtml;
 }

@@ -114,6 +114,7 @@ static void send_response(int fd, const std::string &status, const std::string &
 // - Cria diretório e salva arquivo                     //
 // - Retorna página de sucesso ou erro 500              //
 //////////////////////////////////////////////////////////
+
 static void handle_upload(int fd, const std::string &request, const ServerConfig &config)
 {
     std::size_t body_pos = request.find("\r\n\r\n");
@@ -134,17 +135,35 @@ static void handle_upload(int fd, const std::string &request, const ServerConfig
     }
 
     std::string file_content = body.substr(file_start + 4, file_end - (file_start + 4));
+
+    // Gerar nome único
     std::ostringstream oss;
     oss << "file_" << std::time(0) << "_" << getpid();
     std::string inferred_name = oss.str();
 
-    std::string extension = ".bin";
-    if (body.find("Content-Type: image/jpeg") != std::string::npos)
-        extension = ".jpeg";
-    else if (body.find("Content-Type: image/png") != std::string::npos)
-        extension = ".png";
-    else if (body.find("Content-Type: application/pdf") != std::string::npos)
-        extension = ".pdf";
+    // Criar mapa de content-types para extensões (C++98 style)
+    std::map<std::string, std::string> content_type_map;
+    content_type_map["image/jpeg"] = ".jpeg";
+    content_type_map["image/png"] = ".png";
+    content_type_map["application/pdf"] = ".pdf";
+    content_type_map["text/plain"] = ".txt";
+    content_type_map["application/json"] = ".json";
+    content_type_map["application/zip"] = ".zip";
+    content_type_map["text/html"] = ".html";
+    content_type_map["application/octet-stream"] = ".bin"; // padrão
+
+    std::string extension = ".bin"; // fallback
+
+    // Detectar Content-Type no corpo do upload
+    std::map<std::string, std::string>::const_iterator it;
+    for (it = content_type_map.begin(); it != content_type_map.end(); ++it)
+    {
+        if (body.find(it->first) != std::string::npos)
+        {
+            extension = it->second;
+            break;
+        }
+    }
 
     std::string final_name = inferred_name + extension;
     std::string dir = get_upload_dir_by_extension(final_name);
@@ -157,6 +176,7 @@ static void handle_upload(int fd, const std::string &request, const ServerConfig
     {
         file.write(file_content.c_str(), file_content.size());
         file.close();
+
         std::string success = read_file(config.root + "/upload_success.html");
         send_response(fd, "200 OK", get_mime_type(config.root + "/upload_success.html"), success);
     }
@@ -166,6 +186,7 @@ static void handle_upload(int fd, const std::string &request, const ServerConfig
         send_response(fd, "500 Internal Server Error", "text/html", error500);
     }
 }
+
 //////////////////////////////////////////////////////////////////////////////
 // Processa requisição genérica de cliente:                                 //
 // - Analisa método e caminho                                               //
@@ -187,10 +208,12 @@ static void process_client_request(int fd, const std::string &request, const Ser
     const LocationConfig *loc = match_location(config, path);
     if (loc && loc->path == "/cgi-bin" && path.find("/cgi-bin/") == 0)
     {
-        std::string script_path = loc->directives.at("root") + "/" + path.substr(8);
-        // remove "/cgi-bin"
+        std::string script_name = path;
+        std::string path_info = "";                                                  // Nenhum PATH_INFO adicional
+        std::string script_path = loc->directives.at("root") + "/" + path.substr(9); // nome do script
+
         struct stat st;
-        if (stat(script_path.c_str(), &st) == 0 && (st.st_mode & S_IXUSR)) // arquivo existe e é executável
+        if (stat(script_path.c_str(), &st) == 0 && (st.st_mode & S_IXUSR))
         {
             int pipe_stdout[2], pipe_stdin[2];
             pipe(pipe_stdout);
@@ -204,12 +227,33 @@ static void process_client_request(int fd, const std::string &request, const Ser
                 close(pipe_stdin[1]);
                 close(pipe_stdin[0]);
 
+                // Parse headers
+                std::string content_length = "";
+                std::string content_type = "";
+                size_t header_end = request.find("\r\n\r\n");
+                if (header_end != std::string::npos)
+                {
+                    std::istringstream header_stream(request.substr(0, header_end));
+                    std::string header_line;
+                    while (std::getline(header_stream, header_line))
+                    {
+                        if (header_line.find("Content-Length:") != std::string::npos)
+                            content_length = header_line.substr(header_line.find(":") + 1);
+                        if (header_line.find("Content-Type:") != std::string::npos)
+                            content_type = header_line.substr(header_line.find(":") + 1);
+                    }
+                }
+
+                // Variáveis de ambiente CGI
                 std::vector<std::string> envs;
                 envs.push_back("REQUEST_METHOD=" + method);
-                envs.push_back("PATH_INFO=" + path);
-                envs.push_back("SCRIPT_NAME=" + script_path);
+                envs.push_back("SCRIPT_NAME=" + script_name);
+                envs.push_back("PATH_INFO=" + path_info);
                 envs.push_back("SERVER_PROTOCOL=HTTP/1.1");
                 envs.push_back("GATEWAY_INTERFACE=CGI/1.1");
+                envs.push_back("CONTENT_LENGTH=" + content_length);
+                envs.push_back("CONTENT_TYPE=" + content_type);
+                envs.push_back("REDIRECT_STATUS=200");
 
                 std::vector<char *> envp;
                 for (size_t i = 0; i < envs.size(); ++i)
@@ -218,6 +262,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
 
                 char *argv[] = {const_cast<char *>(script_path.c_str()), NULL};
                 execve(script_path.c_str(), argv, &envp[0]);
+
                 std::cerr << "Erro ao executar CGI\n";
                 exit(1);
             }
@@ -236,9 +281,12 @@ static void process_client_request(int fd, const std::string &request, const Ser
 
                 close(pipe_stdout[0]);
 
-                send_response(fd, "200 OK", "text/html", cgi_output.substr(cgi_output.find("\r\n\r\n") + 4));
+                size_t body_start = cgi_output.find("\r\n\r\n");
+                std::string body = (body_start != std::string::npos)
+                                       ? cgi_output.substr(body_start + 4)
+                                       : cgi_output;
 
-
+                send_response(fd, "200 OK", "text/html", body);
                 return;
             }
         }
@@ -250,6 +298,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
         }
     }
 
+    // Redirecionamentos
     if (loc && loc->directives.count("return"))
     {
         std::istringstream ret(loc->directives.at("return"));
@@ -262,12 +311,12 @@ static void process_client_request(int fd, const std::string &request, const Ser
             response << "HTTP/1.1 " << code_str << " Redirect\r\n"
                      << "Location: " << url << "\r\n"
                      << "Content-Length: 0\r\n\r\n";
-            std::string resStr = response.str();
-            write(fd, resStr.c_str(), resStr.length());
+            write(fd, response.str().c_str(), response.str().length());
             return;
         }
     }
 
+    // Upload
     if (method == "POST" && path == "/upload")
     {
         handle_upload(fd, request, config);
@@ -374,34 +423,50 @@ int ft_server(const ServerConfig &config)
                 }
                 memset(buffer, 0, MAX_UPLOAD_SIZE);
 
-                int n = read(fd, buffer, MAX_UPLOAD_SIZE - 1);
-                std::cout << "Raw POST content:\n"
-                          << buffer << std::endl;
+                size_t total_read = 0;
+                int n = 0;
 
-                if (n < 0)
+                while (true)
                 {
-                    if (errno == EAGAIN || errno == EWOULDBLOCK)
+                    n = read(fd, buffer + total_read, MAX_UPLOAD_SIZE - 1 - total_read);
+                    if (n < 0)
                     {
+                        if (errno == EAGAIN || errno == EWOULDBLOCK)
+                            break;
+                        std::cerr << "Read error on FD " << fd << std::endl;
+                        close(fd);
+                        FD_CLR(fd, &master_set);
                         delete[] buffer;
-                        continue;
+                        continue; // ✅ substitui o return inválido
                     }
-                    std::cerr << "Read error on FD " << fd << std::endl;
-                    close(fd);
-                    FD_CLR(fd, &master_set);
+                    else if (n == 0)
+                    {
+                        // Fim da transmissão
+                        break;
+                    }
+                    else
+                    {
+                        total_read += n;
+                        if (total_read >= MAX_UPLOAD_SIZE - 1)
+                            break;
+                    }
                 }
-                else if (n == 0)
+
+                if (total_read > 0)
                 {
-                    std::cout << "Client disconnected. FD: " << fd << std::endl;
-                    close(fd);
-                    FD_CLR(fd, &master_set);
-                }
-                else
-                {
-                    std::string request(buffer, n);
+                    buffer[total_read] = '\0';
+                    std::string request(buffer, total_read);
                     std::cout << "Request from client FD " << fd << ":\n"
                               << request << std::endl;
                     process_client_request(fd, request, config, master_set);
                 }
+                else
+                {
+                    std::cerr << "Conexão sem dados recebidos. FD: " << fd << std::endl;
+                    close(fd);
+                    FD_CLR(fd, &master_set);
+                }
+
                 delete[] buffer;
             }
         }

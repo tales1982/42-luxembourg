@@ -15,6 +15,7 @@
 
 #include "../config/Config.hpp"
 #include <iostream>
+#include <map>
 #include <ctime>
 #include <cstring>
 #include <vector>
