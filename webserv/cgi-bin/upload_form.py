@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+
+print("Content-Type: text/html\r\n\r\n")
+
+  # Cabeçalho HTTP obrigatório
+
+print("""
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,7 +22,6 @@
       height: 100vh;
       color: #fff;
     }
-
     .upload-container {
       background-color: rgba(0, 0, 0, 0.4);
       padding: 40px;
@@ -24,38 +30,17 @@
       text-align: center;
       width: 350px;
     }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-    }
-
+    h1 { font-size: 2rem; margin-bottom: 20px; }
     input[type="file"] {
-      padding: 10px;
-      background-color: #fff;
-      border: none;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      width: 100%;
+      padding: 10px; background-color: #fff; border: none; border-radius: 5px;
+      margin-bottom: 20px; width: 100%;
     }
-
-    input[type="submit"],
-    .home-button {
-      padding: 10px 20px;
-      background-color: #00ffcc;
-      color: #000;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin-top: 10px;
-      text-decoration: none;
-      display: inline-block;
+    input[type="submit"], .home-button {
+      padding: 10px 20px; background-color: #00ffcc; color: #000; border: none;
+      border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px;
+      text-decoration: none; display: inline-block; transition: background-color 0.3s;
     }
-
-    input[type="submit"]:hover,
-    .home-button:hover {
+    input[type="submit"]:hover, .home-button:hover {
       background-color: #00ddaa;
     }
   </style>
@@ -71,3 +56,4 @@
   </div>
 </body>
 </html>
+""")

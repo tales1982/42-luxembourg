@@ -66,7 +66,6 @@ static int initialize_server(const ServerConfig &config, struct sockaddr_in &add
     return server_fd;
 }
 
-
 //////////////////////////////////////////////////////////
 // Trata nova conexão de cliente:                       //
 // - Accept no socket do servidor                       //
@@ -186,51 +185,67 @@ static void process_client_request(int fd, const std::string &request, const Ser
     iss >> method >> path;
 
     const LocationConfig *loc = match_location(config, path);
-
-    if (loc && loc->directives.count("cgi_pass"))
+    if (loc && loc->path == "/cgi-bin" && path.find("/cgi-bin/") == 0)
     {
-        std::string script_path = loc->directives.at("cgi_pass");
-        int pipe_stdout[2], pipe_stdin[2];
-        pipe(pipe_stdout);
-        pipe(pipe_stdin);
-
-        pid_t pid = fork();
-        if (pid == 0)
+        std::string script_path = loc->directives.at("root") + "/" + path.substr(8);
+        // remove "/cgi-bin"
+        struct stat st;
+        if (stat(script_path.c_str(), &st) == 0 && (st.st_mode & S_IXUSR)) // arquivo existe e é executável
         {
-            dup2(pipe_stdout[1], STDOUT_FILENO);
-            close(pipe_stdout[0]);
-            close(pipe_stdin[1]);
-            close(pipe_stdin[0]);
+            int pipe_stdout[2], pipe_stdin[2];
+            pipe(pipe_stdout);
+            pipe(pipe_stdin);
 
-            std::vector<std::string> envs;
-            envs.push_back("REQUEST_METHOD=" + method);
-            envs.push_back("PATH_INFO=" + path);
-            envs.push_back("SCRIPT_NAME=" + script_path);
-            envs.push_back("SERVER_PROTOCOL=HTTP/1.1");
-            envs.push_back("GATEWAY_INTERFACE=CGI/1.1");
+            pid_t pid = fork();
+            if (pid == 0)
+            {
+                dup2(pipe_stdout[1], STDOUT_FILENO);
+                close(pipe_stdout[0]);
+                close(pipe_stdin[1]);
+                close(pipe_stdin[0]);
 
-            std::vector<char *> envp;
-            for (size_t i = 0; i < envs.size(); ++i)
-                envp.push_back(const_cast<char *>(envs[i].c_str()));
-            envp.push_back(NULL);
+                std::vector<std::string> envs;
+                envs.push_back("REQUEST_METHOD=" + method);
+                envs.push_back("PATH_INFO=" + path);
+                envs.push_back("SCRIPT_NAME=" + script_path);
+                envs.push_back("SERVER_PROTOCOL=HTTP/1.1");
+                envs.push_back("GATEWAY_INTERFACE=CGI/1.1");
 
-            char *argv[] = {const_cast<char *>(script_path.c_str()), NULL};
-            execve(script_path.c_str(), argv, &envp[0]);
-            std::cerr << "Erro ao executar CGI\n";
-            exit(1);
+                std::vector<char *> envp;
+                for (size_t i = 0; i < envs.size(); ++i)
+                    envp.push_back(const_cast<char *>(envs[i].c_str()));
+                envp.push_back(NULL);
+
+                char *argv[] = {const_cast<char *>(script_path.c_str()), NULL};
+                execve(script_path.c_str(), argv, &envp[0]);
+                std::cerr << "Erro ao executar CGI\n";
+                exit(1);
+            }
+            else
+            {
+                close(pipe_stdout[1]);
+                close(pipe_stdin[0]);
+                close(pipe_stdin[1]);
+
+                std::string cgi_output;
+                char buffer[1024];
+                int bytes_read;
+
+                while ((bytes_read = read(pipe_stdout[0], buffer, sizeof(buffer))) > 0)
+                    cgi_output.append(buffer, bytes_read);
+
+                close(pipe_stdout[0]);
+
+                send_response(fd, "200 OK", "text/html", cgi_output.substr(cgi_output.find("\r\n\r\n") + 4));
+
+
+                return;
+            }
         }
         else
         {
-            close(pipe_stdout[1]);
-            close(pipe_stdin[0]);
-            close(pipe_stdin[1]);
-
-            char temp[4096];
-            memset(temp, 0, sizeof(temp));
-            int bytes = read(pipe_stdout[0], temp, sizeof(temp) - 1);
-            close(pipe_stdout[0]);
-
-            send_response(fd, "200 OK", "text/html", std::string(temp, bytes));
+            std::string error404 = read_file(config.error_404);
+            send_response(fd, "404 Not Found", "text/html", error404);
             return;
         }
     }
@@ -360,7 +375,8 @@ int ft_server(const ServerConfig &config)
                 memset(buffer, 0, MAX_UPLOAD_SIZE);
 
                 int n = read(fd, buffer, MAX_UPLOAD_SIZE - 1);
-                std::cout << "Raw POST content:\n" << buffer << std::endl;
+                std::cout << "Raw POST content:\n"
+                          << buffer << std::endl;
 
                 if (n < 0)
                 {
@@ -382,7 +398,8 @@ int ft_server(const ServerConfig &config)
                 else
                 {
                     std::string request(buffer, n);
-                    std::cout << "Request from client FD " << fd << ":\n" << request << std::endl;
+                    std::cout << "Request from client FD " << fd << ":\n"
+                              << request << std::endl;
                     process_client_request(fd, request, config, master_set);
                 }
                 delete[] buffer;
