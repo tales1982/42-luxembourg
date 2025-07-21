@@ -212,10 +212,24 @@ static void handle_upload(int fd, const std::string &request, const ServerConfig
 //////////////////////////////////////////////////////////////////////////////
 static void process_client_request(int fd, const std::string &request, const ServerConfig &config, fd_set &master_set)
 {
+
     (void)&master_set;
     std::string method, path;
     std::istringstream iss(request);
     iss >> method >> path;
+    /*
+    ////////////////////////////////////////
+    // TESTE PARA CAMINHOS PROTEGIDO     ///
+    // http://localhost:8080/protegido   ///
+    // ERRO 401                          ///
+    ////////////////////////////////////////
+      if (path == "/protegido") {
+            std::string error401 = read_file(config.root + "/errors/401.html");
+            send_response(fd, "401 Unauthorized", "text/html", error401);
+            return;
+        }
+
+    */
 
     const LocationConfig *loc = match_location(config, path);
 
@@ -339,46 +353,58 @@ static void process_client_request(int fd, const std::string &request, const Ser
         return;
     }
 
-    // -------------------- DELETE --------------------
-    if (method == "DELETE")
+// -------------------- DELETE --------------------
+if (method == "DELETE")
+{
+    if (loc && loc->directives.count("methods"))
     {
-        if (loc && loc->directives.count("methods"))
+        std::string allowed = loc->directives.at("methods");
+
+        if ((method == "GET" && allowed.find("GET") == std::string::npos) ||
+            (method == "POST" && allowed.find("POST") == std::string::npos) ||
+            (method == "DELETE" && allowed.find("DELETE") == std::string::npos))
         {
-            std::string allowed = loc->directives.at("methods");
-            if (allowed.find("DELETE") == std::string::npos)
-            {
-                log_request(fd, method, path, "405 Method Not Allowed");
-                send_response(fd, "405 Method Not Allowed", "text/plain", "DELETE not allowed");
-                return;
-            }
+            std::string error405 = read_file(config.root + "/errors/405.html");
+            std::ostringstream response;
+            response << "HTTP/1.1 405 Method Not Allowed\r\n"
+                     << "Allow: " << allowed << "\r\n"
+                     << "Content-Type: text/html\r\n"
+                     << "Content-Length: " << error405.length() << "\r\n\r\n"
+                     << error405;
+
+            log_request(fd, method, path, "405 Method Not Allowed");
+            write(fd, response.str().c_str(), response.str().length());
+            return;
         }
+    }
 
-        std::string full_path = config.root + path;
+    std::string full_path = config.root + path;
 
-        struct stat st;
-        if (stat(full_path.c_str(), &st) == 0 && S_ISREG(st.st_mode))
+    struct stat st;
+    if (stat(full_path.c_str(), &st) == 0 && S_ISREG(st.st_mode))
+    {
+        if (unlink(full_path.c_str()) == 0)
         {
-            if (unlink(full_path.c_str()) == 0)
-            {
-                std::cout << "✔ Arquivo deletado: " << full_path << std::endl;
-                log_request(fd, method, path, "204 No Content");
-                send_response(fd, "204 No Content", "text/plain", "");
-            }
-            else
-            {
-                std::string error500 = read_file(config.error_500);
-                log_request(fd, method, path, "500 Internal Server Error");
-                send_response(fd, "500 Internal Server Error", "text/html", error500);
-            }
+            std::cout << "✔ Arquivo deletado: " << full_path << std::endl;
+            log_request(fd, method, path, "204 No Content");
+            send_response(fd, "204 No Content", "text/plain", "");
         }
         else
         {
-            std::string error404 = read_file(config.error_404);
-            log_request(fd, method, path, "404 Not Found");
-            send_response(fd, "404 Not Found", "text/html", error404);
+            std::string error500 = read_file(config.error_500);
+            log_request(fd, method, path, "500 Internal Server Error");
+            send_response(fd, "500 Internal Server Error", "text/html", error500);
         }
-        return;
     }
+    else
+    {
+        std::string error404 = read_file(config.error_404);
+        log_request(fd, method, path, "404 Not Found");
+        send_response(fd, "404 Not Found", "text/html", error404);
+    }
+    return;
+}
+
 
     // -------------------- Outras rotas especiais --------------------
     if (path == "/")
@@ -394,6 +420,16 @@ static void process_client_request(int fd, const std::string &request, const Ser
 
     // -------------------- Servir arquivo ou autoindex --------------------
     std::string full_path = config.root + path;
+
+    // NOVO: Verificação de permissão de leitura (403)
+    if (access(full_path.c_str(), R_OK) != 0)
+    {
+        std::string error403 = read_file(config.root + "/errors/403.html");
+        log_request(fd, method, path, "403 Forbidden");
+        send_response(fd, "403 Forbidden", "text/html", error403);
+        return;
+    }
+
     std::string content = read_file(full_path);
 
     if (content.empty())
@@ -419,7 +455,6 @@ static void process_client_request(int fd, const std::string &request, const Ser
         send_response(fd, "200 OK", get_mime_type(full_path), content);
     }
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Função principal do servidor:                                            //
