@@ -140,7 +140,6 @@ static void send_response(int fd, const std::string &status, const std::string &
 // - Cria diretório e salva arquivo                     //
 // - Retorna página de sucesso ou erro 500              //
 //////////////////////////////////////////////////////////
-
 static void handle_upload(int fd, const std::string &request, const ServerConfig &config)
 {
     std::size_t body_pos = request.find("\r\n\r\n");
@@ -228,11 +227,43 @@ static void handle_upload(int fd, const std::string &request, const ServerConfig
 //////////////////////////////////////////////////////////////////////////////
 static void process_client_request(int fd, const std::string &request, const ServerConfig &config, fd_set &master_set)
 {
-
     (void)&master_set;
     std::string method, path;
     std::istringstream iss(request);
     iss >> method >> path;
+
+    // ✅ Trata POST / antes de validar métodos permitidos
+    if (method == "POST" && path == "/")
+    {
+        std::string msg = "<html><body><h1>POST recebido com sucesso</h1></body></html>";
+        log_request(fd, method, path, "200 OK");
+        send_response(fd, "200 OK", "text/html", msg);
+        return;
+    }
+
+    // ✅ Atualiza path para index.html
+    if (path == "/")
+        path = "/index.html";
+
+    const LocationConfig *loc = match_location(config, path);
+
+    // ✅ Verifica se o método HTTP é permitido na rota
+    if (loc && loc->directives.count("methods"))
+    {
+        std::string allowed = loc->directives.at("methods");
+
+        if ((method == "GET" && allowed.find("GET") == std::string::npos) ||
+            (method == "POST" && allowed.find("POST") == std::string::npos) ||
+            (method == "PUT" && allowed.find("PUT") == std::string::npos) ||
+            (method == "DELETE" && allowed.find("DELETE") == std::string::npos))
+        {
+            std::string error405 = read_file(config.root + "/errors/405.html");
+            log_request(fd, method, path, "405 Method Not Allowed");
+            send_response(fd, "405 Method Not Allowed", "text/html", error405);
+            return;
+        }
+    }
+
     /*
     ////////////////////////////////////////
     // TESTE PARA CAMINHOS PROTEGIDO     ///
@@ -246,8 +277,6 @@ static void process_client_request(int fd, const std::string &request, const Ser
         }
 
     */
-
-    const LocationConfig *loc = match_location(config, path);
 
     // -------------------- CGI --------------------
     if (loc && loc->path == "/cgi-bin" && path.find("/cgi-bin/") == 0)
@@ -421,10 +450,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
         return;
     }
 
-    // -------------------- Outras rotas especiais --------------------
-    if (path == "/")
-        path = "/index.html";
-
+    // --- /all-uploads ---
     if (path == "/all-uploads")
     {
         std::string page = generate_all_uploads_page();
@@ -433,10 +459,27 @@ static void process_client_request(int fd, const std::string &request, const Ser
         return;
     }
 
+    // --- POST direto em /index.html ---
+    if (method == "POST" && path == "/index.html")
+    {
+        std::string msg = "<html><body><h1>POST recebido com sucesso</h1></body></html>";
+        log_request(fd, method, path, "200 OK");
+        send_response(fd, "200 OK", "text/html", msg);
+        return;
+    }
+
     // -------------------- Servir arquivo ou autoindex --------------------
     std::string full_path = config.root + path;
+    struct stat st;
+    if (stat(full_path.c_str(), &st) != 0)
+    {
+        std::string error404 = read_file(config.error_404);
+        log_request(fd, method, path, "404 Not Found");
+        send_response(fd, "404 Not Found", "text/html", error404);
+        return;
+    }
 
-    // NOVO: Verificação de permissão de leitura (403)
+    // Verificar permissão de leitura
     if (access(full_path.c_str(), R_OK) != 0)
     {
         std::string error403 = read_file(config.root + "/errors/403.html");
@@ -445,31 +488,30 @@ static void process_client_request(int fd, const std::string &request, const Ser
         return;
     }
 
-    std::string content = read_file(full_path);
+    // Se for diretório e autoindex estiver ativado
+    if (S_ISDIR(st.st_mode) &&
+        loc && loc->directives.count("autoindex") &&
+        loc->directives.at("autoindex") == "on")
+    {
+        std::string autoindexHtml = generate_autoindex(full_path, path);
+        log_request(fd, method, path, "200 OK");
+        send_response(fd, "200 OK", "text/html", autoindexHtml);
+        return;
+    }
 
+    // Se não for diretório, tentar ler o conteúdo
+    std::string content = read_file(full_path);
     if (content.empty())
     {
-        struct stat st;
-        if (stat(full_path.c_str(), &st) == 0 && S_ISDIR(st.st_mode) &&
-            loc && loc->directives.count("autoindex") && loc->directives.at("autoindex") == "on")
-        {
-            std::string autoindexHtml = generate_autoindex(full_path, path);
-            log_request(fd, method, path, "200 OK");
-            send_response(fd, "200 OK", "text/html", autoindexHtml);
-        }
-        else
-        {
-            std::string error404 = read_file(config.error_404);
-            log_request(fd, method, path, "404 Not Found");
-            send_response(fd, "404 Not Found", "text/html", error404);
-        }
+        std::string error404 = read_file(config.error_404);
+        log_request(fd, method, path, "404 Not Found");
+        send_response(fd, "404 Not Found", "text/html", error404);
     }
     else
     {
         log_request(fd, method, path, "200 OK");
         send_response(fd, "200 OK", get_mime_type(full_path), content);
     }
-
     if (!is_keep_alive(request))
     {
         std::cout << "🔌 Fechando conexão (sem keep-alive): FD " << fd << "\n";

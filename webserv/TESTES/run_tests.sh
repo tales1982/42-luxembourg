@@ -6,7 +6,7 @@ CGI_SCRIPT="cgi-bin/test.py"
 TEST_DIR="fotos"
 UPLOAD_ENDPOINT="/upload"
 REDIRECT_PATH="/redirect301"
-PROTECTED_FILE="arquivo_protegido.txt"
+PROTECTED_FILE="protected_file.txt"
 
 GREEN="\033[0;32m"
 RED="\033[0;31m"
@@ -15,7 +15,6 @@ NC="\033[0m" # No Color
 # Criação de arquivos e permissões
 touch $UPLOAD_FILE
 echo "Teste de upload automático" > $UPLOAD_FILE
-touch www/$PROTECTED_FILE
 chmod 000 www/$PROTECTED_FILE
 
 print_result() {

@@ -128,6 +128,14 @@ Esses logs ajudam no diagnóstico e no rastreio de comportamento HTTP.
 ⏱️ 6. Timeout e Keep-Alive
 Se o cliente não envia dados em 10 segundos, a conexão é encerrada.
 
+🧪 Testes Automatizados
+
+Execute:
+
+```bash
+cd TESTES
+./run_tests.sh
+
 Conexões com Connection: keep-alive são mantidas até o próximo timeout.
 
 🧑‍💻 Estrutura do Projeto
