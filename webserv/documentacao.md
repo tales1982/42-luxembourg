@@ -1,55 +1,106 @@
-✅ Já implementado:
-Funcionalidade	Status
-Parser de configuração estilo nginx	✅
-Servidor TCP não bloqueante	✅
-Suporte a múltiplas conexões (via select)	✅
-Suporte a uploads via POST /upload	✅
-Salvamento em pastas por tipo (fotos, pdfs, othes)	✅
-Mapeamento MIME-Type → extensão	✅
-Geração de HTML para listar arquivos	✅
-Preview de imagens (PNG, JPG) no HTML	✅
-Contador total de arquivos ({{COUNT}})	✅
-Página de sucesso após upload	✅
-CGI com suporte a script Python	✅
-Redirecionamentos (/redirect301, etc.)	✅
-Página de erro 404 e 500	✅
-Autoindex opcional via autoindex on	✅
+✅ O que já está implementado e funcional
+🔧 Funcionalidades principais:
+✅ Parsing completo de configuração (ConfigParser.cpp)
 
-⚠️ O que pode estar pendente ou melhorar:
-🧪 Validação completa do upload (robustez)
+✅ Suporte a CGI com scripts Python (script.py, upload_form.py)
 
-Se o Content-Length da requisição não for respeitado corretamente, o arquivo pode ser cortado.
+✅ Uploads multipart funcionando e organizados por tipo (handle_upload)
 
-A extração do conteúdo do arquivo usando find("\r\n\r\n") e rfind("------") pode falhar para arquivos grandes ou com conteúdo semelhante ao delimitador.
+✅ Sistema modular com RequestHandler, ResponseBuilder, Server
 
-✅ Solução sugerida: usar Content-Disposition e o boundary corretamente para parsear os dados multipart com mais segurança. Isso pode ser feito com parsing linha a linha ou separando por boundary.
+✅ Página de uploads com preview e contagem (generate_all_uploads_page)
 
-📄 Permitir envio de múltiplos arquivos (se quiser ir além)
+✅ Autoindex com HTML estilizado e substituição de variáveis
 
-Atualmente, só aceita um arquivo por form.
+✅ Redirecionamentos HTTP (301, 302, 307, 308)
 
-📂 Criação recursiva de pastas
+✅ Suporte a métodos GET e POST
 
-Verifique se as pastas ./www/fotos/, pdfs, othes são criadas automaticamente na inicialização.
+✅ Templates HTML personalizados para:
 
-🛑 Upload > 100MB não dá erro explícito
+Página principal (index.html)
 
-Embora você tenha o MAX_UPLOAD_SIZE, o servidor não retorna erro amigável caso o tamanho ultrapasse.
+Página de sucesso de upload
 
-✅ Dica: verificar client_max_body_size na config e validar o tamanho antes de salvar.
+Autoindex
 
-🔐 Segurança básica (opcional mas recomendado)
+Página de erro 404 e 500
 
-Impedir upload de arquivos com extensões .exe, .sh, etc.
+✅ Loop com select() para múltiplas conexões simultâneas (não bloqueante)
 
-Validar nomes dos arquivos (sanitização, evitar diretórios relativos).
+✅ Estrutura de config, server, cgi-bin, www bem organizada
 
-✅ Pequenos ajustes que valorizam:
-Incluir botão/link para acessar /all-uploads a partir da página de upload.
+✅ Logs básicos via std::cout (mas não persistente)
 
-Mostrar tamanho do arquivo ao lado do nome na lista.
 
-Ordenar arquivos por nome ou data de upload (se quiser melhorar a UX).
 
-Adicionar favicon e melhorar title das páginas HTML.
 
+3. 🧪 Validações do projeto da 42
+Conforme critérios da 42 para o webserv, ainda é necessário testar:
+
+Critério	Status
+✅ Múltiplas conexões simultâneas	OK
+✅ Upload multipart	OK
+✅ CGI (GET/POST)	OK
+✅ Redirecionamentos	OK
+✅ Parsing .conf	OK
+✅ Autoindex	OK
+✅ Método DELETE	Falta
+✅ Log de requisições	Falta
+⚠️ Validação de erros (403, 405)	Parcial
+⚠️ Timeout / keep-alive	Não presente, pode ser opcional
+
+✅ FUNCIONALIDADES IMPLEMENTADAS
+Funcionalidade	Status	Observação
+Parsing do config estilo nginx	✔️	listen, host, root, methods, autoindex, return, etc.
+Servidor HTTP	✔️	Bind, listen, accept, multiplexação com select()
+Upload via POST multipart	✔️	Inclui detecção de tipo, salvamento em pasta por extensão
+Geração de HTML dinâmica	✔️	Página /all-uploads com preview e contagem
+Autoindex	✔️	Diretórios com autoindex on geram listagem dinâmica
+Execução de CGI	✔️	Suporte completo com env vars, fork/execve
+Suporte ao método DELETE	✔️	Inclui verificação de permissão via methods
+Páginas de erro customizadas	✔️	Erros 404 e 500 definidos por error_page
+Suporte a redirecionamentos	✔️	Códigos 301, 302, 307, 308 com return
+Suporte a vários métodos	✔️	GET, POST, DELETE, com verificação por location
+Logging de requisições	✔️	Incluído via log_request()
+Templates HTML com placeholders	✔️	Sistema de substituição ({{PATH}}, {{COUNT}}, etc.)
+Compatível com C++98	✔️	Estilo e recursos usados respeitam a restrição
+
+🔍 O QUE PODE REVISAR/ADICIONAR (CHECK FINAL)
+Item	Ação sugerida
+Headers HTTP mais completos	Adicionar Date, Connection, Server nas respostas, se quiser enriquecer
+Timeouts e tempo de inatividade	Pode definir tempo limite para clientes ociosos
+Logs com timestamps e IP	Melhorar log_request() para incluir data/hora e IP do cliente
+Limite de tamanho do corpo POST	Verifique se client_max_body_size está sendo respeitado
+Código modular/documentado	Revisar duplicações, separar responsabilidade (ex: CGI handler separado)
+Validação de input no upload	Impedir nomes inválidos, ou extensões potencialmente perigosas
+Teste com navegadores e curl	Verificar resposta a métodos inesperados, headers malformados, etc.
+Teste de concorrência (stress)	Verifique estabilidade com múltiplos acessos simultâneos
+Suporte a múltiplos servidores	Se quiser avançar, parsing de múltiplos server {} no mesmo config
+
+✅ Conclusão
+Com base no seu código atual, você já tem um servidor HTTP completo e funcional com todas as funcionalidades principais esperadas em um projeto webserv da 42. A única etapa restante agora é:
+
+Revisar seu código com calma, olhando:
+
+legibilidade
+
+duplicações
+
+consistência de tratamento de erro
+
+Documentar:
+
+Adicione comentários finais
+
+Crie um README explicando como rodar e testar
+
+Testar com:
+
+curl
+
+navegadores modernos
+
+arquivos grandes e pequenos
+
+métodos inválidos

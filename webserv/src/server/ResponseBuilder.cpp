@@ -79,8 +79,8 @@ std::string generate_autoindex(const std::string &dirPath, const std::string &ur
 std::string generate_all_uploads_page()
 {
     const char *folders[] = {"./www/fotos/", "./www/pdfs/", "./www/othes/"};
-    const char *routes[]  = {"/fotos/", "/pdfs/", "/othes/"};
-    const char *titles[]  = {"📷 Fotos", "📄 PDFs", "📦 Outros Arquivos"};
+    const char *routes[] = {"/fotos/", "/pdfs/", "/othes/"};
+    const char *titles[] = {"📷 Fotos", "📄 PDFs", "📦 Outros Arquivos"};
 
     std::ostringstream combinedList;
     int total_files = 0;
@@ -113,11 +113,17 @@ std::string generate_all_uploads_page()
             {
                 combinedList << "<li><img src=\"" << url
                              << "\" alt=\"preview\" style=\"width:40px;height:auto;margin-right:10px;vertical-align:middle;border-radius:4px;\" />"
-                             << "<a href=\"" << url << "\">" << name << "</a></li>\n";
+                             << "<a href=\"" << url << "\">" << name << "</a>"
+                             << "<button onclick=\"deleteFile('" << url << "', this.parentNode)\""
+                             << " style=\"margin-left:10px;padding:4px 10px;background-color:#ff6b6b;border:none;border-radius:4px;color:white;cursor:pointer;\">🗑 Deletar</button>"
+                             << "</li>\n";
             }
             else
             {
-                combinedList << "<li><a href=\"" << url << "\">" << name << "</a></li>\n";
+                combinedList << "<li><a href=\"" << url << "\">" << name << "</a>"
+                             << "<button onclick=\"deleteFile('" << url << "', this.parentNode)\""
+                             << " style=\"margin-left:10px;padding:4px 10px;background-color:#ff6b6b;border:none;border-radius:4px;color:white;cursor:pointer;\">🗑 Deletar</button>"
+                             << "</li>\n";
             }
         }
 

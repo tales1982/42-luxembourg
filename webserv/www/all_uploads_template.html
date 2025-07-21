@@ -115,9 +115,29 @@
   <div class="container">
     <h1>Index of {{PATH}}</h1>
     <p>Total de arquivos: <strong>{{COUNT}}</strong></p>
-    <ul>
-      {{LIST}}
-    </ul>
+    <ul id="file-list">
+  {{LIST}}
+</ul>
+
+<script>
+function deleteFile(path, liElement) {
+  if (!confirm("Tem certeza que deseja deletar este arquivo?")) return;
+
+  fetch(path, { method: 'DELETE' })
+    .then(response => {
+      if (response.status === 204) {
+        liElement.remove(); // Remove visualmente da lista
+        alert("Arquivo deletado com sucesso.");
+      } else {
+        alert("Erro ao deletar: " + response.status);
+      }
+    })
+    .catch(() => {
+      alert("Erro ao conectar com o servidor.");
+    });
+}
+</script>
+
     <div class="links">
       <a href="http://localhost:8080/">Aller vers la Home</a>
     </div>

@@ -22,6 +22,16 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+///////////////////////////////////////
+// Exibe os Logs completos do sitema //
+///////////////////////////////////////
+static void log_request(int fd, const std::string &method, const std::string &path, const std::string &status)
+{
+    std::ostringstream oss;
+    oss << "[LOG] FD " << fd << " | " << method << " " << path << " => " << status << "\n";
+    std::cout << oss.str();
+}
+
 //////////////////////////////////////////////////////////
 // Inicializa o servidor com base na configuração:      //
 // - Cria socket TCP não bloqueante                     //
@@ -193,10 +203,12 @@ static void handle_upload(int fd, const std::string &request, const ServerConfig
 // - Verifica diretivas CGI e executa script via fork+execve                //
 // - Trata redirecionamentos usando diretiva 'return'                       //
 // - Chama handle_upload para POST /upload                                  //
+// - Executa deleção de arquivos para método DELETE                         //
+//   (verifica se DELETE é permitido no location, usa unlink no arquivo)    //
 // - Serve index.html para raiz                                             //
 // - Gera página de todas as uploads (/all-uploads)                         //
 // - Lê arquivo do sistema de arquivos ou gera autoindex para diretórios    //
-// - Retorna 200, 404 ou 500 conforme apropriado                            //
+// - Retorna 200, 204, 404, 405 ou 500 conforme apropriado                  //
 //////////////////////////////////////////////////////////////////////////////
 static void process_client_request(int fd, const std::string &request, const ServerConfig &config, fd_set &master_set)
 {
@@ -206,11 +218,13 @@ static void process_client_request(int fd, const std::string &request, const Ser
     iss >> method >> path;
 
     const LocationConfig *loc = match_location(config, path);
+
+    // -------------------- CGI --------------------
     if (loc && loc->path == "/cgi-bin" && path.find("/cgi-bin/") == 0)
     {
         std::string script_name = path;
-        std::string path_info = "";                                                  // Nenhum PATH_INFO adicional
-        std::string script_path = loc->directives.at("root") + "/" + path.substr(9); // nome do script
+        std::string path_info = "";
+        std::string script_path = loc->directives.at("root") + "/" + path.substr(9);
 
         struct stat st;
         if (stat(script_path.c_str(), &st) == 0 && (st.st_mode & S_IXUSR))
@@ -227,7 +241,6 @@ static void process_client_request(int fd, const std::string &request, const Ser
                 close(pipe_stdin[1]);
                 close(pipe_stdin[0]);
 
-                // Parse headers
                 std::string content_length = "";
                 std::string content_type = "";
                 size_t header_end = request.find("\r\n\r\n");
@@ -244,7 +257,6 @@ static void process_client_request(int fd, const std::string &request, const Ser
                     }
                 }
 
-                // Variáveis de ambiente CGI
                 std::vector<std::string> envs;
                 envs.push_back("REQUEST_METHOD=" + method);
                 envs.push_back("SCRIPT_NAME=" + script_name);
@@ -286,6 +298,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
                                        ? cgi_output.substr(body_start + 4)
                                        : cgi_output;
 
+                log_request(fd, method, path, "200 OK");
                 send_response(fd, "200 OK", "text/html", body);
                 return;
             }
@@ -293,12 +306,13 @@ static void process_client_request(int fd, const std::string &request, const Ser
         else
         {
             std::string error404 = read_file(config.error_404);
+            log_request(fd, method, path, "404 Not Found");
             send_response(fd, "404 Not Found", "text/html", error404);
             return;
         }
     }
 
-    // Redirecionamentos
+    // -------------------- Redirecionamento --------------------
     if (loc && loc->directives.count("return"))
     {
         std::istringstream ret(loc->directives.at("return"));
@@ -311,28 +325,74 @@ static void process_client_request(int fd, const std::string &request, const Ser
             response << "HTTP/1.1 " << code_str << " Redirect\r\n"
                      << "Location: " << url << "\r\n"
                      << "Content-Length: 0\r\n\r\n";
+            log_request(fd, method, path, code_str + " Redirect");
             write(fd, response.str().c_str(), response.str().length());
             return;
         }
     }
 
-    // Upload
+    // -------------------- Upload --------------------
     if (method == "POST" && path == "/upload")
     {
         handle_upload(fd, request, config);
+        log_request(fd, method, path, "200 OK");
         return;
     }
 
+    // -------------------- DELETE --------------------
+    if (method == "DELETE")
+    {
+        if (loc && loc->directives.count("methods"))
+        {
+            std::string allowed = loc->directives.at("methods");
+            if (allowed.find("DELETE") == std::string::npos)
+            {
+                log_request(fd, method, path, "405 Method Not Allowed");
+                send_response(fd, "405 Method Not Allowed", "text/plain", "DELETE not allowed");
+                return;
+            }
+        }
+
+        std::string full_path = config.root + path;
+
+        struct stat st;
+        if (stat(full_path.c_str(), &st) == 0 && S_ISREG(st.st_mode))
+        {
+            if (unlink(full_path.c_str()) == 0)
+            {
+                std::cout << "✔ Arquivo deletado: " << full_path << std::endl;
+                log_request(fd, method, path, "204 No Content");
+                send_response(fd, "204 No Content", "text/plain", "");
+            }
+            else
+            {
+                std::string error500 = read_file(config.error_500);
+                log_request(fd, method, path, "500 Internal Server Error");
+                send_response(fd, "500 Internal Server Error", "text/html", error500);
+            }
+        }
+        else
+        {
+            std::string error404 = read_file(config.error_404);
+            log_request(fd, method, path, "404 Not Found");
+            send_response(fd, "404 Not Found", "text/html", error404);
+        }
+        return;
+    }
+
+    // -------------------- Outras rotas especiais --------------------
     if (path == "/")
         path = "/index.html";
 
     if (path == "/all-uploads")
     {
         std::string page = generate_all_uploads_page();
+        log_request(fd, method, path, "200 OK");
         send_response(fd, "200 OK", "text/html", page);
         return;
     }
 
+    // -------------------- Servir arquivo ou autoindex --------------------
     std::string full_path = config.root + path;
     std::string content = read_file(full_path);
 
@@ -343,19 +403,23 @@ static void process_client_request(int fd, const std::string &request, const Ser
             loc && loc->directives.count("autoindex") && loc->directives.at("autoindex") == "on")
         {
             std::string autoindexHtml = generate_autoindex(full_path, path);
+            log_request(fd, method, path, "200 OK");
             send_response(fd, "200 OK", "text/html", autoindexHtml);
         }
         else
         {
             std::string error404 = read_file(config.error_404);
+            log_request(fd, method, path, "404 Not Found");
             send_response(fd, "404 Not Found", "text/html", error404);
         }
     }
     else
     {
+        log_request(fd, method, path, "200 OK");
         send_response(fd, "200 OK", get_mime_type(full_path), content);
     }
 }
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Função principal do servidor:                                            //
