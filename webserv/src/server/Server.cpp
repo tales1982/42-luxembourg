@@ -22,6 +22,22 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+/////////////////////////////////////////////
+///     Suporte a leitura do cobecario  /////
+/////////////////////////////////////////////
+bool is_keep_alive(const std::string &request)
+{
+    std::size_t pos = request.find("Connection:");
+    if (pos != std::string::npos)
+    {
+        std::size_t end = request.find("\r\n", pos);
+        std::string header = request.substr(pos, end - pos);
+        if (header.find("keep-alive") != std::string::npos)
+            return true;
+    }
+    return false;
+}
+
 ///////////////////////////////////////
 // Exibe os Logs completos do sitema //
 ///////////////////////////////////////
@@ -353,58 +369,57 @@ static void process_client_request(int fd, const std::string &request, const Ser
         return;
     }
 
-// -------------------- DELETE --------------------
-if (method == "DELETE")
-{
-    if (loc && loc->directives.count("methods"))
+    // -------------------- DELETE --------------------
+    if (method == "DELETE")
     {
-        std::string allowed = loc->directives.at("methods");
-
-        if ((method == "GET" && allowed.find("GET") == std::string::npos) ||
-            (method == "POST" && allowed.find("POST") == std::string::npos) ||
-            (method == "DELETE" && allowed.find("DELETE") == std::string::npos))
+        if (loc && loc->directives.count("methods"))
         {
-            std::string error405 = read_file(config.root + "/errors/405.html");
-            std::ostringstream response;
-            response << "HTTP/1.1 405 Method Not Allowed\r\n"
-                     << "Allow: " << allowed << "\r\n"
-                     << "Content-Type: text/html\r\n"
-                     << "Content-Length: " << error405.length() << "\r\n\r\n"
-                     << error405;
+            std::string allowed = loc->directives.at("methods");
 
-            log_request(fd, method, path, "405 Method Not Allowed");
-            write(fd, response.str().c_str(), response.str().length());
-            return;
+            if ((method == "GET" && allowed.find("GET") == std::string::npos) ||
+                (method == "POST" && allowed.find("POST") == std::string::npos) ||
+                (method == "DELETE" && allowed.find("DELETE") == std::string::npos))
+            {
+                std::string error405 = read_file(config.root + "/errors/405.html");
+                std::ostringstream response;
+                response << "HTTP/1.1 405 Method Not Allowed\r\n"
+                         << "Allow: " << allowed << "\r\n"
+                         << "Content-Type: text/html\r\n"
+                         << "Content-Length: " << error405.length() << "\r\n\r\n"
+                         << error405;
+
+                log_request(fd, method, path, "405 Method Not Allowed");
+                write(fd, response.str().c_str(), response.str().length());
+                return;
+            }
         }
-    }
 
-    std::string full_path = config.root + path;
+        std::string full_path = config.root + path;
 
-    struct stat st;
-    if (stat(full_path.c_str(), &st) == 0 && S_ISREG(st.st_mode))
-    {
-        if (unlink(full_path.c_str()) == 0)
+        struct stat st;
+        if (stat(full_path.c_str(), &st) == 0 && S_ISREG(st.st_mode))
         {
-            std::cout << "✔ Arquivo deletado: " << full_path << std::endl;
-            log_request(fd, method, path, "204 No Content");
-            send_response(fd, "204 No Content", "text/plain", "");
+            if (unlink(full_path.c_str()) == 0)
+            {
+                std::cout << "✔ Arquivo deletado: " << full_path << std::endl;
+                log_request(fd, method, path, "204 No Content");
+                send_response(fd, "204 No Content", "text/plain", "");
+            }
+            else
+            {
+                std::string error500 = read_file(config.error_500);
+                log_request(fd, method, path, "500 Internal Server Error");
+                send_response(fd, "500 Internal Server Error", "text/html", error500);
+            }
         }
         else
         {
-            std::string error500 = read_file(config.error_500);
-            log_request(fd, method, path, "500 Internal Server Error");
-            send_response(fd, "500 Internal Server Error", "text/html", error500);
+            std::string error404 = read_file(config.error_404);
+            log_request(fd, method, path, "404 Not Found");
+            send_response(fd, "404 Not Found", "text/html", error404);
         }
+        return;
     }
-    else
-    {
-        std::string error404 = read_file(config.error_404);
-        log_request(fd, method, path, "404 Not Found");
-        send_response(fd, "404 Not Found", "text/html", error404);
-    }
-    return;
-}
-
 
     // -------------------- Outras rotas especiais --------------------
     if (path == "/")
@@ -454,6 +469,16 @@ if (method == "DELETE")
         log_request(fd, method, path, "200 OK");
         send_response(fd, "200 OK", get_mime_type(full_path), content);
     }
+
+    if (!is_keep_alive(request))
+    {
+        std::cout << "🔌 Fechando conexão (sem keep-alive): FD " << fd << "\n";
+        if (FD_ISSET(fd, &master_set))
+        {
+            close(fd);
+            FD_CLR(fd, &master_set);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -497,7 +522,16 @@ int ft_server(const ServerConfig &config)
     while (true)
     {
         read_set = master_set;
-        int activity = select(max_fd + 1, &read_set, NULL, NULL, NULL);
+        struct timeval timeout;
+        timeout.tv_sec = 10; // timeout de 10 segundos
+        timeout.tv_usec = 0;
+        int activity = select(max_fd + 1, &read_set, NULL, NULL, &timeout);
+
+        if (activity == 0)
+        {
+            // Timeout sem atividade
+            continue;
+        }
 
         if (activity < 0)
         {

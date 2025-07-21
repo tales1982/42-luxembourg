@@ -1,106 +1,163 @@
-✅ O que já está implementado e funcional
-🔧 Funcionalidades principais:
-✅ Parsing completo de configuração (ConfigParser.cpp)
+📚 1. Sobre o Projeto
+🌐 O que é este projeto?
+Este projeto é um servidor HTTP feito em C++98, desenvolvido do zero, que simula o comportamento básico de servidores como Nginx e Apache. Ele é capaz de processar requisições HTTP e responder de acordo com as diretivas definidas em um arquivo de configuração estilo nginx.conf.
 
-✅ Suporte a CGI com scripts Python (script.py, upload_form.py)
+🔧 Funcionalidades implementadas:
+Servidor multi-clientes com select() (não bloqueante)
 
-✅ Uploads multipart funcionando e organizados por tipo (handle_upload)
+Suporte a métodos HTTP: GET, POST, DELETE
 
-✅ Sistema modular com RequestHandler, ResponseBuilder, Server
+Upload de arquivos multipart/form-data
 
-✅ Página de uploads com preview e contagem (generate_all_uploads_page)
+Execução de scripts CGI (Python)
 
-✅ Autoindex com HTML estilizado e substituição de variáveis
+Autoindex (listagem de diretórios)
 
-✅ Redirecionamentos HTTP (301, 302, 307, 308)
+Sistema de rotas (location) com redirecionamentos
 
-✅ Suporte a métodos GET e POST
+Páginas de erro personalizadas (401, 403, 404, 405, 500)
 
-✅ Templates HTML personalizados para:
+Logs de requisições
 
-Página principal (index.html)
+Keep-Alive e Timeout
 
-Página de sucesso de upload
+Sistema de templates HTML dinâmicos
 
-Autoindex
+Divisão dos uploads por tipo de arquivo (ex: imagens, texto, binários)
 
-Página de erro 404 e 500
+Interface HTML para simular visualmente os erros HTTP
 
-✅ Loop com select() para múltiplas conexões simultâneas (não bloqueante)
+⚙️ 2. Como compilar e executar
+🧱 Pré-requisitos:
+Sistema UNIX (Linux/macOS)
 
-✅ Estrutura de config, server, cgi-bin, www bem organizada
+C++ compilador com suporte C++98 (g++)
 
-✅ Logs básicos via std::cout (mas não persistente)
+Python 3 (para testes CGI)
 
+🛠️ Compilação:
+bash
+Copy
+Edit
+make
+Isso irá compilar o servidor com os arquivos em src/ e gerar um binário chamado webserv.
 
+🚀 Execução:
+bash
+Copy
+Edit
+./webserv config/default.conf
+Isso inicia o servidor com a configuração padrão disponível.
 
+🧪 3. Como testar as funcionalidades
+Você pode usar:
 
-3. 🧪 Validações do projeto da 42
-Conforme critérios da 42 para o webserv, ainda é necessário testar:
+Navegador (para testes visuais)
 
-Critério	Status
-✅ Múltiplas conexões simultâneas	OK
-✅ Upload multipart	OK
-✅ CGI (GET/POST)	OK
-✅ Redirecionamentos	OK
-✅ Parsing .conf	OK
-✅ Autoindex	OK
-✅ Método DELETE	Falta
-✅ Log de requisições	Falta
-⚠️ Validação de erros (403, 405)	Parcial
-⚠️ Timeout / keep-alive	Não presente, pode ser opcional
+curl no terminal
 
-✅ FUNCIONALIDADES IMPLEMENTADAS
-Funcionalidade	Status	Observação
-Parsing do config estilo nginx	✔️	listen, host, root, methods, autoindex, return, etc.
-Servidor HTTP	✔️	Bind, listen, accept, multiplexação com select()
-Upload via POST multipart	✔️	Inclui detecção de tipo, salvamento em pasta por extensão
-Geração de HTML dinâmica	✔️	Página /all-uploads com preview e contagem
-Autoindex	✔️	Diretórios com autoindex on geram listagem dinâmica
-Execução de CGI	✔️	Suporte completo com env vars, fork/execve
-Suporte ao método DELETE	✔️	Inclui verificação de permissão via methods
-Páginas de erro customizadas	✔️	Erros 404 e 500 definidos por error_page
-Suporte a redirecionamentos	✔️	Códigos 301, 302, 307, 308 com return
-Suporte a vários métodos	✔️	GET, POST, DELETE, com verificação por location
-Logging de requisições	✔️	Incluído via log_request()
-Templates HTML com placeholders	✔️	Sistema de substituição ({{PATH}}, {{COUNT}}, etc.)
-Compatível com C++98	✔️	Estilo e recursos usados respeitam a restrição
+Interface gráfica de testes: simulador.html
 
-🔍 O QUE PODE REVISAR/ADICIONAR (CHECK FINAL)
-Item	Ação sugerida
-Headers HTTP mais completos	Adicionar Date, Connection, Server nas respostas, se quiser enriquecer
-Timeouts e tempo de inatividade	Pode definir tempo limite para clientes ociosos
-Logs com timestamps e IP	Melhorar log_request() para incluir data/hora e IP do cliente
-Limite de tamanho do corpo POST	Verifique se client_max_body_size está sendo respeitado
-Código modular/documentado	Revisar duplicações, separar responsabilidade (ex: CGI handler separado)
-Validação de input no upload	Impedir nomes inválidos, ou extensões potencialmente perigosas
-Teste com navegadores e curl	Verificar resposta a métodos inesperados, headers malformados, etc.
-Teste de concorrência (stress)	Verifique estabilidade com múltiplos acessos simultâneos
-Suporte a múltiplos servidores	Se quiser avançar, parsing de múltiplos server {} no mesmo config
+✅ Testes básicos
+1. Página inicial
+bash
+Copy
+Edit
+curl http://localhost:8080/
+2. Autoindex
+bash
+Copy
+Edit
+curl http://localhost:8080/fotos/
+3. Upload de arquivo
+Use o formulário HTML em /upload.html ou:
 
-✅ Conclusão
-Com base no seu código atual, você já tem um servidor HTTP completo e funcional com todas as funcionalidades principais esperadas em um projeto webserv da 42. A única etapa restante agora é:
+bash
+Copy
+Edit
+curl -F "file=@arquivo.txt" http://localhost:8080/upload
+4. Excluir arquivo
+bash
+Copy
+Edit
+curl -X DELETE http://localhost:8080/fotos/file_123456.png
+5. Executar script CGI (Python)
+bash
+Copy
+Edit
+curl http://localhost:8080/cgi-bin/test.py
+6. Redirecionamento
+bash
+Copy
+Edit
+curl -i http://localhost:8080/redirect301
+7. Erro 405 (método não permitido)
+bash
+Copy
+Edit
+curl -X DELETE http://localhost:8080/
+8. Erro 403 (sem permissão de leitura)
+bash
+Copy
+Edit
+chmod 000 www/arquivo.txt
+curl http://localhost:8080/arquivo.txt
+9. Erro 404 (arquivo inexistente)
+bash
+Copy
+Edit
+curl http://localhost:8080/nada.html
+🧪 4. Simulador de Erros HTTP (HTML)
+Abra no navegador:
 
-Revisar seu código com calma, olhando:
+bash
+Copy
+Edit
+http://localhost:8080/simulador.html
+Essa página possui botões para simular os erros 401, 403, 404, 405 e 500 carregando suas respectivas páginas de erro dentro de um iframe.
 
-legibilidade
+🧾 5. Logs de requisição
+A cada requisição recebida, o servidor imprime no terminal:
 
-duplicações
+pgsql
+Copy
+Edit
+[LOG] FD 4 | GET /index.html => 200 OK
+Esses logs ajudam no diagnóstico e no rastreio de comportamento HTTP.
 
-consistência de tratamento de erro
+⏱️ 6. Timeout e Keep-Alive
+Se o cliente não envia dados em 10 segundos, a conexão é encerrada.
 
-Documentar:
+Conexões com Connection: keep-alive são mantidas até o próximo timeout.
 
-Adicione comentários finais
+🧑‍💻 Estrutura do Projeto
+bash
+Copy
+Edit
+.
+├── config/
+│   └── default.conf
+├── www/
+│   ├── index.html
+│   ├── upload_success.html
+│   └── errors/
+│       ├── 401.html
+│       ├── 403.html
+│       ├── 404.html
+│       ├── 405.html
+│       └── 500.html
+├── Uploads/
+│   ├── imagens/
+│   ├── pdfs/
+│   ├── textos/
+│   └── ...
+├── src/
+│   ├── Server.cpp
+│   ├── RequestHandler.cpp
+│   └── ...
+├── include/
+│   └── ...
+└── Makefile
+✍️ Créditos
+Projeto desenvolvido por [Tales, Sandro, Andre --> 42LUXEMBOURG] como parte do módulo de Redes e Webservers.
 
-Crie um README explicando como rodar e testar
-
-Testar com:
-
-curl
-
-navegadores modernos
-
-arquivos grandes e pequenos
-
-métodos inválidos
