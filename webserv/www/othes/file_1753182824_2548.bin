@@ -1,0 +1,60 @@
+# Servidor HTTP em C++98
+
+## 📚 Sobre o Projeto
+
+Este é um servidor HTTP minimalista desenvolvido em C++98. Ele simula funcionalidades básicas de servidores como Nginx, incluindo suporte a múltiplos métodos HTTP, upload de arquivos, execução de scripts CGI e muito mais.
+
+## 🔧 Funcionalidades
+
+- Suporte a GET, POST, DELETE
+- Upload multipart/form-data
+- Execução de scripts CGI (Python)
+- Autoindex
+- Rotas e redirecionamentos
+- Páginas de erro personalizadas (401, 403, 404, 405, 500)
+- Log de requisições
+- Suporte a keep-alive e timeout
+- Interface HTML para testes de erro
+
+## ⚙️ Como compilar e rodar
+
+### Pré-requisitos
+- Linux/macOS
+- Compilador C++98
+- Python 3
+
+### Compilação
+```bash
+make
+```
+
+### Execução
+```bash
+./webserv config/default.conf
+```
+
+## 🧪 Testes
+
+### Testes com curl
+```bash
+curl http://localhost:8080/
+curl -F "file=@arquivo.txt" http://localhost:8080/upload
+curl -X DELETE http://localhost:8080/arquivo.txt
+```
+
+### Página de simulação de erros
+Abra no navegador:
+```
+http://localhost:8080/simulador.html
+```
+
+## 📂 Estrutura do Projeto
+
+- `src/`: Código-fonte
+- `www/`: Arquivos HTML e erros
+- `Uploads/`: Arquivos enviados
+- `config/`: Configuração
+
+## ✍️ Autor
+Tales @ 42SP
+

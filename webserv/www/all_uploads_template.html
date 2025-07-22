@@ -1,23 +1,21 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Index of {{ PATH }}</title>
+  <title>Index de {{ PATH }}</title>
   <style>
     :root {
-      --bg-page-start: #eef2f7;
-      --bg-page-end: #dfe4ea;
-      --bg-box: #ffffff;
-      --accent-start: #6a11cb;
-      --accent-end: #2575fc;
-      --text-main: #2d3436;
-      --text-link: #2575fc;
-      --hover-bg: #f1f3f5;
-      --btn-gradient-start: #ff6a00;
-      --btn-gradient-end: #ee0979;
+      --bg-start: #4ba1b7;
+      --bg-end: #184830;
+      --box-bg: rgba(255, 255, 255, 0.15);
+      --box-border: rgba(255, 255, 255, 0.25);
+      --text-main: #ffffff;
+      --text-secondary: #e0e0e0;
+      --link: #00ffe7;
+      --hover-bg: rgba(255, 255, 255, 0.05);
+      --btn-start: #ff6a00;
+      --btn-end: #ee0979;
       --btn-text: #ffffff;
-      --btn-hover-offset: 4px;
-      --box-shadow: 0 12px 32px rgba(0,0,0,0.08);
     }
 
     *, *::before, *::after {
@@ -26,120 +24,130 @@
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
+      height: 100%;
       font-family: 'Segoe UI', Tahoma, sans-serif;
-     background: linear-gradient(120deg, #4ba1b7, #184830);
+      background: linear-gradient(120deg, var(--bg-start), var(--bg-end));
       color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
       padding: 2rem;
     }
 
     .container {
-      background: var(--bg-box);
-      padding: 2.5rem 3rem;
-      border-radius: 16px;
-      box-shadow: var(--box-shadow);
-      max-width: 600px;
       width: 100%;
+      max-width: 600px;
+      background: var(--box-bg);
+      border: 1px solid var(--box-border);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
       text-align: center;
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 1.75rem;
-      background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ffcc70, #ff7eb3);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      border-bottom: 3px solid var(--accent-end);
-      padding-bottom: 0.75rem;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
     }
 
     ul {
       list-style: none;
+      padding-left: 0;
       margin-bottom: 2rem;
     }
 
     li {
-      margin: 0.75rem 0;
-      padding: 1rem 1.25rem;
-      background-color: var(--bg-page-end);
-      border-left: 5px solid var(--accent-start);
+      background: var(--hover-bg);
+      border-left: 4px solid var(--link);
+      margin: 0.5rem 0;
+      padding: 0.75rem 1rem;
       border-radius: 8px;
-      transition: background-color 0.2s, transform 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s ease;
     }
 
     li:hover {
-      background-color: var(--hover-bg);
-      transform: translateX(8px);
+      transform: translateX(5px);
     }
 
-    a {
+    li a {
       text-decoration: none;
-      color: var(--text-link);
-      font-weight: 600;
+      color: var(--link);
+      font-weight: 500;
     }
 
-    a:hover {
-      color: var(--accent-end);
-      text-decoration: underline;
+    .file-icon {
+      margin-right: 0.5rem;
     }
 
-    /* NOVO ESTILO DE BOTÃO */
     .links {
-      margin-top: 1.5rem;
+      margin-top: 2rem;
     }
 
     .links a {
       display: inline-block;
       padding: 0.75rem 1.75rem;
-      background: linear-gradient(45deg, var(--btn-gradient-start), var(--btn-gradient-end));
-      color: var(--btn-text);
-      text-decoration: none;
+      font-weight: bold;
       font-size: 1rem;
-      font-weight: 600;
+      text-decoration: none;
+      color: var(--btn-text);
+      background: linear-gradient(45deg, var(--btn-start), var(--btn-end));
       border-radius: 50px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.12);
-      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .links a:hover {
-      transform: translateY(-var(--btn-hover-offset));
-      box-shadow: 0 12px 24px rgba(0,0,0,0.16);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.4);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Index of {{PATH}}</h1>
-    <p>Total de arquivos: <strong>{{COUNT}}</strong></p>
+    <h1>🗂️ Index de {{PATH}}</h1>
+    <p>Nombre total de fichiers : <strong>{{COUNT}}</strong></p>
+
     <ul id="file-list">
-  {{LIST}}
-</ul>
+      {{LIST}}
+    </ul>
 
-<script>
-function deleteFile(path, liElement) {
-  if (!confirm("Tem certeza que deseja deletar este arquivo?")) return;
+    <script>
+      function deleteFile(path, liElement) {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer ce fichier ?")) return;
 
-  fetch(path, { method: 'DELETE' })
-    .then(response => {
-      if (response.status === 204) {
-        liElement.remove(); // Remove visualmente da lista
-        alert("Arquivo deletado com sucesso.");
-      } else {
-        alert("Erro ao deletar: " + response.status);
+        fetch(path, { method: 'DELETE' })
+          .then(response => {
+            if (response.status === 204) {
+              liElement.remove();
+              alert("Fichier supprimé avec succès.");
+            } else {
+              alert("Erreur lors de la suppression : " + response.status);
+            }
+          })
+          .catch(() => {
+            alert("Erreur de connexion avec le serveur.");
+          });
       }
-    })
-    .catch(() => {
-      alert("Erro ao conectar com o servidor.");
-    });
-}
-</script>
+    </script>
 
     <div class="links">
-      <a href="http://localhost:8080/">Aller vers la Home</a>
+      <a href="http://localhost:8080/">⬅ Retour à l'accueil</a>
+      <a href="http://localhost:8080/tests/index_tests.html">⬅ Retour à la  page tests</a>
     </div>
   </div>
 </body>

@@ -231,6 +231,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
     std::string method, path;
     std::istringstream iss(request);
     iss >> method >> path;
+    
 
     // ✅ Trata POST / antes de validar métodos permitidos
     if (method == "POST" && path == "/")

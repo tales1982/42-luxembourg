@@ -81,6 +81,7 @@ html = f"""
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
+      margin: 10px;
     }}
 
     .btn-refresh:hover {{
@@ -95,7 +96,7 @@ html = f"""
     <p>Date et heure actuelles :<br><strong>{date_actuelle}</strong></p>
     <form method="post">
       <button type="submit" class="btn-refresh">Actualiser</button>
-      <a href="/" class="btn-refresh">Aller vers Home</a>
+      <a class="btn-refresh" href="http://localhost:8080/tests/index_tests.html">⬅ Retour à la page tests</a>
     </form>
   </div>
 </body>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>WebServ - Tests Obligatoires</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: #ffcc70;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #e0e0e0;
+      margin-bottom: 1rem;
+    }
+
+    .card a {
+      background: linear-gradient(45deg, #00ffcc, #00b894);
+      padding: 0.6rem 1.2rem;
+      color: black;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: background 0.2s ease;
+    }
+
+    .card a:hover {
+      background: linear-gradient(45deg, #00e6b0, #00a383);
+    }
+
+    .back-button {
+      display: flex;
+      justify-content: center;
+      margin-top: 3rem;
+    }
+
+    .back-button a {
+      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+      padding: 0.8rem 1.8rem;
+      color: #fff;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: background 0.2s ease;
+    }
+
+    .back-button a:hover {
+      background: linear-gradient(45deg, #ff8787, #ff6f61);
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🌐 Tests Obligatoires - WebServ</h1>
+  <div class="grid">
+    <div class="card">
+      <h2>GET</h2>
+      <p>Tester la méthode GET en accédant à index.html</p>
+      <a href="/">Essayer</a>
+    </div>
+    <div class="card">
+      <h2>POST</h2>
+      <p>Envoyer une requête POST à la racine ou vers un script</p>
+      <a href="/cgi-bin/script.py">Essayer</a>
+    </div>
+    <div class="card">
+      <h2>DELETE</h2>
+      <p>Supprimer un fichier.</p>
+      <a href="/all-uploads">Essayer</a>
+    </div>
+    <div class="card">
+      <h2>UPLOAD (CGI)</h2>
+      <p>Téléverser un fichier via un formulaire CGI</p>
+      <a href="/cgi-bin/upload_form.py">Essayer</a>
+    </div>
+    <div class="card">
+      <h2>UPLOAD (Natif)</h2>
+      <p>Transfert de fichiers sans CGI (natif)</p>
+      <a href="/transfert_fichier.html">Essayer</a>
+    </div>
+    <div class="card">
+      <h2>Download (CGI)</h2>
+      <p>Télécharger un fichier via un script CGI</p>
+      <a href="/cgi-bin/download_cgi.py">Essayer</a>
+    </div>
+
+    <div class="card">
+      <h2>Download (Natif)</h2>
+      <p>Télécharger un fichier statique (sans CGI)</p>
+      <a href="/download_native.html">Essayer</a>
+    </div>
+
+    <div class="card">
+      <h2>Lister un Répertoire</h2>
+      <p>Voir les tous le fichiers dans le dossier</p>
+      <a href="http://localhost:8080/all-uploads">Essayer</a>
+    </div>
+    <div class="card">
+      <h2>Redirection</h2>
+      <p>Redirection 301 vers une URL externe</p>
+      <a href="/redirect301">Essayer</a>
+    </div>
+    <div class="card">
+      <h2>Pages d'Erreur Personnalisées</h2>
+      <p>Afficher les pages 404, 403, 405, 500</p>
+      <a href="/test_errors.html">Essayer</a>
+    </div>
+    <div class="card">
+      <h2>Alias</h2>
+      <p>Accéder à banane.html via une route alias</p>
+      <a href="/youpi.bla">Essayer</a>
+    </div>
+  </div>
+
+  <div class="back-button">
+    <a href="/">⬅ Retour à l'accueil</a>
+  </div>
+
+</body>
+
+</html>
