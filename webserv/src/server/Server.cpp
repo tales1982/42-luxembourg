@@ -21,10 +21,9 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <cctype>     // std::tolower
-#include <strings.h>  // strncasecmp  (POSIX)
-#include <ctime>      // std::time (você usa em handle_upload)
-
+#include <cctype>    // std::tolower
+#include <strings.h> // strncasecmp  (POSIX)
+#include <ctime>     // std::time (você usa em handle_upload)
 
 /////////////////////////////////////////////
 ///     Suporte a leitura do cobecario  /////
@@ -305,17 +304,6 @@ static void process_client_request(int fd, const std::string &request, const Ser
     std::istringstream iss(request);
     iss >> method >> path;
 
-    // ✅ Trata POST / antes de validar métodos permitidos
-/*     if (method == "POST" && path == "/")
-    {
-        std::string msg = "<html><body><h1>POST recebido com sucesso</h1></body></html>";
-        log_request(fd, method, path, "200 OK");
-        send_response(fd, "200 OK", "text/html", msg, (method=="HEAD"), is_keep_alive(request));
-
-        return;
-    } */
-
-    // ✅ Atualiza path para index.html
     if (path == "/")
         path = "/index.html";
 
@@ -324,33 +312,230 @@ static void process_client_request(int fd, const std::string &request, const Ser
     // ✅ Verifica se o método HTTP é permitido na rota
     if (loc && loc->directives.count("methods"))
     {
-        std::string allowed = loc->directives.at("methods");
-
-        if ((method == "GET" && allowed.find("GET") == std::string::npos) ||
-            (method == "POST" && allowed.find("POST") == std::string::npos) ||
-            (method == "PUT" && allowed.find("PUT") == std::string::npos) ||
-            (method == "DELETE" && allowed.find("DELETE") == std::string::npos))
+        // 👉 não 405 aqui para POST em arquivos .bla; deixa o handler do .bla decidir
+        bool is_bla_post = (method == "POST" && path.size() >= 4 && path.substr(path.size() - 4) == ".bla");
+        if (!is_bla_post)
         {
-            std::string error405 = read_file(config.root + "/errors/405.html");
-            log_request(fd, method, path, "405 Method Not Allowed");
-            send_response(fd, "405 Method Not Allowed", "text/html", error405);
+            std::string allowed = loc->directives.at("methods");
+            if ((method == "GET" && allowed.find("GET") == std::string::npos) ||
+                (method == "POST" && allowed.find("POST") == std::string::npos) ||
+                (method == "PUT" && allowed.find("PUT") == std::string::npos) ||
+                (method == "DELETE" && allowed.find("DELETE") == std::string::npos))
+            {
+                std::string error405 = read_file(config.root + "/errors/405.html");
+                log_request(fd, method, path, "405 Method Not Allowed");
+                send_response(fd, "405 Method Not Allowed", "text/html", error405,
+                              (method == "HEAD"), is_keep_alive(request));
+                return;
+            }
+        }
+    }
+
+    /* ------------- AQUI: BLOCO DO PUT /put_test ------------- */
+    if (method == "PUT" && path.rfind("/put_test/", 0) == 0)
+    { // começa com /put_test/
+        // Descobre root definido para /put_test no config (ubuntu_tester.conf usa ./put_store)
+        const LocationConfig *putLoc = match_location(config, "/put_test");
+        std::string putRoot = (putLoc && putLoc->directives.count("root"))
+                                  ? putLoc->directives.at("root")
+                                  : "./put_store";
+        mkdir(putRoot.c_str(), 0777);
+
+        // Sufixo após "/put_test/"
+        std::string rel = path.substr(10); // len("/put_test/") = 10
+        if (rel.empty())
+            rel = "put_file.dat";
+
+        std::string full = putRoot + "/" + rel;
+
+        // Corpo da requisição
+        size_t hdr_end = request.find("\r\n\r\n");
+        std::string body = (hdr_end != std::string::npos) ? request.substr(hdr_end + 4) : "";
+
+        // Grava o arquivo
+        std::ofstream out(full.c_str(), std::ios::binary);
+        if (!out)
+        {
+            std::string error500 = read_file(config.error_500);
+            send_response(fd, "500 Internal Server Error", "text/html", error500,
+                          (method == "HEAD"), is_keep_alive(request));
+            return;
+        }
+        out.write(body.data(), body.size());
+        out.close();
+
+        // 201 Created sem corpo está ok para PUT
+        log_request(fd, method, path, "201 Created");
+        send_response(fd, "201 Created", "text/plain", "",
+                      (method == "HEAD"), is_keep_alive(request));
+        return;
+    }
+    /* --------- FIM DO BLOCO PUT /put_test  --------- */
+    // -------------------- CGI por extensão .bla (POST via ./cgi_test) --------------------
+    if (path.size() >= 4 && path.substr(path.size() - 4) == ".bla" && method == "POST")
+    {
+        // Pega root e cgi_path da location; se faltar, usa defaults do tester
+        const LocationConfig *blaLoc = match_location(config, path);
+        std::string cgi_exec = (blaLoc && blaLoc->directives.count("cgi_path"))
+                                   ? blaLoc->directives.at("cgi_path")
+                                   : "./cgi_test";
+        std::string root = (blaLoc && blaLoc->directives.count("root"))
+                               ? blaLoc->directives.at("root")
+                               : "./YoupiBanane";
+
+        // Separa caminho e query
+        std::string url_path, query;
+        split_path_query(path, url_path, query);
+
+        // Mapear URL -> FS: ex. /youpi.bla => ./YoupiBanane/youpi.bla
+        std::string script_fs = root + url_path;
+
+        // Body e headers
+        size_t hdr_end = request.find("\r\n\r\n");
+        std::string req_body = (hdr_end != std::string::npos) ? request.substr(hdr_end + 4) : "";
+        std::string content_length = get_header_value(request, "Content-Length");
+        std::string content_type = get_header_value(request, "Content-Type");
+
+        // Pipes
+        int pipe_out[2], pipe_in[2];
+        if (pipe(pipe_out) == -1 || pipe(pipe_in) == -1)
+        {
+            std::string error500 = read_file(config.error_500);
+            send_response(fd, "500 Internal Server Error", "text/html", error500,
+                          (method == "HEAD"), is_keep_alive(request));
+            return;
+        }
+
+        pid_t pid = fork();
+        if (pid == -1)
+        {
+            std::string error500 = read_file(config.error_500);
+            send_response(fd, "500 Internal Server Error", "text/html", error500,
+                          (method == "HEAD"), is_keep_alive(request));
+            return;
+        }
+
+        if (pid == 0)
+        {
+            // Filho: conecta stdin/stdout
+            dup2(pipe_in[0], STDIN_FILENO);
+            dup2(pipe_out[1], STDOUT_FILENO);
+            close(pipe_in[1]);
+            close(pipe_out[0]);
+            close(pipe_in[0]);
+            close(pipe_out[1]);
+
+            // ENV CGI (INCLUI REQUEST_METHOD!)
+            std::vector<std::string> envs;
+            envs.push_back("GATEWAY_INTERFACE=CGI/1.1");
+            envs.push_back("SERVER_PROTOCOL=HTTP/1.1");
+            envs.push_back("REQUEST_METHOD=" + method);
+            envs.push_back("QUERY_STRING=" + query);
+            envs.push_back("SCRIPT_NAME=" + url_path);
+            envs.push_back("SCRIPT_FILENAME=" + script_fs);
+            envs.push_back("PATH_INFO=");
+            envs.push_back("SERVER_NAME=localhost");
+            envs.push_back("SERVER_PORT=" + ((config.port > 0) ? to_string_i(config.port) : std::string("8080")));
+            if (!content_type.empty())
+                envs.push_back("CONTENT_TYPE=" + content_type);
+            if (!content_length.empty())
+                envs.push_back("CONTENT_LENGTH=" + content_length);
+            envs.push_back("REDIRECT_STATUS=200");
+
+            std::vector<char *> envp;
+            for (size_t i = 0; i < envs.size(); ++i)
+                envp.push_back(const_cast<char *>(envs[i].c_str()));
+            envp.push_back(0);
+
+            // Executável CGI direto
+            const char *argv_exec[3];
+            argv_exec[0] = cgi_exec.c_str();
+            argv_exec[1] = script_fs.c_str(); // maioria aceita argv[1] como caminho
+            argv_exec[2] = 0;
+
+            execve(cgi_exec.c_str(), const_cast<char *const *>(argv_exec), &envp[0]);
+            _exit(127);
+        }
+        else
+        {
+            // Pai: envia body e lê resposta
+            close(pipe_in[0]);
+            close(pipe_out[1]);
+
+            if (!req_body.empty())
+            {
+                ssize_t off = 0;
+                while (off < (ssize_t)req_body.size())
+                {
+                    ssize_t w = write(pipe_in[1], req_body.data() + off, req_body.size() - off);
+                    if (w <= 0)
+                        break;
+                    off += w;
+                }
+            }
+            close(pipe_in[1]);
+
+            std::string cgi_raw;
+            char buf[4096];
+            ssize_t n;
+            while ((n = read(pipe_out[0], buf, sizeof(buf))) > 0)
+                cgi_raw.append(buf, n);
+            close(pipe_out[0]);
+
+            // separa headers e body
+            std::string::size_type sep = cgi_raw.find("\r\n\r\n");
+            std::string cgi_headers = (sep != std::string::npos) ? cgi_raw.substr(0, sep) : "";
+            std::string cgi_body = (sep != std::string::npos) ? cgi_raw.substr(sep + 4) : cgi_raw;
+
+            int status_code = 200;
+            std::string status_text = "OK";
+            std::string contentType = "text/plain";
+            std::istringstream hs(cgi_headers);
+            for (std::string line; std::getline(hs, line);)
+            {
+                if (!line.empty() && line[line.size() - 1] == '\r')
+                    line.erase(line.size() - 1);
+                if (line.size() > 8 && !strncasecmp(line.c_str(), "Status: ", 8))
+                {
+                    std::istringstream ss(line.substr(8));
+                    ss >> status_code;
+                    std::getline(ss, status_text);
+                    if (!status_text.empty() && status_text[0] == ' ')
+                        status_text.erase(0, 1);
+                }
+                else if (line.size() > 13 && !strncasecmp(line.c_str(), "Content-Type:", 13))
+                {
+                    std::string v = line.substr(13);
+                    if (!v.empty() && v[0] == ' ')
+                        v.erase(0, 1);
+                    contentType = v;
+                }
+            }
+            std::ostringstream status;
+            status << status_code << " " << (status_text.empty() ? "OK" : status_text);
+            send_response(fd, status.str(), contentType, cgi_body,
+                          (method == "HEAD"), is_keep_alive(request));
             return;
         }
     }
 
-    /*
-    ////////////////////////////////////////
-    // TESTE PARA CAMINHOS PROTEGIDO     ///
-    // http://localhost:8080/protegido   ///
-    // ERRO 401                          ///
-    ////////////////////////////////////////
-      if (path == "/protegido") {
-            std::string error401 = read_file(config.root + "/errors/401.html");
-            send_response(fd, "401 Unauthorized", "text/html", error401);
+    // -------------------- POST /post_body (max 100 bytes) --------------------
+    if (method == "POST" && path == "/post_body")
+    {
+        size_t hdr_end = request.find("\r\n\r\n");
+        std::string body = (hdr_end != std::string::npos) ? request.substr(hdr_end + 4) : "";
+
+        if (body.size() > 100)
+        {
+            // 413 Payload Too Large
+            send_response(fd, "413 Payload Too Large", "text/plain", "",
+                          (method == "HEAD"), is_keep_alive(request));
             return;
         }
-
-    */
+        send_response(fd, "200 OK", "text/plain", "OK",
+                      (method == "HEAD"), is_keep_alive(request));
+        return;
+    }
 
     // -------------------- CGI (NOVA VERSÃO) --------------------
     if (loc && loc->path == "/cgi-bin" && path.find("/cgi-bin/") == 0)
@@ -412,7 +597,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
             // fecha pontas não usadas
             close(pipe_in[1]);
             close(pipe_out[0]);
-            close(pipe_in[0]); 
+            close(pipe_in[0]);
             close(pipe_out[1]);
 
             // monta env
@@ -576,25 +761,6 @@ static void process_client_request(int fd, const std::string &request, const Ser
                 return;
             }
         }
-
-        std::string full_path = config.root + path;
-
-        struct stat st;
-        if (stat(full_path.c_str(), &st) == 0 && S_ISREG(st.st_mode))
-        {
-            if (unlink(full_path.c_str()) == 0)
-            {
-                std::cout << "✔ Arquivo deletado: " << full_path << std::endl;
-                log_request(fd, method, path, "204 No Content");
-                send_response(fd, "204 No Content", "text/plain", "");
-            }
-            else
-            {
-                std::string error500 = read_file(config.error_500);
-                log_request(fd, method, path, "500 Internal Server Error");
-                send_response(fd, "500 Internal Server Error", "text/html", error500);
-            }
-        }
         else
         {
             std::string error404 = read_file(config.error_404);
@@ -618,7 +784,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
     {
         std::string msg = "<html><body><h1>POST recebido com sucesso</h1></body></html>";
         log_request(fd, method, path, "200 OK");
-        send_response(fd, "200 OK", "text/html", msg, (method=="HEAD"), is_keep_alive(request));
+        send_response(fd, "200 OK", "text/html", msg, (method == "HEAD"), is_keep_alive(request));
 
         return;
     }
