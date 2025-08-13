@@ -25,6 +25,8 @@
 #include <algorithm>
 #include <fcntl.h>
 #include <cerrno>
-#include <arpa/inet.h> // necessário para inet_addr
+#include <arpa/inet.h> 
+#include <cctype>    
+#include <strings.h> 
 
 int ft_server(const ServerConfig& config);

@@ -64,13 +64,14 @@ code=$(curl -s -o /dev/null -w "%{http_code}" "$SERVER_URL/arquivo-inexistente.h
 print_result "$code" "404" "Arquivo não encontrado (404)"
 
 # 9. DELETE válido
-UPLOAD_NAME=$(ls Uploads/imagens/ | grep file_ | head -n 1)
+UPLOAD_NAME=$(ls www/fotos/ | grep -E '^file_' | head -n 1)
 if [ -n "$UPLOAD_NAME" ]; then
-  code=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE "$SERVER_URL/$TEST_DIR/$UPLOAD_NAME")
+  code=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE "$SERVER_URL/fotos/$UPLOAD_NAME")
   print_result "$code" "204" "Deleção de arquivo válido"
 else
   echo "⚠️ Nenhum arquivo encontrado para deletar. Pulei o teste DELETE."
 fi
+
 
 # Limpeza
 rm -f $UPLOAD_FILE

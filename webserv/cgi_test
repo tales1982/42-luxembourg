@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# CGI mínimo: imprime headers e ecoa algumas variáveis/entrada
+
+# headers obrigatórios
+echo "Status: 200 OK"
+echo "Content-Type: text/plain"
+echo
+
+echo "== CGI TEST =="
+echo "REQUEST_METHOD=${REQUEST_METHOD:-<vazio>}"
+echo "QUERY_STRING=${QUERY_STRING:-<vazio>}"
+echo "SCRIPT_NAME=${SCRIPT_NAME:-<vazio>}"
+echo "SCRIPT_FILENAME=${SCRIPT_FILENAME:-<vazio>}"
+echo "CONTENT_TYPE=${CONTENT_TYPE:-<vazio>}"
+echo "CONTENT_LENGTH=${CONTENT_LENGTH:-<vazio>}"
+
+# se houver corpo (POST), lê e mostra os primeiros bytes
+if [ -n "${CONTENT_LENGTH}" ] && [[ "${CONTENT_LENGTH}" =~ ^[0-9]+$ ]]; then
+  echo
+  echo "-- BODY (${CONTENT_LENGTH} bytes, até 256 mostrados) --"
+  head -c 256
+  echo
+fi

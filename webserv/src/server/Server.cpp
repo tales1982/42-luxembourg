@@ -21,6 +21,10 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <cctype>     // std::tolower
+#include <strings.h>  // strncasecmp  (POSIX)
+#include <ctime>      // std::time (você usa em handle_upload)
+
 
 /////////////////////////////////////////////
 ///     Suporte a leitura do cobecario  /////
@@ -120,16 +124,25 @@ static int handle_new_connection(int server_fd, fd_set &master_set, int &max_fd,
 // - Monta status line, headers de tipo e tamanho   //
 // - Envia corpo da mensagem                        //
 //////////////////////////////////////////////////////
-static void send_response(int fd, const std::string &status, const std::string &content_type, const std::string &content)
+// substitui a tua versão
+static void send_response(int fd, const std::string &status, const std::string &content_type,
+                          const std::string &content, bool head_only = false, bool keep_alive = false)
 {
     std::ostringstream response;
     response << "HTTP/1.1 " << status << "\r\n"
              << "Content-Type: " << content_type << "\r\n"
-             << "Content-Length: " << content.length() << "\r\n"
-             << "\r\n"
-             << content;
-    std::string resStr = response.str();
-    write(fd, resStr.c_str(), resStr.length());
+             << "Content-Length: " << content.size() << "\r\n"
+             << "Connection: " << (keep_alive ? "keep-alive" : "close") << "\r\n"
+             << "\r\n";
+
+    std::string head = response.str();
+    write(fd, head.c_str(), head.size());
+
+    if (!head_only)
+    {
+        if (!content.empty())
+            write(fd, content.c_str(), content.size());
+    }
 }
 
 //////////////////////////////////////////////////////////
@@ -212,6 +225,66 @@ static void handle_upload(int fd, const std::string &request, const ServerConfig
     }
 }
 
+//////////////////////////////////////
+//          HELPS                  ///
+//////////////////////////////////////
+static std::string get_header_value(const std::string &request, const std::string &name)
+{
+    // name ex: "Content-Length" ou "Content-Type" (case-insensitive simples)
+    std::string n = name + ":";
+    std::string r = request;
+    // busca case-insensitive básica
+    for (size_t i = 0; i < r.size(); ++i)
+        r[i] = std::tolower(r[i]);
+
+    std::string low = name;
+    for (size_t i = 0; i < low.size(); ++i)
+        low[i] = std::tolower(low[i]);
+    std::string needle = low + ":";
+
+    size_t pos = r.find(needle);
+    if (pos == std::string::npos)
+        return "";
+    size_t line_end = request.find("\r\n", pos);
+    if (line_end == std::string::npos)
+        line_end = request.size();
+    std::string line = request.substr(pos, line_end - pos); // ainda com o nome em lowercase
+    // pega a linha original (com as maiúsculas) no mesmo range
+    line = request.substr(pos, line_end - pos);
+    size_t colon = line.find(":");
+    if (colon == std::string::npos)
+        return "";
+    std::string val = line.substr(colon + 1);
+    // trim
+    while (!val.empty() && (val[0] == ' ' || val[0] == '\t'))
+        val.erase(0, 1);
+    while (!val.empty() && (val[val.size() - 1] == '\r' || val[val.size() - 1] == '\n' || val[val.size() - 1] == ' ' || val[val.size() - 1] == '\t'))
+        val.erase(val.size() - 1);
+    return val;
+}
+
+static void split_path_query(const std::string &input, std::string &path_only, std::string &query)
+{
+    size_t q = input.find('?');
+    if (q == std::string::npos)
+    {
+        path_only = input;
+        query = "";
+    }
+    else
+    {
+        path_only = input.substr(0, q);
+        query = input.substr(q + 1);
+    }
+}
+
+static std::string to_string_i(int v)
+{
+    std::ostringstream oss;
+    oss << v;
+    return oss.str();
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // Processa requisição genérica de cliente:                                 //
 // - Analisa método e caminho                                               //
@@ -231,16 +304,16 @@ static void process_client_request(int fd, const std::string &request, const Ser
     std::string method, path;
     std::istringstream iss(request);
     iss >> method >> path;
-    
 
     // ✅ Trata POST / antes de validar métodos permitidos
-    if (method == "POST" && path == "/")
+/*     if (method == "POST" && path == "/")
     {
         std::string msg = "<html><body><h1>POST recebido com sucesso</h1></body></html>";
         log_request(fd, method, path, "200 OK");
-        send_response(fd, "200 OK", "text/html", msg);
+        send_response(fd, "200 OK", "text/html", msg, (method=="HEAD"), is_keep_alive(request));
+
         return;
-    }
+    } */
 
     // ✅ Atualiza path para index.html
     if (path == "/")
@@ -279,95 +352,175 @@ static void process_client_request(int fd, const std::string &request, const Ser
 
     */
 
-    // -------------------- CGI --------------------
+    // -------------------- CGI (NOVA VERSÃO) --------------------
     if (loc && loc->path == "/cgi-bin" && path.find("/cgi-bin/") == 0)
     {
-        std::string script_name = path;
-        std::string path_info = "";
-        std::string script_path = loc->directives.at("root") + "/" + path.substr(9);
+        // separa caminho e query
+        std::string url_path, query;
+        split_path_query(path, url_path, query); // ex.: /cgi-bin/test.py?x=1
 
+        // resolve script no filesystem
+        std::string cgi_root = (loc->directives.count("root") ? loc->directives.at("root") : "./cgi-bin");
+        std::string script_rel = url_path.substr(9); // remove "/cgi-bin/"
+        std::string script_fs = cgi_root + "/" + script_rel;
+
+        // verifica existência
         struct stat st;
-        if (stat(script_path.c_str(), &st) == 0 && (st.st_mode & S_IXUSR))
-        {
-            int pipe_stdout[2], pipe_stdin[2];
-            pipe(pipe_stdout);
-            pipe(pipe_stdin);
-
-            pid_t pid = fork();
-            if (pid == 0)
-            {
-                dup2(pipe_stdout[1], STDOUT_FILENO);
-                close(pipe_stdout[0]);
-                close(pipe_stdin[1]);
-                close(pipe_stdin[0]);
-
-                std::string content_length = "";
-                std::string content_type = "";
-                size_t header_end = request.find("\r\n\r\n");
-                if (header_end != std::string::npos)
-                {
-                    std::istringstream header_stream(request.substr(0, header_end));
-                    std::string header_line;
-                    while (std::getline(header_stream, header_line))
-                    {
-                        if (header_line.find("Content-Length:") != std::string::npos)
-                            content_length = header_line.substr(header_line.find(":") + 1);
-                        if (header_line.find("Content-Type:") != std::string::npos)
-                            content_type = header_line.substr(header_line.find(":") + 1);
-                    }
-                }
-
-                std::vector<std::string> envs;
-                envs.push_back("REQUEST_METHOD=" + method);
-                envs.push_back("SCRIPT_NAME=" + script_name);
-                envs.push_back("PATH_INFO=" + path_info);
-                envs.push_back("SERVER_PROTOCOL=HTTP/1.1");
-                envs.push_back("GATEWAY_INTERFACE=CGI/1.1");
-                envs.push_back("CONTENT_LENGTH=" + content_length);
-                envs.push_back("CONTENT_TYPE=" + content_type);
-                envs.push_back("REDIRECT_STATUS=200");
-
-                std::vector<char *> envp;
-                for (size_t i = 0; i < envs.size(); ++i)
-                    envp.push_back(const_cast<char *>(envs[i].c_str()));
-                envp.push_back(NULL);
-
-                char *argv[] = {const_cast<char *>(script_path.c_str()), NULL};
-                execve(script_path.c_str(), argv, &envp[0]);
-
-                std::cerr << "Erro ao executar CGI\n";
-                exit(1);
-            }
-            else
-            {
-                close(pipe_stdout[1]);
-                close(pipe_stdin[0]);
-                close(pipe_stdin[1]);
-
-                std::string cgi_output;
-                char buffer[1024];
-                int bytes_read;
-
-                while ((bytes_read = read(pipe_stdout[0], buffer, sizeof(buffer))) > 0)
-                    cgi_output.append(buffer, bytes_read);
-
-                close(pipe_stdout[0]);
-
-                size_t body_start = cgi_output.find("\r\n\r\n");
-                std::string body = (body_start != std::string::npos)
-                                       ? cgi_output.substr(body_start + 4)
-                                       : cgi_output;
-
-                log_request(fd, method, path, "200 OK");
-                send_response(fd, "200 OK", "text/html", body);
-                return;
-            }
-        }
-        else
+        if (stat(script_fs.c_str(), &st) != 0)
         {
             std::string error404 = read_file(config.error_404);
             log_request(fd, method, path, "404 Not Found");
-            send_response(fd, "404 Not Found", "text/html", error404);
+            send_response(fd, "404 Not Found", "text/html", error404, (method == "HEAD"), is_keep_alive(request));
+            return;
+        }
+
+        // pega headers de interesse
+        std::string content_length = get_header_value(request, "Content-Length");
+        std::string content_type = get_header_value(request, "Content-Type");
+
+        // corpo da requisição (se houver)
+        size_t hdr_end = request.find("\r\n\r\n");
+        std::string req_body = (hdr_end != std::string::npos) ? request.substr(hdr_end + 4) : "";
+
+        // pipes
+        int pipe_out[2]; // CGI stdout -> servidor
+        int pipe_in[2];  // servidor -> CGI stdin
+        if (pipe(pipe_out) == -1 || pipe(pipe_in) == -1)
+        {
+            std::string error500 = read_file(config.error_500);
+            log_request(fd, method, path, "500 Internal Server Error");
+            send_response(fd, "500 Internal Server Error", "text/html", error500, (method == "HEAD"), is_keep_alive(request));
+            return;
+        }
+
+        pid_t pid = fork();
+        if (pid == -1)
+        {
+            std::string error500 = read_file(config.error_500);
+            log_request(fd, method, path, "500 Internal Server Error");
+            send_response(fd, "500 Internal Server Error", "text/html", error500, (method == "HEAD"), is_keep_alive(request));
+            return;
+        }
+
+        if (pid == 0)
+        {
+            // ----- filho: executa o CGI -----
+            // stdin do CGI <- pipe_in[0]; stdout do CGI -> pipe_out[1]
+            dup2(pipe_in[0], STDIN_FILENO);
+            dup2(pipe_out[1], STDOUT_FILENO);
+
+            // fecha pontas não usadas
+            close(pipe_in[1]);
+            close(pipe_out[0]);
+            close(pipe_in[0]); 
+            close(pipe_out[1]);
+
+            // monta env
+            std::vector<std::string> envs;
+            envs.push_back("GATEWAY_INTERFACE=CGI/1.1");
+            envs.push_back("SERVER_PROTOCOL=HTTP/1.1");
+            envs.push_back("REQUEST_METHOD=" + method);
+            envs.push_back("QUERY_STRING=" + query);
+            envs.push_back("SCRIPT_NAME=" + url_path);      // caminho na URL
+            envs.push_back("SCRIPT_FILENAME=" + script_fs); // caminho no FS
+            envs.push_back("PATH_INFO=");                   // vazio aqui
+            envs.push_back("SERVER_NAME=localhost");
+            std::string portStr = (config.port > 0) ? to_string_i(config.port) : "8080";
+            envs.push_back("SERVER_PORT=" + portStr);
+            if (!content_type.empty())
+                envs.push_back("CONTENT_TYPE=" + content_type);
+            if (!content_length.empty())
+                envs.push_back("CONTENT_LENGTH=" + content_length);
+            envs.push_back("REDIRECT_STATUS=200");
+
+            // converte para char*[]
+            std::vector<char *> envp;
+            for (size_t i = 0; i < envs.size(); ++i)
+                envp.push_back(const_cast<char *>(envs[i].c_str()));
+            envp.push_back(0);
+
+            // intérprete
+            std::string cgi_path = (loc->directives.count("cgi_path") ? loc->directives.at("cgi_path") : "/usr/bin/python3");
+
+            const char *argv[3];
+            argv[0] = cgi_path.c_str();
+            argv[1] = script_fs.c_str();
+            argv[2] = 0;
+
+            execve(cgi_path.c_str(), const_cast<char *const *>(argv), &envp[0]);
+            // se chegou aqui, falhou
+            _exit(127);
+        }
+        else
+        {
+            // ----- pai: escreve corpo e lê resposta -----
+            close(pipe_in[0]);  // não lê do stdin do CGI
+            close(pipe_out[1]); // não escreve no stdout do CGI
+
+            // escreve o body (POST) no stdin do CGI
+            if (!req_body.empty())
+            {
+                ssize_t off = 0;
+                while (off < (ssize_t)req_body.size())
+                {
+                    ssize_t w = write(pipe_in[1], req_body.data() + off, req_body.size() - off);
+                    if (w <= 0)
+                        break;
+                    off += w;
+                }
+            }
+            close(pipe_in[1]);
+
+            // lê stdout do CGI
+            std::string cgi_raw;
+            char buf[4096];
+            ssize_t n;
+            while ((n = read(pipe_out[0], buf, sizeof(buf))) > 0)
+            {
+                cgi_raw.append(buf, n);
+            }
+            close(pipe_out[0]);
+
+            // parse headers do CGI
+            std::string::size_type sep = cgi_raw.find("\r\n\r\n");
+            std::string cgi_headers = (sep != std::string::npos) ? cgi_raw.substr(0, sep) : "";
+            std::string cgi_body = (sep != std::string::npos) ? cgi_raw.substr(sep + 4) : cgi_raw;
+
+            int status_code = 200;
+            std::string status_text = "OK";
+            std::string contentType = "text/html";
+
+            std::istringstream hs(cgi_headers);
+            for (std::string line; std::getline(hs, line);)
+            {
+                if (!line.empty() && line[line.size() - 1] == '\r')
+                    line.erase(line.size() - 1);
+                if (line.empty())
+                    continue;
+                if (line.size() > 8 && !strncasecmp(line.c_str(), "Status: ", 8))
+                {
+                    std::istringstream ss(line.substr(8));
+                    ss >> status_code;
+                    std::getline(ss, status_text);
+                    if (!status_text.empty() && status_text[0] == ' ')
+                        status_text.erase(0, 1);
+                }
+                else if (line.size() > 13 && !strncasecmp(line.c_str(), "Content-Type:", 13))
+                {
+                    std::string v = line.substr(13);
+                    if (!v.empty() && v[0] == ' ')
+                        v.erase(0, 1);
+                    contentType = v;
+                }
+                // (se quiser, repasse Set-Cookie etc. depois)
+            }
+
+            std::ostringstream status;
+            status << status_code << " " << (status_text.empty() ? "OK" : status_text);
+
+            log_request(fd, method, path, status.str());
+            // HEAD? manda só headers
+            send_response(fd, status.str(), contentType, cgi_body, (method == "HEAD"), is_keep_alive(request));
             return;
         }
     }
@@ -446,7 +599,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
         {
             std::string error404 = read_file(config.error_404);
             log_request(fd, method, path, "404 Not Found");
-            send_response(fd, "404 Not Found", "text/html", error404);
+            send_response(fd, "404 Not Found", "text/html", error404, (method == "HEAD"), is_keep_alive(request));
         }
         return;
     }
@@ -465,7 +618,8 @@ static void process_client_request(int fd, const std::string &request, const Ser
     {
         std::string msg = "<html><body><h1>POST recebido com sucesso</h1></body></html>";
         log_request(fd, method, path, "200 OK");
-        send_response(fd, "200 OK", "text/html", msg);
+        send_response(fd, "200 OK", "text/html", msg, (method=="HEAD"), is_keep_alive(request));
+
         return;
     }
 
@@ -476,7 +630,8 @@ static void process_client_request(int fd, const std::string &request, const Ser
     {
         std::string error404 = read_file(config.error_404);
         log_request(fd, method, path, "404 Not Found");
-        send_response(fd, "404 Not Found", "text/html", error404);
+        send_response(fd, "404 Not Found", "text/html", error404, (method == "HEAD"), is_keep_alive(request));
+
         return;
     }
 
@@ -506,7 +661,7 @@ static void process_client_request(int fd, const std::string &request, const Ser
     {
         std::string error404 = read_file(config.error_404);
         log_request(fd, method, path, "404 Not Found");
-        send_response(fd, "404 Not Found", "text/html", error404);
+        send_response(fd, "404 Not Found", "text/html", error404, (method == "HEAD"), is_keep_alive(request));
     }
     else
     {
