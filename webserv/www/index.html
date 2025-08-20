@@ -1,98 +1,120 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Serveur WebServ - Bienvenue</title>
+  <meta charset="utf-8">
+  <title>webserv 42</title>
   <style>
-    body {
+    /* ===== Reset básico ===== */
+    * {
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(120deg, #4b6cb7, #182848);
+      box-sizing: border-box;
+      font-family: "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
       color: #fff;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      text-align: center;
+      padding: 40px;
     }
 
     .container {
-      background-color: rgba(0, 0, 0, 0.4);
+      background: rgba(255, 255, 255, 0.08);
       padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-      max-width: 600px;
+      border-radius: 16px;
+      max-width: 700px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
     }
 
     h1 {
       font-size: 2.5rem;
       margin-bottom: 20px;
+      color: #ffda79;
+      text-shadow: 0 0 8px rgba(255, 218, 121, 0.6);
     }
 
-    p {
-      font-size: 1.2rem;
-      margin: 10px 0;
+    ul {
+      list-style: none;
+      margin: 20px 0;
     }
 
-    .highlight {
-      color: #00ffcc;
-      font-weight: bold;
+    ul li {
+      margin: 12px 0;
     }
 
-    .links {
-      margin-top: 20px;
-    }
-
-    .links a {
-      display: inline-block;
-      margin: 10px;
-      padding: 12px 20px;
-      background-color: #00ffcc;
-      color: #000;
+    ul li a {
       text-decoration: none;
-      border-radius: 8px;
+      color: #00e0ff;
       font-weight: bold;
-      transition: background-color 0.3s ease;
+      transition: color 0.3s ease, transform 0.2s ease;
     }
 
-    .links a:hover {
-      background-color: #00ddaa;
+    ul li a:hover {
+      color: #ffda79;
+      transform: scale(1.05);
     }
 
-    .credits {
+    form {
       margin-top: 30px;
-      font-size: 0.9rem;
-      color: #ccc;
+      text-align: left;
     }
 
-    .color-text{
-      color: #00ffcc;
+    form h3 {
+      margin-bottom: 10px;
+      color: #ffd86b;
     }
 
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      resize: none;
+      outline: none;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffda79, #ff9a3c);
+      color: #000;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 218, 121, 0.6);
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>✅ Serveur en ligne avec succès !</h1>
-    <p>Félicitations, vous avez accédé à la racine du serveur <span class="highlight">WebServ</span>.</p>
-    <p>Ceci est un exercice de test. Essayez d'accéder à d'autres routes ou de tester différentes méthodes HTTP.</p>
-    <p>Bonne chance et bon apprentissage ! 🚀</p>
-
-    <div class="links">
-      
-      <a href="http://localhost:8080/tests/index_tests.html">Aller vers la page TESTS</a>
-      <!--
-      <a href="http://localhost:8080/cgi-bin/script.py">Aller vers la page test - CGI </a>
-      <a href="http://localhost:8080/cgi-bin/upload_form.py">Aller vers la page d’upload - CGI</a>
-      <a href="http://localhost:8080/all-uploads">Aller vers la Galerie</a>
-      <a href="http://localhost:8080/test_errors.html">Aller vers la page ERROS</a>
-    -->
-    </div>
-
-    <div class="credits">
-      <p>Projet développé par <strong class="color-text">Tales Lima</strong>, <strong class="color-text">Sandro Weber</strong> et <strong class="color-text">Andre Luiz</strong></p>
-    </div>
+    <h1>It works 🎉</h1>
+    <ul>
+      <li><a href="/files/">/files/</a> (autoindex + upload via POST)</li>
+      <li><a href="/cgi/echo.py?hello=world">/cgi/echo.py</a> (CGI)</li>
+      <li><a href="/old">/old</a> → /new</li>
+    </ul>
+    <form method="POST" action="/files/">
+      <h3>Upload (raw)</h3>
+      <textarea name="data" rows="4" cols="60">Digite algo e envie</textarea><br>
+      <button>Enviar (POST)</button>
+    </form>
   </div>
 </body>
 </html>

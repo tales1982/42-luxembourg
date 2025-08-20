@@ -1,71 +1,23 @@
-✅ Passo 2: Primeiras Tarefas
-Criar o main.cpp:
+# webserv (42) — versão limpa
 
-Ler o arquivo de configuração passado por argumento.
+- C++98, `-Wall -Wextra -Werror`, **sem libs externas**
+- **select()** como único loop de I/O (non-blocking)
+- Métodos: **GET, HEAD, POST, DELETE**
+- Autoindex, Upload simples (corpo raw), CGI por extensão
+- Multi-port/virtual host via config (exemplo mostra 1 server)
 
-Inicializar o servidor.
+## Build
+```bash
+make
+```
 
-Entrar no loop com poll() ou select().
+## Run
+```bash
+./webserv configs/example.conf
+```
 
-Criar o Server básico:
-
-Abrir socket TCP.
-
-Usar bind, listen, accept.
-
-Deixar todos os FDs em modo não bloqueante com fcntl.
-
-Tratar múltiplas conexões:
-
-Usar poll() para gerenciar todos os FDs.
-
-Reagir a eventos de leitura e escrita.
-
-Ler requisições HTTP:
-
-Criar classe Request.
-
-Fazer parsing manual dos headers.
-
-Enviar resposta:
-
-Criar classe Response.
-
-Implementar GET básico servindo arquivos estáticos.
-
-✅ Regras Importantes
-Compilar com c++ -Wall -Wextra -Werror -std=c++98
-
-Usar apenas C++98.
-
-Não usar boost nem bibliotecas externas.
-
-Nada pode bloquear (usar poll para tudo).
-
-Só pode usar fork para CGI (PHP/Python).
-
-Requisitos: GET, POST, DELETE + upload de arquivos.
-
-Páginas de erro padrão.
-
-Suporte a múltiplos ports e servidores virtuais.
-
-✅ Sugestão de Progresso
-✅ Servidor escutando com poll() e resposta "Hello, World"
-
-✅ Parsing básico do request
-
-✅ Servir arquivos estáticos com GET
-
-✅ POST com upload (multipart/form-data)
-
-✅ DELETE de arquivos
-
-✅ Páginas de erro
-
-✅ Suporte a múltiplos ports
-
-✅ CGI com PHP (usando fork/execve)
-
-✅ Stress test com ab (Apache Benchmark) ou wrk
-
+## Rotas
+- `/` → estático (`index.html`)
+- `/files/` → autoindex + GET/POST/DELETE (upload salvo em `www/uploads`)
+- `/cgi/echo.py?hello=world` → CGI Python
+- `/old` → redireciona para `/new`

@@ -1,61 +1,33 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: 42Webserv                                    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/07/16 10:30:00 by tales             #+#    #+#              #
-#    Updated: 2025/07/16 10:30:00 by tales            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+NAME = webserv
+CXX = c++
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+INCS = -Iinclude
 
-NAME        = webserv
-CXX         = c++
-CXXFLAGS    = -Wall -Wextra -Werror -std=c++98
+SRCS = \
+	src/main.cpp \
+	src/Config.cpp \
+	src/Server.cpp \
+	src/Http.cpp \
+	src/Router.cpp \
+	src/Utils.cpp \
+	src/AutoIndex.cpp \
+	src/CGI.cpp
 
-# Diretórios
-SRC_DIR     = src
-OBJ_DIR     = obj
-INC_DIR     = include
+OBJS = $(SRCS:.cpp=.o)
 
-# Subpastas organizadas
-SRC_CONFIG  = $(SRC_DIR)/config
-SRC_SERVER  = $(SRC_DIR)/server
-
-# Fontes
-SRCS        = \
-	$(SRC_DIR)/main.cpp \
-	$(SRC_CONFIG)/ConfigParser.cpp \
-	$(SRC_SERVER)/Server.cpp \
-	$(SRC_SERVER)/RequestHandler.cpp \
-	$(SRC_SERVER)/ResponseBuilder.cpp \
-
-# Objetos
-OBJS        = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-
-# Includes
-INCLUDES    = -I$(INC_DIR) -I$(INC_DIR)/config -I$(INC_DIR)/parser -I$(INC_DIR)/server
-
-# Regras
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
-	@echo "✅ Compilado com sucesso!"
+	$(CXX) $(CXXFLAGS) $(INCS) -o $(NAME) $(OBJS)
 
-# Criação dos diretórios de objetos se necessário
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCS) -c $< -o $@
 
 clean:
-	@rm -rf $(OBJ_DIR)
-	@echo "🧹 Objetos removidos"
+	rm -f $(OBJS)
 
 fclean: clean
-	@rm -f $(NAME)
-	@echo "🧹 Binário removido"
+	rm -f $(NAME)
 
 re: fclean all
 
