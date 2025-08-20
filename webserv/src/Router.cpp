@@ -32,14 +32,28 @@ const LocationConfig* Router::pickLocation(const ServerConfig *srv, const std::s
 	return best;
 }
 
+// Router.cpp
 RouteMatch Router::match(const HttpRequest &req) const {
-	RouteMatch m; m.server = pickServer(req); m.loc = 0;
-	if (!m.server) return m;
-	m.loc = pickLocation(m.server, req.uri);
-	m.fsRoot = m.server->root;
-	if (m.loc && !m.loc->root.empty()) m.fsRoot = m.loc->root;
-	m.relPath = req.uri;
-	if (m.loc && Utils::startsWith(m.relPath, m.loc->path)) m.relPath = m.relPath.substr(m.loc->path.size());
-	if (m.relPath.size() && m.relPath[0] == '/') m.relPath = m.relPath.substr(1);
-	return m;
+    RouteMatch m; 
+    m.server = pickServer(req);
+    m.loc = 0;
+    if (!m.server) return m;
+
+    m.loc = pickLocation(m.server, req.uri); // longest prefix
+
+    m.fsRoot = m.server->root;
+    if (m.loc && !m.loc->root.empty()) m.fsRoot = m.loc->root;
+
+    // relPath = uri sem prefixo da location e SEM query
+    std::string rel = req.uri;
+    if (m.loc && Utils::startsWith(rel, m.loc->path))
+        rel.erase(0, m.loc->path.size());
+
+    size_t q = rel.find('?');
+    if (q != std::string::npos) rel.erase(q);
+
+    if (!rel.empty() && rel[0] == '/') rel.erase(0,1);
+
+    m.relPath = rel;
+    return m;
 }

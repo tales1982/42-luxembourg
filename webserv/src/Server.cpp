@@ -237,35 +237,48 @@ HttpResponse ServerApp::handleStatic(const HttpRequest &req, const RouteMatch &r
 	return res;
 }
 
-HttpResponse ServerApp::handleUpload(const HttpRequest &req, const RouteMatch &rm)
-{
-	(void)rm;
-	HttpResponse res;
-	if (!rm.loc || !rm.loc->upload_on)
-	{
-		res.status = 403;
-		res.reason = httpStatusReason(403);
-		return res;
-	}
-	std::string store = rm.loc->upload_store.empty() ? "./www/uploads" : rm.loc->upload_store;
-	std::string name = "upload_" + Utils::utoa((size_t)std::time(NULL)) + ".dat";
-	std::string path = Utils::joinPath(store, name);
-	FILE *fp = std::fopen(path.c_str(), "wb");
-	if (!fp)
-	{
-		res.status = 500;
-		res.reason = httpStatusReason(500);
-		return res;
-	}
-	if (!req.body.empty())
-		std::fwrite(req.body.data(), 1, req.body.size(), fp);
-	std::fclose(fp);
-	res.status = 201;
-	res.reason = httpStatusReason(201);
-	res.headers["Content-Type"] = "text/plain";
-	res.body = "Saved as: " + path + "\n";
-	return res;
+// Server.cpp, em handleUpload()
+HttpResponse ServerApp::handleUpload(const HttpRequest &req, const RouteMatch &rm) {
+    HttpResponse res; 
+    if (!rm.loc || !rm.loc->upload_on) { res.status=403; res.reason=httpStatusReason(403); return res; }
+
+    std::string store = rm.loc->upload_store.empty()? "./www/uploads" : rm.loc->upload_store;
+    std::string name  = "upload_" + Utils::utoa((size_t)std::time(NULL)) + ".dat";
+    std::string path  = Utils::joinPath(store, name);
+
+    // *** NOVO: extrai o campo "data" se for x-www-form-urlencoded
+    std::string payload = req.body;
+    std::map<std::string,std::string>::const_iterator it = req.headers.find("Content-Type");
+    if (it != req.headers.end() && Utils::startsWith(Utils::toLower(it->second), "application/x-www-form-urlencoded")) {
+        // procura data=...&...
+        std::string s = payload;
+        std::string val;
+        size_t p = s.find("data=");
+        if (p != std::string::npos) {
+            val = s.substr(p + 5);
+            size_t amp = val.find('&');
+            if (amp != std::string::npos) val.erase(amp);
+            payload = Utils::urlDecode(val);
+        }
+    }
+
+    FILE *fp = std::fopen(path.c_str(), "wb");
+    if (!fp) { res.status=500; res.reason=httpStatusReason(500); return res; }
+    if (!payload.empty()) std::fwrite(payload.data(), 1, payload.size(), fp);
+    std::fclose(fp);
+
+    // 201 Created (mantém compatibilidade com seu script de testes)
+    res.status = 201; res.reason = httpStatusReason(201);
+    res.headers["Content-Type"] = "text/plain";
+    res.body = "Saved as: " + path + "\n";
+
+    // log útil
+    std::cerr << "\033[35m[UPLOAD]\033[0m wrote " << payload.size()
+              << " bytes to " << path << "\n";
+
+    return res;
 }
+
 
 HttpResponse ServerApp::handleDelete(const std::string &fsPath)
 {
@@ -392,11 +405,29 @@ void ServerApp::processRequest(Connection &c)
 
 	std::string fsPath = Utils::safePathJoin(rm.fsRoot, relNoQ);
 
-	// DEBUG: ver o caminho real calculado para o CGI/estático
-	std::cerr << "\033[33m[CGI-DEBUG]\033[0m fsRoot=" << rm.fsRoot
-			  << " relPath=" << rm.relPath
-			  << " (noQ=" << relNoQ << ")"
-			  << " -> fsPath=" << fsPath << std::endl;
+	// --- Redireciona diretório sem barra final (/dir -> /dir/) ---
+std::string uriNoQ = req.uri;
+size_t qmark = uriNoQ.find('?');
+if (qmark != std::string::npos) uriNoQ.erase(qmark);
+
+// Se o caminho real no FS é um diretório e a URI não termina com '/',
+// redireciona para a versão com '/' preservando a query string.
+if (Utils::isDir(fsPath) && !uriNoQ.empty() && uriNoQ[uriNoQ.size()-1] != '/') {
+    HttpResponse res;
+    res.status = 301; // (pode usar 308 se preferir)
+    res.reason = httpStatusReason(res.status);
+
+    std::string loc = uriNoQ + "/";
+    size_t origQ = req.uri.find('?');
+    if (origQ != std::string::npos) loc += req.uri.substr(origQ); // preserva '?...'
+
+    res.headers["Location"] = loc;
+    queueResponse(c, res);
+    c.closeAfterWrite = !keepAlive;
+    return;
+}
+
+
 
 	// CGI
 	if (CGI::isCGI(rm.loc, fsPath))
