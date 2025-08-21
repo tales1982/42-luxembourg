@@ -1,0 +1,8 @@
+# One URL per line. You can use absolute URLs or relative paths (combined with BASE_URL passed to siege)
+/
+/index.html
+/autoindex/
+/uploads/
+/errors/404.html
+/upload.html
+/cgi/echo.py?x=1

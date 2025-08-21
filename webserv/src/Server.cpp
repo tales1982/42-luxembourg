@@ -237,20 +237,32 @@ HttpResponse ServerApp::handleStatic(const HttpRequest &req, const RouteMatch &r
 	return res;
 }
 
-// Server.cpp, em handleUpload()
-HttpResponse ServerApp::handleUpload(const HttpRequest &req, const RouteMatch &rm) {
-    HttpResponse res; 
-    if (!rm.loc || !rm.loc->upload_on) { res.status=403; res.reason=httpStatusReason(403); return res; }
 
-    std::string store = rm.loc->upload_store.empty()? "./www/uploads" : rm.loc->upload_store;
-    std::string name  = "upload_" + Utils::utoa((size_t)std::time(NULL)) + ".dat";
-    std::string path  = Utils::joinPath(store, name);
+HttpResponse ServerApp::handleUpload(const HttpRequest &req, const RouteMatch &rm)
+{
+    HttpResponse res;
 
-    // *** NOVO: extrai o campo "data" se for x-www-form-urlencoded
+    // precisa estar numa location com upload_on on;
+    if (!rm.loc || !rm.loc->upload_on) {
+        res.status = 403;
+        res.reason = httpStatusReason(403);
+        return res;
+    }
+
+    // diretório-alvo
+    std::string store = rm.loc->upload_store.empty() ? "./www/uploads" : rm.loc->upload_store;
+
+    // nome simples (timestamp) — suficiente pro exercício
+    std::string name = "upload_" + Utils::utoa((size_t)std::time(NULL)) + ".dat";
+    std::string path = Utils::joinPath(store, name);
+
+    // conteúdo padrão é o body cru
     std::string payload = req.body;
-    std::map<std::string,std::string>::const_iterator it = req.headers.find("Content-Type");
-    if (it != req.headers.end() && Utils::startsWith(Utils::toLower(it->second), "application/x-www-form-urlencoded")) {
-        // procura data=...&...
+
+    // Se for application/x-www-form-urlencoded, salve o campo "data"
+    std::map<std::string,std::string>::const_iterator ct = req.headers.find("Content-Type");
+    if (ct != req.headers.end() && Utils::startsWith(Utils::toLower(ct->second), "application/x-www-form-urlencoded"))
+    {
         std::string s = payload;
         std::string val;
         size_t p = s.find("data=");
@@ -262,17 +274,24 @@ HttpResponse ServerApp::handleUpload(const HttpRequest &req, const RouteMatch &r
         }
     }
 
+    // grava o arquivo
     FILE *fp = std::fopen(path.c_str(), "wb");
-    if (!fp) { res.status=500; res.reason=httpStatusReason(500); return res; }
-    if (!payload.empty()) std::fwrite(payload.data(), 1, payload.size(), fp);
+    if (!fp) {
+        res.status = 500;
+        res.reason = httpStatusReason(500);
+        return res;
+    }
+    if (!payload.empty())
+        std::fwrite(payload.data(), 1, payload.size(), fp);
     std::fclose(fp);
 
-    // 201 Created (mantém compatibilidade com seu script de testes)
-    res.status = 201; res.reason = httpStatusReason(201);
+    // resposta do upload
+    res.status = 201; // Created
+    res.reason = httpStatusReason(201);
     res.headers["Content-Type"] = "text/plain";
     res.body = "Saved as: " + path + "\n";
 
-    // log útil
+    // log opcional
     std::cerr << "\033[35m[UPLOAD]\033[0m wrote " << payload.size()
               << " bytes to " << path << "\n";
 
@@ -346,36 +365,32 @@ void ServerApp::processRequest(Connection &c)
 	}
 
 	// métodos permitidos por location + header Allow em 405
-	if (rm.loc && !rm.loc->methods.empty())
-	{
-		bool ok = false;
-		for (size_t i = 0; i < rm.loc->methods.size(); ++i)
-			if (rm.loc->methods[i] == req.method)
-				ok = true;
+	std::string meth = req.method;
+if (meth == "HEAD") meth = "GET";   // HEAD segue sem corpo depois
 
-		if (!ok)
-		{
-			HttpResponse res;
-			res.status = 405;
-			res.reason = httpStatusReason(405);
+if (rm.loc && !rm.loc->methods.empty()) {
+    bool ok = false, hasGET = false;
+    std::string allow;
 
-			// Header Allow com os métodos declarados na location
-			if (!rm.loc->methods.empty())
-			{
-				std::string allow;
-				for (size_t i = 0; i < rm.loc->methods.size(); ++i)
-				{
-					if (i)
-						allow += ", ";
-					allow += rm.loc->methods[i];
-				}
-				res.headers["Allow"] = allow;
-			}
-			queueResponse(c, res);
-			c.closeAfterWrite = !keepAlive;
-			return;
-		}
-	}
+    for (size_t i = 0; i < rm.loc->methods.size(); ++i) {
+        const std::string &m = rm.loc->methods[i];
+        if (m == "GET") hasGET = true;
+        if (i) allow += ", ";
+        allow += m;
+        if (m == meth) ok = true;
+    }
+    if (hasGET) allow += ", HEAD";  // se GET é permitido, anuncie HEAD também
+
+    if (!ok) {
+        HttpResponse res;
+        res.status = 405;
+        res.reason = httpStatusReason(405);
+        res.headers["Allow"] = allow;
+        queueResponse(c, res);
+        c.closeAfterWrite = !keepAlive;
+        return;
+    }
+}
 
 	// redirect por location
 	if (rm.loc && !rm.loc->redirect.empty())
@@ -405,35 +420,16 @@ void ServerApp::processRequest(Connection &c)
 
 	std::string fsPath = Utils::safePathJoin(rm.fsRoot, relNoQ);
 
-	// --- Redireciona diretório sem barra final (/dir -> /dir/) ---
-std::string uriNoQ = req.uri;
-size_t qmark = uriNoQ.find('?');
-if (qmark != std::string::npos) uriNoQ.erase(qmark);
-
-// Se o caminho real no FS é um diretório e a URI não termina com '/',
-// redireciona para a versão com '/' preservando a query string.
-if (Utils::isDir(fsPath) && !uriNoQ.empty() && uriNoQ[uriNoQ.size()-1] != '/') {
-    HttpResponse res;
-    res.status = 301; // (pode usar 308 se preferir)
-    res.reason = httpStatusReason(res.status);
-
-    std::string loc = uriNoQ + "/";
-    size_t origQ = req.uri.find('?');
-    if (origQ != std::string::npos) loc += req.uri.substr(origQ); // preserva '?...'
-
-    res.headers["Location"] = loc;
-    queueResponse(c, res);
-    c.closeAfterWrite = !keepAlive;
-    return;
-}
-
-
+	// DEBUG: ver o caminho real calculado para o CGI/estático
+	std::cerr << "\033[33m[CGI-DEBUG]\033[0m fsRoot=" << rm.fsRoot
+			  << " relPath=" << rm.relPath
+			  << " (noQ=" << relNoQ << ")"
+			  << " -> fsPath=" << fsPath << std::endl;
 
 	// CGI
-	if (CGI::isCGI(rm.loc, fsPath))
+	if (rm.loc && CGI::isCGI(rm.loc, rm.relPath))
 	{
-		HttpResponse res = CGI::run(req, rm, fsPath);
-		// NÃO limpe o body aqui para HEAD; o queueResponse cuida disso
+		HttpResponse res = CGI::run(req, rm, fsPath); // fsPath continua sendo o path real do script
 		queueResponse(c, res);
 		c.closeAfterWrite = !keepAlive;
 		return;

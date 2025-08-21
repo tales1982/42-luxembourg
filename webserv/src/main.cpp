@@ -1,6 +1,8 @@
 #include "Config.hpp"
 #include "Server.hpp"
+#include "ConfigValidation.hpp"
 #include <iostream>
+#include <signal.h>
 
 // Cores ANSI
 #define RESET   "\033[0m"
@@ -11,6 +13,7 @@
 #define CYAN    "\033[36m"
 
 int main(int argc, char **argv) {
+    signal(SIGPIPE, SIG_IGN);
     std::string cfg = "configs/example.conf";
     if (argc > 1) cfg = argv[1];
     try {
@@ -18,6 +21,8 @@ int main(int argc, char **argv) {
 
         ConfigParser p;
         GlobalConfig g = p.parseFile(cfg);
+        validateOrDie(g);
+
 
         if (g.servers.empty()) {
             std::cerr << RED << "[ERROR]" << RESET << " No servers defined in config" << std::endl;

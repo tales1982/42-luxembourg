@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<title>/files/ – webserv 42</title>
+<style>
+  body{margin:0;font-family:ui-sans-serif,system-ui;background:#0f1f3a;color:#eef}
+  .wrap{max-width:820px;margin:6vh auto;padding:32px;background:#152956;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+  h1{margin:0 0 8px;font-size:28px}
+  a{color:#9dd1ff;text-decoration:none} a:hover{color:#fff}
+  textarea{width:100%;min-height:120px;margin-top:8px;padding:12px;border-radius:10px;border:0;background:#0d1a36;color:#fff}
+  button{margin-top:10px;padding:10px 16px;border:0;border-radius:10px;background:#ffd36a;color:#000;font-weight:700;cursor:pointer}
+  .hint{opacity:.8;font-size:14px}
+</style>
+<div class="wrap">
+  <h1>/files/</h1>
+  <p class="hint">Página dedicada de <code>/files/</code>. Para ver a listagem automática do servidor, abra:
+    <a href="/files/" target="_blank" rel="noopener">/files/ (autoindex)</a>
+  </p>
+  <hr style="border:0;height:1px;background:#26437c;margin:18px 0">
+  <h2>Upload (POST)</h2>
+  <p class="hint">Envia <code>application/x-www-form-urlencoded</code> com campo <code>data</code>.
+     O servidor salva em <code>./www/uploads</code>.</p>
+  <form method="POST" action="/files/">
+    <textarea name="data" placeholder="Digite algo e envie"></textarea>
+    <div><button>Enviar (POST)</button> &nbsp; <a href="/">← Voltar</a></div>
+  </form>
+</div>
+</html>

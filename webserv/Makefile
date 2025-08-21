@@ -11,7 +11,8 @@ SRCS = \
 	src/Router.cpp \
 	src/Utils.cpp \
 	src/AutoIndex.cpp \
-	src/CGI.cpp
+	src/CGI.cpp \
+	src/CGIManager.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 

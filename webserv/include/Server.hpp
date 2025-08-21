@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 #include <cstdio>
+#include <ctime> 
 
 struct Connection {
 	int fd;
@@ -18,6 +19,7 @@ struct Connection {
 	HttpParser parser;
 	bool hasRequest;
 	HttpRequest req;
+	time_t lastActive;
 	const ServerConfig *boundServer;
 	Connection(): fd(-1), wantWrite(false), closeAfterWrite(false), hasRequest(false), boundServer(0) {}
 };

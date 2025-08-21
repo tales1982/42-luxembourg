@@ -1,59 +1,116 @@
 #include "Router.hpp"
 #include "Utils.hpp"
+#include <cstdlib>
 
 Router::Router(const GlobalConfig &gc): _conf(gc) {}
 
-const ServerConfig* Router::pickServer(const HttpRequest &req) const {
-	std::string host = "";
-	std::map<std::string,std::string>::const_iterator it = req.headers.find("Host");
-	if (it != req.headers.end()) host = it->second;
-	size_t colon = host.find(':');
-	std::string hostOnly = (colon==std::string::npos) ? host : host.substr(0, colon);
+#include <vector> // se ainda não tiver
 
-	for (size_t i=0;i<_conf.servers.size();++i) {
-		const ServerConfig &s = _conf.servers[i];
-		for (size_t j=0;j<s.server_names.size();++j) {
-			if (s.server_names[j] == hostOnly) return &s;
-		}
-	}
-	for (size_t i=0;i<_conf.servers.size();++i) if (_conf.servers[i].is_default) return &_conf.servers[i];
-	return _conf.servers.empty()? (ServerConfig*)0 : &_conf.servers[0];
+const ServerConfig* Router::pickServer(const HttpRequest &req) const {
+    // 1) Host bruto
+    std::string hostHdr;
+    std::map<std::string,std::string>::const_iterator it = req.headers.find("Host");
+    if (it != req.headers.end()) hostHdr = Utils::trim(it->second);
+
+    // 2) Extrai host e porta (suporta [IPv6]:port)
+    std::string hostOnly = hostHdr;
+    int reqPort = -1;
+    if (!hostHdr.empty()) {
+        if (hostHdr[0] == '[') {
+            size_t rb = hostHdr.find(']');
+            if (rb != std::string::npos) {
+                hostOnly = hostHdr.substr(1, rb - 1);
+                size_t colon = hostHdr.find(':', rb);
+                if (colon != std::string::npos)
+                    reqPort = std::atoi(hostHdr.c_str() + colon + 1);
+            }
+        } else {
+            size_t colon = hostHdr.rfind(':');
+            if (colon != std::string::npos) {
+                reqPort = std::atoi(hostHdr.c_str() + colon + 1);
+                hostOnly = hostHdr.substr(0, colon);
+            }
+        }
+    }
+    std::string hostLC = Utils::toLower(hostOnly);
+
+    // 3) Candidatos (se porta informada, filtra por ela)
+    std::vector<const ServerConfig*> cand;
+    cand.reserve(_conf.servers.size());
+    for (size_t i = 0; i < _conf.servers.size(); ++i) {
+        const ServerConfig &s = _conf.servers[i];
+        if (reqPort == -1 || s.port == reqPort)
+            cand.push_back(&s);
+    }
+    if (cand.empty())
+        return _conf.servers.empty()? (const ServerConfig*)0 : &_conf.servers[0];
+
+    // 4) PRIMEIRO: match exato por hostname (case-insensitive)
+    if (!hostLC.empty()) {
+        for (size_t i = 0; i < cand.size(); ++i) {
+            const ServerConfig *s = cand[i];
+            for (size_t j = 0; j < s->server_names.size(); ++j) {
+                if (Utils::toLower(s->server_names[j]) == hostLC)
+                    return s;
+            }
+        }
+    }
+
+    // 5) DEPOIS: aceita wildcard "_" (apenas entre os candidatos)
+    for (size_t i = 0; i < cand.size(); ++i) {
+        const ServerConfig *s = cand[i];
+        for (size_t j = 0; j < s->server_names.size(); ++j) {
+            if (s->server_names[j] == "_")
+                return s;
+        }
+    }
+
+    // 6) Fallbacks
+    for (size_t i = 0; i < cand.size(); ++i)
+        if (cand[i]->is_default) return cand[i];
+
+    return cand[0];
 }
+
 
 const LocationConfig* Router::pickLocation(const ServerConfig *srv, const std::string &uri) const {
-	const LocationConfig *best = 0;
-	size_t bestLen = 0;
-	for (size_t i=0;i<srv->locations.size();++i) {
-		const LocationConfig &loc = srv->locations[i];
-		if (Utils::startsWith(uri, loc.path) && loc.path.size() > bestLen) {
-			best = &loc; bestLen = loc.path.size();
-		}
-	}
-	return best;
+    const LocationConfig *best = 0;
+    size_t bestLen = 0;
+
+    for (size_t i=0; i<srv->locations.size(); ++i) {
+        const LocationConfig &loc = srv->locations[i];
+        const std::string &p = loc.path;           // ex: "/cgi/", "/files/", "/"
+        if (!Utils::startsWith(uri, p)) continue;
+
+        // fronteira: evita "/cgi" casar "/cgiX"
+        if (p != "/" && uri.size() > p.size() && uri[p.size()] != '/') continue;
+
+        if (p.size() > bestLen) { best = &loc; bestLen = p.size(); }
+    }
+    return best;
 }
+
+
+
 
 // Router.cpp
 RouteMatch Router::match(const HttpRequest &req) const {
-    RouteMatch m; 
+    RouteMatch m;
     m.server = pickServer(req);
-    m.loc = 0;
     if (!m.server) return m;
 
     m.loc = pickLocation(m.server, req.uri); // longest prefix
 
+    // fsRoot = root da location se houver, senão do server
     m.fsRoot = m.server->root;
-    if (m.loc && !m.loc->root.empty()) m.fsRoot = m.loc->root;
+    if (m.loc && !m.loc->root.empty())
+        m.fsRoot = m.loc->root;
 
-    // relPath = uri sem prefixo da location e SEM query
+    // relPath = URI inteira sem query e sem a barra inicial
     std::string rel = req.uri;
-    if (m.loc && Utils::startsWith(rel, m.loc->path))
-        rel.erase(0, m.loc->path.size());
+    size_t q = rel.find('?'); if (q != std::string::npos) rel.erase(q);
+    if (!rel.empty() && rel[0]=='/') rel.erase(0,1);
 
-    size_t q = rel.find('?');
-    if (q != std::string::npos) rel.erase(q);
-
-    if (!rel.empty() && rel[0] == '/') rel.erase(0,1);
-
-    m.relPath = rel;
+    m.relPath = rel;            // "/cgi/echo.py" -> "cgi/echo.py"
     return m;
 }

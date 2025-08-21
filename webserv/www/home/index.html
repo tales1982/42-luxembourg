@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Webserv Test Home</title>
+</head>
+<body>
+  <h1>Test Dashboard</h1>
+  <ul>
+    <li><a href="/">GET / (default page)</a></li>
+    <li><a href="/files/">Autoindex /files/</a></li>
+    <li><form method="POST" action="/files/">
+      <textarea name="data">teste upload</textarea><br>
+      <button type="submit">Upload (urlencoded)</button>
+    </form></li>
+    <li><form method="POST" action="/files/" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <button type="submit">Upload (multipart)</button>
+    </form></li>
+    <li><a href="/cgi/echo.py?hello=world">CGI echo</a></li>
+    <li><a href="/old">Redirect /old → /new</a></li>
+    <li><a href="/naoexiste">Erro 404</a></li>
+  </ul>
+</body>
+</html>
