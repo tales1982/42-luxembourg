@@ -1,7 +1,0 @@
-# Example suppressions (extend as needed)
-{
-   getaddrinfo_glibc_noise
-   Memcheck:Leak
-   fun:malloc
-   ...
-}

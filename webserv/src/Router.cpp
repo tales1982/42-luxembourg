@@ -1,6 +1,7 @@
 #include "Router.hpp"
 #include "Utils.hpp"
 #include <cstdlib>
+#include <string>
 
 Router::Router(const GlobalConfig &gc): _conf(gc) {}
 
@@ -83,7 +84,8 @@ const LocationConfig* Router::pickLocation(const ServerConfig *srv, const std::s
         if (!Utils::startsWith(uri, p)) continue;
 
         // fronteira: evita "/cgi" casar "/cgiX"
-        if (p != "/" && uri.size() > p.size() && uri[p.size()] != '/') continue;
+        if (p != "/" && p.size() && p[p.size()-1] != '/' &&
+            uri.size() > p.size() && uri[p.size()] != '/') continue;
 
         if (p.size() > bestLen) { best = &loc; bestLen = p.size(); }
     }

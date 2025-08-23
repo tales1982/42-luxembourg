@@ -21,6 +21,7 @@
 #include <cstdio>
 #include <sstream>
 #include <vector>
+#include <set>
 #include <iostream>
 
 // --- helper: pega apenas o path sem query, e remove a leading '/' para virar relativo ---
@@ -321,162 +322,176 @@ HttpResponse ServerApp::handleDelete(const std::string &fsPath)
 
 void ServerApp::processRequest(Connection &c)
 {
-	HttpRequest &req = c.req;
-	bool keepAlive = true;
-	std::string conn = "";
-	if (req.headers.count("Connection"))
-		conn = Utils::toLower(req.headers["Connection"]);
-	if (req.version == "HTTP/1.0" && conn != "keep-alive")
-		keepAlive = false;
-	if (req.version == "HTTP/1.1" && conn == "close")
-		keepAlive = false;
+    HttpRequest &req = c.req;
+    bool keepAlive = true;
+    std::string conn = "";
+    if (req.headers.count("Connection"))
+        conn = Utils::toLower(req.headers["Connection"]);
+    if (req.version == "HTTP/1.0" && conn != "keep-alive")
+        keepAlive = false;
+    if (req.version == "HTTP/1.1" && conn == "close")
+        keepAlive = false;
 
-	// Primeiro matching por Router
-	RouteMatch rm = _router.match(req);
+    // Primeiro matching por Router
+    RouteMatch rm = _router.match(req);
 
-	// Fallback se Router não encontrou server (ex: Host não bate com server_name)
-	if (!rm.server)
-	{
-		if (_conf.servers.empty())
-		{
-			HttpResponse res;
-			res.status = 500;
-			res.reason = httpStatusReason(500);
-			queueResponse(c, res);
-			c.closeAfterWrite = true;
-			return;
-		}
-		// monta um match mínimo contra o primeiro server configurado
-		rm.server = &_conf.servers[0];
-		rm.loc = NULL;					  // sem location específica
-		rm.fsRoot = rm.server->root;	  // raiz do server
-		rm.relPath = uriPathRel(req.uri); // relativo a partir da raiz
-	}
-
-	// body size
-	if (req.body.size() > rm.server->client_max_body_size)
-	{
-		HttpResponse res;
-		res.status = 413;
-		res.reason = httpStatusReason(413);
-		queueResponse(c, res);
-		c.closeAfterWrite = !keepAlive;
-		return;
-	}
-
-	// métodos permitidos por location + header Allow em 405
-	std::string meth = req.method;
-if (meth == "HEAD") meth = "GET";   // HEAD segue sem corpo depois
-
-if (rm.loc && !rm.loc->methods.empty()) {
-    bool ok = false, hasGET = false;
-    std::string allow;
-
-    for (size_t i = 0; i < rm.loc->methods.size(); ++i) {
-        const std::string &m = rm.loc->methods[i];
-        if (m == "GET") hasGET = true;
-        if (i) allow += ", ";
-        allow += m;
-        if (m == meth) ok = true;
+    // Fallback se Router não encontrou server (ex: Host não bate com server_name)
+    if (!rm.server)
+    {
+        if (_conf.servers.empty())
+        {
+            HttpResponse res;
+            res.status = 500;
+            res.reason = httpStatusReason(500);
+            queueResponse(c, res);
+            c.closeAfterWrite = true;
+            return;
+        }
+        // monta um match mínimo contra o primeiro server configurado
+        rm.server = &_conf.servers[0];
+        rm.loc = NULL;                    // sem location específica
+        rm.fsRoot = rm.server->root;      // raiz do server
+        rm.relPath = uriPathRel(req.uri); // relativo a partir da raiz
     }
-    if (hasGET) allow += ", HEAD";  // se GET é permitido, anuncie HEAD também
 
-    if (!ok) {
+    // body size
+    if (req.body.size() > rm.server->client_max_body_size)
+    {
         HttpResponse res;
-        res.status = 405;
-        res.reason = httpStatusReason(405);
-        res.headers["Allow"] = allow;
+        res.status = 413;
+        res.reason = httpStatusReason(413);
         queueResponse(c, res);
         c.closeAfterWrite = !keepAlive;
         return;
     }
+
+    // métodos permitidos por location + header Allow em 405 (sem duplicatas)
+    if (rm.loc && !rm.loc->methods.empty()) {
+        // HEAD é tratado como GET para checagem de permissão
+        std::string effMethod = req.method;
+        if (effMethod == "HEAD") effMethod = "GET";
+
+        // Conjunto ordenado de métodos permitidos
+        std::set<std::string> allowSet(rm.loc->methods.begin(), rm.loc->methods.end());
+
+        // Regra HTTP: se GET é permitido, HEAD também é permitido
+        if (allowSet.count("GET")) allowSet.insert("HEAD");
+
+        bool ok = allowSet.count(effMethod) > 0;
+
+        if (!ok) {
+            // Monta o header Allow ordenado e sem duplicatas
+            std::ostringstream oss;
+            for (std::set<std::string>::const_iterator it = allowSet.begin(); it != allowSet.end(); ++it) {
+                if (it != allowSet.begin()) oss << ", ";
+                oss << *it;
+            }
+            HttpResponse res;
+            res.status  = 405;
+            res.reason  = httpStatusReason(405);
+            res.headers["Allow"] = oss.str();
+            queueResponse(c, res);
+            c.closeAfterWrite = !keepAlive;
+            return;
+        }
+    }
+
+    // redirect por location
+    if (rm.loc && !rm.loc->redirect.empty())
+    {
+        HttpResponse res;
+        res.status = 301;
+        res.reason = httpStatusReason(301);
+        std::string code = rm.loc->redirect.substr(0, rm.loc->redirect.find(' '));
+        int ccode = std::atoi(code.c_str());
+        if (ccode >= 300 && ccode < 400)
+        {
+            res.status = ccode;
+            res.reason = httpStatusReason(ccode);
+        }
+        std::string target = rm.loc->redirect.substr(rm.loc->redirect.find(' ') + 1);
+        res.headers["Location"] = target;
+        queueResponse(c, res);
+        c.closeAfterWrite = !keepAlive;
+        return;
+    }
+
+    // Caminho de FS a partir do match — REMOVENDO a query do relPath
+    std::string relNoQ = rm.relPath;
+    size_t qpos = relNoQ.find('?');
+    if (qpos != std::string::npos)
+        relNoQ.erase(qpos);
+
+    std::string fsPath = Utils::safePathJoin(rm.fsRoot, relNoQ);
+
+    // DEBUG: ver o caminho real calculado para o CGI/estático
+    std::cerr << "\033[33m[CGI-DEBUG]\033[0m fsRoot=" << rm.fsRoot
+              << " relPath=" << rm.relPath
+              << " (noQ=" << relNoQ << ")"
+              << " -> fsPath=" << fsPath << std::endl;
+
+    // CGI
+    if (rm.loc && CGI::isCGI(rm.loc, rm.relPath))
+    {
+        HttpResponse res = CGI::run(req, rm, fsPath); // fsPath continua sendo o path real do script
+        queueResponse(c, res);
+        c.closeAfterWrite = !keepAlive;
+        return;
+    }
+
+    // GET / HEAD (HEAD tratado no queueResponse)
+    if (req.method == "GET" || req.method == "HEAD")
+    {
+        HttpResponse res = handleStatic(req, rm);
+        // NÃO limpe o body aqui para HEAD; o queueResponse cuida disso
+        queueResponse(c, res);
+        c.closeAfterWrite = !keepAlive;
+        return;
+    }
+
+    // POST
+    if (req.method == "POST")
+    {
+        if (rm.loc && rm.loc->upload_on)
+        {
+            HttpResponse res = handleUpload(req, rm);
+            queueResponse(c, res);
+            c.closeAfterWrite = !keepAlive;
+            return;
+        }
+        HttpResponse res = handleStatic(req, rm);
+        queueResponse(c, res);
+        c.closeAfterWrite = !keepAlive;
+        return;
+    }
+
+    // DELETE
+    if (req.method == "DELETE")
+    {
+        HttpResponse res = handleDelete(fsPath);
+        queueResponse(c, res);
+        c.closeAfterWrite = !keepAlive;
+        return;
+    }
+
+    // Qualquer outro método -> 405 (inclui Allow se tivermos a lista da location)
+    HttpResponse res;
+    res.status = 405;
+    res.reason = httpStatusReason(405);
+    if (rm.loc && !rm.loc->methods.empty()) {
+        std::set<std::string> allowSet(rm.loc->methods.begin(), rm.loc->methods.end());
+        if (allowSet.count("GET")) allowSet.insert("HEAD");
+        std::ostringstream oss;
+        for (std::set<std::string>::const_iterator it = allowSet.begin(); it != allowSet.end(); ++it) {
+            if (it != allowSet.begin()) oss << ", ";
+            oss << *it;
+        }
+        res.headers["Allow"] = oss.str();
+    }
+    queueResponse(c, res);
+    c.closeAfterWrite = !keepAlive;
 }
 
-	// redirect por location
-	if (rm.loc && !rm.loc->redirect.empty())
-	{
-		HttpResponse res;
-		res.status = 301;
-		res.reason = httpStatusReason(301);
-		std::string code = rm.loc->redirect.substr(0, rm.loc->redirect.find(' '));
-		int ccode = std::atoi(code.c_str());
-		if (ccode >= 300 && ccode < 400)
-		{
-			res.status = ccode;
-			res.reason = httpStatusReason(ccode);
-		}
-		std::string target = rm.loc->redirect.substr(rm.loc->redirect.find(' ') + 1);
-		res.headers["Location"] = target;
-		queueResponse(c, res);
-		c.closeAfterWrite = !keepAlive;
-		return;
-	}
-
-	// Caminho de FS a partir do match — REMOVENDO a query do relPath
-	std::string relNoQ = rm.relPath;
-	size_t qpos = relNoQ.find('?');
-	if (qpos != std::string::npos)
-		relNoQ.erase(qpos);
-
-	std::string fsPath = Utils::safePathJoin(rm.fsRoot, relNoQ);
-
-	// DEBUG: ver o caminho real calculado para o CGI/estático
-	std::cerr << "\033[33m[CGI-DEBUG]\033[0m fsRoot=" << rm.fsRoot
-			  << " relPath=" << rm.relPath
-			  << " (noQ=" << relNoQ << ")"
-			  << " -> fsPath=" << fsPath << std::endl;
-
-	// CGI
-	if (rm.loc && CGI::isCGI(rm.loc, rm.relPath))
-	{
-		HttpResponse res = CGI::run(req, rm, fsPath); // fsPath continua sendo o path real do script
-		queueResponse(c, res);
-		c.closeAfterWrite = !keepAlive;
-		return;
-	}
-
-	// GET / HEAD (HEAD tratado no queueResponse)
-	if (req.method == "GET" || req.method == "HEAD")
-	{
-		HttpResponse res = handleStatic(req, rm);
-		// NÃO limpe o body aqui para HEAD; o queueResponse cuida disso
-		queueResponse(c, res);
-		c.closeAfterWrite = !keepAlive;
-		return;
-	}
-
-	// POST
-	if (req.method == "POST")
-	{
-		if (rm.loc && rm.loc->upload_on)
-		{
-			HttpResponse res = handleUpload(req, rm);
-			queueResponse(c, res);
-			c.closeAfterWrite = !keepAlive;
-			return;
-		}
-		HttpResponse res = handleStatic(req, rm);
-		queueResponse(c, res);
-		c.closeAfterWrite = !keepAlive;
-		return;
-	}
-
-	// DELETE
-	if (req.method == "DELETE")
-	{
-		HttpResponse res = handleDelete(fsPath);
-		queueResponse(c, res);
-		c.closeAfterWrite = !keepAlive;
-		return;
-	}
-
-	// Qualquer outro método
-	HttpResponse res;
-	res.status = 405;
-	res.reason = httpStatusReason(405);
-	queueResponse(c, res);
-	c.closeAfterWrite = !keepAlive;
-}
 
 std::string ServerApp::buildResponse(const HttpResponse &res, bool keepAlive)
 {

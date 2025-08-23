@@ -1,18 +1,41 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage: ./valgrind.sh ./webserv <config.conf>
+# Uso:
+#   ./test/scripts/valgrind.sh [./webserv] [./configs/example.conf]
 BIN="${1:-./webserv}"
-CONF="${2:-./conf/example.conf}"
+CONF="${2:-./configs/example.conf}"
 
 if ! command -v valgrind >/dev/null 2>&1; then
   echo "ERROR: valgrind not found. Install with: sudo apt-get install -y valgrind" >&2
   exit 1
 fi
 
-SUPP="$(dirname "$0")/valgrind.supp"
-LOG="valgrind.log"
+if [ ! -x "$BIN" ]; then
+  echo "ERROR: binary not found or not executable: $BIN" >&2
+  exit 1
+fi
+if [ ! -f "$CONF" ]; then
+  echo "ERROR: config file not found: $CONF" >&2
+  exit 1
+fi
 
-echo "[i] Starting valgrind (it will keep running until you stop the server or send requests)"
-echo "[i] You can run ./scripts/siege.sh in another terminal while valgrind is running."
-exec valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all \  --track-origins=yes --log-file="$LOG" --suppressions="$SUPP" \  "$BIN" "$CONF"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SUPP="$SCRIPT_DIR/valgrind.supp"
+LOG="${LOG:-valgrind.log}"
+
+echo "[i] Starting valgrind (Ctrl+C para parar)"
+echo "[i] Em outro terminal, você pode rodar eval_all.sh"
+
+# Monta os argumentos do valgrind de forma segura
+ARGS=(
+  "--tool=memcheck"
+  "--leak-check=full"
+  "--show-leak-kinds=all"
+  "--track-origins=yes"
+  "--log-file=$LOG"
+)
+# Só adiciona suppressions se o arquivo existir
+[ -f "$SUPP" ] && ARGS+=("--suppressions=$SUPP")
+
+exec valgrind "${ARGS[@]}" "$BIN" "$CONF"
