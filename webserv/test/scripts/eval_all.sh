@@ -7,7 +7,7 @@
 ###############################################################################
 BASE_URL="${BASE_URL:-http://127.0.0.1:8080}"
 EXPECT_A="${EXPECT_A:-SITE A (hostname)}"
-EXPECT_B="${EXPECT_B:-SITE B 8081}"
+EXPECT_B="${EXPECT_B:-SITE B (hostname)}"
 
 ROOT_URL="${ROOT_URL:-$BASE_URL/}"
 HEAD_URL="${HEAD_URL:-$BASE_URL/}"
@@ -32,7 +32,7 @@ BODY_LIMIT_SIZE_KB="${BODY_LIMIT_SIZE_KB:-10240}"   # 10 MiB
 HOST_A="${HOST_A:-sitea.local}"; PORT_A="${PORT_A:-8081}"
 HOST_B="${HOST_B:-siteb.local}"; PORT_B="${PORT_B:-8082}"
 EXPECT_A="${EXPECT_A:-SITE A (hostname)}"
-EXPECT_B="${EXPECT_B:-SITE B 8081}"
+EXPECT_B="${EXPECT_B:-SITE B (hostname)}"
 
 # Stress (opcional): exige 'siege'
 ENABLE_SIEGE="${ENABLE_SIEGE:-1}"
