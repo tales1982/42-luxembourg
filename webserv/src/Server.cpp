@@ -408,7 +408,7 @@ void ServerApp::processRequest(Connection &c)
 		res.status = 405;
 		res.reason = httpStatusReason(405);
 
-		res.headers["Allow"] = "GET, HEAD"; // NÃO anuncie HEAD
+		res.headers["Allow"] = "GET"; // NÃO anuncie HEAD
 		// >>> adicione isto <<<
 		res.headers["Content-Length"] = "0";
 		// res.headers["Content-Type"] = "text/plain";
