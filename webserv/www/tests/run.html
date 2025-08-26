@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Webserv — Executar Teste</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body {
+      margin:0; font-family: system-ui,Segoe UI,Roboto,Ubuntu;
+      color:#e8f0ff;
+      background:#0b1522 url("/images/serve5.jpg") no-repeat center center fixed;
+      background-size:cover;
+    }
+    .wrap { max-width:900px; margin:0 auto; padding:32px 16px; background:rgba(0,0,0,.6); border-radius:16px; margin-top:40px; }
+    a.back { color:#ffd54a; text-decoration:none; font-weight:700; }
+    h1 { margin:16px 0; font-size:26px; }
+    p { color:#cfd8dc; }
+    pre {
+      background:rgba(0,0,0,.35); padding:12px; border-radius:12px; overflow:auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:#9fe8ff;
+    }
+    button {
+      margin-top:16px; padding:12px 20px; border:none; border-radius:8px;
+      background:#ffd54a; color:#000; font-weight:bold; cursor:pointer;
+    }
+    button:hover { background:#ffb300; }
+    #result { margin-top:20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="index.html">← Voltar aos testes</a>
+    <h1 id="title">Teste</h1>
+    <p id="desc"></p>
+    <button onclick="runTest()">Executar teste</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const id = new URLSearchParams(location.search).get('id') || '';
+
+    // Definição dos testes
+    const TESTS = {
+      "get": {
+        title:"GET básico (200 + Content-Type)",
+        desc:"Requisita / e valida 200 + Content-Type.",
+        req: { url:"/", method:"GET", expect:200 }
+      },
+      "head": {
+        title:"HEAD sem corpo",
+        desc:"Confere status 200 e body 0 bytes.",
+        req: { url:"/", method:"HEAD", expect:200 }
+      },
+      "404": {
+        title:"404 custom",
+        desc:"Requisita /nao_existe e espera 404.",
+        req: { url:"/nao_existe", method:"GET", expect:404 }
+      },
+      "autoindex": {
+        title:"Autoindex",
+        desc:"Lista de diretório habilitada em /files/.",
+        req: { url:"/files/", method:"GET", expect:200 }
+      },
+      "redirect": {
+        title:"Redirect (3xx + Location)",
+        desc:"GET /old deve redirecionar.",
+        req: { url:"/old", method:"GET", expect:301 }
+      },
+      "405": {
+        title:"405 Method Not Allowed",
+        desc:"DELETE em /new/index.html deve retornar 405.",
+        req: { url:"/new/index.html", method:"DELETE", expect:405 }
+      },
+      "upload": {
+        title:"Upload raw",
+        desc:"POST em /files/ deve retornar 200/201.",
+        req: { url:"/files/", method:"POST", body:"hello webserv", headers:{ "Content-Type":"text/plain" }, expect:[200,201] }
+      },
+      "413": {
+        title:"Body limit (413)",
+        desc:"POST grande deve retornar 413.",
+        req: { url:"/cgi/echo.py", method:"POST", body:"X".repeat(1024*1024*11), headers:{ "Content-Type":"application/octet-stream" }, expect:413 }
+      },
+      "cgi-get": {
+        title:"CGI GET",
+        desc:"GET /cgi/echo.py retorna 200.",
+        req: { url:"/cgi/echo.py", method:"GET", expect:200 }
+      },
+      "cgi-post": {
+        title:"CGI POST",
+        desc:"POST /cgi/echo.py retorna 200.",
+        req: { url:"/cgi/echo.py", method:"POST", body:"msg=hello", headers:{ "Content-Type":"application/x-www-form-urlencoded" }, expect:200 }
+      }
+    };
+
+    const t = TESTS[id];
+    if (!t) {
+      document.getElementById("title").textContent = "Teste não encontrado";
+      document.getElementById("desc").textContent = "ID inválido. Volte e escolha outro teste.";
+    } else {
+      document.getElementById("title").textContent = "Teste: " + t.title;
+      document.getElementById("desc").textContent = t.desc;
+    }
+
+    async function runTest(){
+      if (!t) return;
+      const resultEl = document.getElementById("result");
+      resultEl.innerHTML = "<em>Executando...</em>";
+
+      try {
+        const opt = { method:t.req.method, cache:"no-store", headers:t.req.headers||{} };
+        if (t.req.body) opt.body = t.req.body;
+
+        const res = await fetch(t.req.url, opt);
+        const ct = res.headers.get("Content-Type") || "(sem Content-Type)";
+        const expect = Array.isArray(t.req.expect) ? t.req.expect : [t.req.expect];
+
+        let statusOk = expect.includes(res.status);
+        let body = "";
+        if (t.req.method !== "HEAD") {
+          body = await res.text();
+        }
+
+        resultEl.innerHTML = `
+          <p>Status: <strong>${res.status} ${res.statusText}</strong> 
+            (esperado: ${expect.join(" ou ")}) 
+            ${statusOk ? "✅" : "❌"}
+          </p>
+          <p>Content-Type: <code>${ct}</code></p>
+          <h3>Prévia do corpo:</h3>
+          <pre id="bodyPreview"></pre>
+        `;
+
+        document.getElementById("bodyPreview").textContent =
+          body.slice(0,600) + (body.length>600 ? "\n…(cortado)" : "");
+
+      } catch(e){
+        resultEl.innerHTML = "<p style='color:#ff6b6b'>Erro: "+e+"</p>";
+      }
+    }
+  </script>
+</body>
+</html>

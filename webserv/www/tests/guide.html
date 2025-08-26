@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Guia de Execução (CLI)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --bg:#0e1a2a; --panel:#13233a; --txt:#e8f0ff; --muted:#e0c4c4; --accent:#ffd54a; }
+    * { box-sizing:border-box; }
+    body{
+      margin:0; font-family:system-ui,Segoe UI,Roboto,Ubuntu; color:var(--txt);
+      background: #0b1522 url("/images/serve8.jpg") no-repeat center center fixed;
+      background-size: cover;
+    }
+    .wrap{ max-width:900px; margin:0 auto; padding:24px 16px 40px; background:rgba(0,0,0,0.55); border-radius:16px; }
+    a.back{ color:var(--accent); text-decoration:none; font-weight:700; }
+    h1{ margin:12px 0 8px; font-size:24px; }
+    p.muted{ color:var(--muted); }
+    .card{ margin-top:14px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px dashed rgba(255,255,255,.35); border-radius:16px; padding:16px; }
+    pre{ background:rgba(0,0,0,.35); padding:12px; border-radius:12px; overflow:auto; color:#fff; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .tip{ color:var(--muted); font-size:14px; }
+    .kbd{ padding:2px 6px; border:1px solid rgba(255, 255, 255, 0.418); border-radius:6px; background:rgba(255,255,255,.06); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="index.html">← Voltar aos testes</a>
+    <h1 id="title">Guia</h1>
+    <p class="muted" id="desc">Este teste requer linha de comando. Siga os passos abaixo.</p>
+
+    <section class="card" id="conteudo">
+      <h3>Comandos</h3>
+      <pre id="cmd">—</pre>
+      <h3 id="detalhes">Notas</h3>
+      <div id="notes" class="tip">—</div>
+    </section>
+  </div>
+
+  <script>
+    const id = new URLSearchParams(location.search).get('id') || '';
+
+    const GUIDES = {
+      'vhost': {
+        title: 'Multi-host (server_name)',
+        desc: 'Valida que cada virtual host responde conforme o server_name.',
+        cmd:
+`# Teste Host A:
+curl -s --resolve sitea.local:8081:127.0.0.1 http://sitea.local:8081/
+
+# Teste Host B:
+curl -s --resolve siteb.local:8082:127.0.0.1 http://siteb.local:8082/`,
+        notes:
+`• Ajuste os domínios e portas conforme seu \`configs/example.conf\`.
+• O parâmetro <span class="kbd">--resolve</span> força o DNS para 127.0.0.1 sem editar /etc/hosts.
+• Verifique se o corpo contém o texto esperado (ex.: “SITE A (hostname)”).`
+      },
+      'unknown': {
+        title: 'UNKNOWN method',
+        desc: 'Garante que o servidor não quebra com métodos desconhecidos.',
+        cmd:
+`curl -i -X FOO http://127.0.0.1:8080/`,
+        notes:
+`• O esperado é <span class="kbd">405 Method Not Allowed</span> (ou 400, dependendo da sua validação).
+• Se retornar 405, confira também o header <span class="kbd">Allow</span> com os métodos suportados.`
+      },
+      'siege': {
+        title: 'Stress (siege)',
+        desc: 'Executa um teste de carga curto e mede disponibilidade.',
+        cmd:
+`# Instale o siege (Ubuntu/Debian):
+sudo apt-get update && sudo apt-get install -y siege
+
+# Rode por 10 segundos:
+siege -b --no-log -t 10S http://127.0.0.1:8080/`,
+        notes:
+`• Você pode ajustar o alvo e duração: <span class="kbd">-t 30S</span>, <span class="kbd">-t 1M</span>.
+• Desative logs para não travar (<span class="kbd">--no-log</span>).
+• A disponibilidade deve ser alta (≥ 99%).`
+      }
+    };
+
+    const g = GUIDES[id];
+    const $ = s => document.querySelector(s);
+    if (!g) {
+      $('#title').textContent = 'Guia não encontrado';
+      $('#desc').textContent = 'ID inválido. Volte e escolha um teste CLI.';
+      $('#cmd').textContent = '—';
+      $('#notes').textContent = '—';
+    } else {
+      $('#title').textContent = g.title + ' (CLI)';
+      $('#desc').textContent = g.desc;
+      $('#cmd').textContent = g.cmd;
+      $('#notes').innerHTML = g.notes;
+    }
+  </script>
+</body>
+</html>

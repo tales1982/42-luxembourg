@@ -11,7 +11,7 @@
 #include <algorithm>
 
 // no topo do arquivo (depois dos includes)
-static void chdir_to_script_dir(const std::string &scriptPath)
+/* static void chdir_to_script_dir(const std::string &scriptPath)
 {
     std::string dir = scriptPath;
     std::string::size_type slash = dir.find_last_of("/");
@@ -21,7 +21,7 @@ static void chdir_to_script_dir(const std::string &scriptPath)
         if (!dir.empty())
             ::chdir(dir.c_str());
     }
-}
+} */
 
 static int set_nonblock(int fd)
 {
@@ -82,28 +82,40 @@ CgiResult CGIManager::run(const std::string &execPath,
         throw std::runtime_error("fork failed");
     }
     if (pid == 0)
-    {
-        // child
-        dup2(inPipe[0], STDIN_FILENO);
-        dup2(outPipe[1], STDOUT_FILENO);
-        close(inPipe[0]);
-        close(inPipe[1]);
-        close(outPipe[0]);
-        close(outPipe[1]);
-        // isolate child in its own process group
-        setpgid(0, 0);
-        // build argv: execPath scriptPath
+{
+    // child
+    dup2(inPipe[0], STDIN_FILENO);
+    dup2(outPipe[1], STDOUT_FILENO);
+    close(inPipe[0]);
+    close(inPipe[1]);
+    close(outPipe[0]);
+    close(outPipe[1]);
 
-        chdir_to_script_dir(scriptPath);
+    setpgid(0, 0);
 
-        char *const argv[] = {const_cast<char *>(execPath.c_str()),
-                              const_cast<char *>(scriptPath.c_str()),
-                              NULL};
-        char **envp = build_envp(env);
-        execve(execPath.c_str(), argv, envp);
-        free_envp(envp);
-        _exit(127);
-    }
+    // >>> resolva dir e basename do script (sem duplicar ./www/...)
+    // (se quiser, pode manter sem realpath — funciona do mesmo jeito)
+    std::string scriptAbs = scriptPath;
+
+    // chdir para o diretório do script
+    std::string::size_type slash = scriptAbs.find_last_of('/');
+    std::string scriptDir  = (slash == std::string::npos) ? "." : scriptAbs.substr(0, slash);
+    std::string scriptBase = (slash == std::string::npos) ? scriptAbs : scriptAbs.substr(slash + 1);
+    ::chdir(scriptDir.c_str());
+
+    // *** ATENÇÃO: declare o argv APENAS UMA VEZ ***
+    char *const argv[] = {
+        const_cast<char *>(execPath.c_str()),
+        const_cast<char *>(scriptBase.c_str()),  // só "echo.py"
+        NULL
+    };
+
+    char **envp = build_envp(env);
+    execve(execPath.c_str(), argv, envp);
+    free_envp(envp);
+    _exit(127);
+}
+
     // parent
     close(inPipe[0]);
     close(outPipe[1]);

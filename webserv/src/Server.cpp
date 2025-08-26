@@ -613,6 +613,15 @@ std::string ServerApp::buildResponse(const HttpResponse &res, bool keepAlive)
 		out.headers["Connection"] = keepAlive ? "keep-alive" : "close";
 	}
 
+	// ---- Desativar cache por padrão ----
+	// Se não tiverem sido definidos explicitamente, força no-cache/no-store
+	if (out.headers.find("Cache-Control") == out.headers.end())
+	{
+		out.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0";
+		out.headers["Pragma"] = "no-cache";
+		out.headers["Expires"] = "0";
+	}
+
 	// *** Regras de corpo/Content-Length por status ***
 	// 1xx / 204 / 304 --> sem corpo e Content-Length: 0
 	if ((out.status >= 100 && out.status < 200) || out.status == 204 || out.status == 304)
@@ -652,6 +661,8 @@ void ServerApp::queueResponse(Connection &c, const HttpResponse &res)
 		keepAlive = false;
 
 	HttpResponse final = res;
+	final.headers["Connection"] = "close";
+
 
 	std::map<std::string, std::string>::const_iterator itConn = final.headers.find("Connection");
 	if (itConn != final.headers.end() && Utils::toLower(itConn->second) == "close")
