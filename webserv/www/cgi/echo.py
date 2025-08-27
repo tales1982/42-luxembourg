@@ -20,7 +20,7 @@ post_raw = read_post_data() if method == "POST" else ""
 post_ct = (os.environ.get("CONTENT_TYPE") or "").split(";")[0].strip().lower()
 post_params = parse_qs(post_raw, keep_blank_values=True) if post_ct in ("application/x-www-form-urlencoded", "") else {}
 
-# name pode vir de POST ou GET
+# name can come from POST or GET
 name = ""
 for src in (post_params, get_params):
     if "name" in src and src["name"]:
@@ -28,12 +28,12 @@ for src in (post_params, get_params):
         break
 name = name.strip()
 
-client_ip = os.environ.get("REMOTE_ADDR", "desconhecido")
+client_ip = os.environ.get("REMOTE_ADDR", "unknown")
 now_str   = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 safe_name = html.escape(name)
 
 html_body = f"""<!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>CGI • Echo & Welcome</title>
@@ -43,7 +43,7 @@ html_body = f"""<!doctype html>
     html, body {{ height:100%; }}
     body {{
       color:#fff; min-height:100vh; display:flex; justify-content:center; align-items:center; padding:40px;
-      /* a imagem é aplicada via JS (com cache-buster) */
+      /* image is applied via JS (with cache-buster) */
       background-color:#111;
       background-position:center center; background-repeat:no-repeat;
       background-attachment:fixed; background-size:cover;
@@ -73,7 +73,7 @@ html_body = f"""<!doctype html>
     .ok  {{ color:#90ee90; }}
     .mono {{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }}
 
-    /* Debug bar igual à da home */
+    /* Debug bar same as home */
     #dbgbar{{ position:fixed; top:8px; left:8px; z-index:9999; background:#000a; color:#fff;
              padding:6px 10px; border-radius:6px; font:14px system-ui; display:flex; gap:8px; align-items:center; }}
     #dbgthumb{{ height:44px; border-radius:6px; border:2px solid #fff; }}
@@ -88,34 +88,38 @@ html_body = f"""<!doctype html>
     <strong>DEBUG IMG</strong>
     <img id="dbgthumb" alt="(thumb)" />
     <div id="dbginfo">
-      <div id="dbgstatus">carregando…</div>
-      <small><a id="dbglink" href="#" target="_blank" rel="noopener">abrir imagem</a></small>
+      <div id="dbgstatus">loading…</div>
+      <small><a id="dbglink" href="#" target="_blank" rel="noopener">open image</a></small>
     </div>
   </div>
 
   <div class="card">
-    <h1>⚡ CGI Dinâmica</h1>
-    <p class="lead">Digite seu nome para receber uma mensagem de boas-vindas com data, hora e IP.</p>
+    <h1>⚡ Dynamic CGI</h1>
+    <p class="lead">Type your name to receive a welcome message with date, time and IP.</p>
 
     <form method="GET" action="/cgi/echo.py">
-      <label for="name">Seu nome</label>
+      <label for="name">Your name</label>
       <div class="row">
-        <input type="text" id="name" name="name" placeholder="Ex.: Tales" value="{safe_name}">
-        <button type="submit">Enviar</button>
+        <input type="text" id="name" name="name" placeholder="E.g.: Tales" value="{safe_name}">
+        <button type="submit">Send</button>
       </div>
     </form>
 
-    {("<div class='box ok'><strong>Bem-vindo, " + safe_name + "!</strong><br>Agora: " + html.escape(now_str) + " &middot; Seu IP: <span class='mono'>" + html.escape(client_ip) + "</span></div>") if safe_name else ""}
+    {("<div class='box ok'><strong>Welcome, " + safe_name + "!</strong><br>Now: " + html.escape(now_str) + " &middot; Your IP: <span class='mono'>" + html.escape(client_ip) + "</span></div>") if safe_name else ""}
 
     <div class="box muted">
-      <div><strong>Método:</strong> {html.escape(method)}</div>
+      <div><strong>Method:</strong> {html.escape(method)}</div>
       <div><strong>QUERY_STRING:</strong> <span class="mono">{html.escape(qs)}</span></div>
     </div>
+    <!-- Botão Home -->
+<a href="/" class="home-btn"><button type="button">⬅ Back to Home</button></a>
+
   </div>
+  
 
   <script>
-    // Mesma lógica da home: cache-buster + thumb + status
-    const base = "/images/serve2.jpg";
+    // Same logic as home: cache-buster + thumb + status
+    const base = "/images/serve7.jpg";
     const url  = base + "?cb=" + Date.now();
 
     document.getElementById("dbglink").href = base;

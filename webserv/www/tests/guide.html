@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Guia de Execução (CLI)</title>
+  <title>Execution Guide (CLI)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root { --bg:#0e1a2a; --panel:#13233a; --txt:#e8f0ff; --muted:#e0c4c4; --accent:#ffd54a; }
@@ -26,14 +26,14 @@
 </head>
 <body>
   <div class="wrap">
-    <a class="back" href="index.html">← Voltar aos testes</a>
-    <h1 id="title">Guia</h1>
-    <p class="muted" id="desc">Este teste requer linha de comando. Siga os passos abaixo.</p>
+    <a class="back" href="index.html">← Back to tests</a>
+    <h1 id="title">Guide</h1>
+    <p class="muted" id="desc">This test requires the command line. Follow the steps below.</p>
 
     <section class="card" id="conteudo">
-      <h3>Comandos</h3>
+      <h3>Commands</h3>
       <pre id="cmd">—</pre>
-      <h3 id="detalhes">Notas</h3>
+      <h3 id="detalhes">Notes</h3>
       <div id="notes" class="tip">—</div>
     </section>
   </div>
@@ -44,48 +44,48 @@
     const GUIDES = {
       'vhost': {
         title: 'Multi-host (server_name)',
-        desc: 'Valida que cada virtual host responde conforme o server_name.',
+        desc: 'Validates that each virtual host responds according to its server_name.',
         cmd:
-`# Teste Host A:
+`# Test Host A:
 curl -s --resolve sitea.local:8081:127.0.0.1 http://sitea.local:8081/
 
-# Teste Host B:
+# Test Host B:
 curl -s --resolve siteb.local:8082:127.0.0.1 http://siteb.local:8082/`,
         notes:
-`• Ajuste os domínios e portas conforme seu \`configs/example.conf\`.
-• O parâmetro <span class="kbd">--resolve</span> força o DNS para 127.0.0.1 sem editar /etc/hosts.
-• Verifique se o corpo contém o texto esperado (ex.: “SITE A (hostname)”).`
+`• Adjust domains and ports according to your \`configs/example.conf\`.
+• The <span class="kbd">--resolve</span> parameter forces DNS to 127.0.0.1 without editing /etc/hosts.
+• Check if the response body contains the expected text (e.g., “SITE A (hostname)”).`
       },
       'unknown': {
         title: 'UNKNOWN method',
-        desc: 'Garante que o servidor não quebra com métodos desconhecidos.',
+        desc: 'Ensures the server does not crash with unknown methods.',
         cmd:
 `curl -i -X FOO http://127.0.0.1:8080/`,
         notes:
-`• O esperado é <span class="kbd">405 Method Not Allowed</span> (ou 400, dependendo da sua validação).
-• Se retornar 405, confira também o header <span class="kbd">Allow</span> com os métodos suportados.`
+`• The expected result is <span class="kbd">405 Method Not Allowed</span> (or 400, depending on your validation).
+• If it returns 405, also check the <span class="kbd">Allow</span> header with the supported methods.`
       },
       'siege': {
         title: 'Stress (siege)',
-        desc: 'Executa um teste de carga curto e mede disponibilidade.',
+        desc: 'Runs a short load test and measures availability.',
         cmd:
-`# Instale o siege (Ubuntu/Debian):
+`# Install siege (Ubuntu/Debian):
 sudo apt-get update && sudo apt-get install -y siege
 
-# Rode por 10 segundos:
+# Run for 10 seconds:
 siege -b --no-log -t 10S http://127.0.0.1:8080/`,
         notes:
-`• Você pode ajustar o alvo e duração: <span class="kbd">-t 30S</span>, <span class="kbd">-t 1M</span>.
-• Desative logs para não travar (<span class="kbd">--no-log</span>).
-• A disponibilidade deve ser alta (≥ 99%).`
+`• You can adjust the target and duration: <span class="kbd">-t 30S</span>, <span class="kbd">-t 1M</span>.
+• Disable logs to avoid blocking (<span class="kbd">--no-log</span>).
+• Availability should be high (≥ 99%).`
       }
     };
 
     const g = GUIDES[id];
     const $ = s => document.querySelector(s);
     if (!g) {
-      $('#title').textContent = 'Guia não encontrado';
-      $('#desc').textContent = 'ID inválido. Volte e escolha um teste CLI.';
+      $('#title').textContent = 'Guide not found';
+      $('#desc').textContent = 'Invalid ID. Go back and choose another CLI test.';
       $('#cmd').textContent = '—';
       $('#notes').textContent = '—';
     } else {

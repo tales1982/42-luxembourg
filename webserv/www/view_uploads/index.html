@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>📂 Uploaded Files</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background:#0b1522 url("/images/serve10.jpg") no-repeat center center fixed;
+      background-size:cover;
+      color:#fff;
+      padding:70px 20px 20px; /* espaço extra no topo por causa da barra */
+    }
+    h1 { color:#ffd54a; text-align:center; }
+
+    /* Top bar */
+    .topbar {
+      position:fixed; top:0; left:0; right:0;
+      background:rgba(0,0,0,.7);
+      padding:10px 20px;
+      display:flex; gap:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,.6);
+    }
+    .topbar a {
+      background:#ffd54a; color:#222; font-weight:bold; padding:8px 14px;
+      border-radius:8px; text-decoration:none; font-size:14px;
+    }
+    .topbar a:hover { background:#ffb300; }
+
+    table { border-collapse: collapse; width: 100%; max-width: 800px; margin:20px auto; }
+    th, td { border:1px solid rgba(255,255,255,.2); padding:8px 12px; }
+    th { background:#111; }
+    tr:nth-child(even) { background:rgba(255,255,255,.05); }
+    a { color:#90ee90; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    button {
+      background:#ff5d5d; border:none; padding:6px 10px; border-radius:6px; color:#fff; cursor:pointer;
+    }
+    button:hover { background:#ff2d2d; }
+    .msg {
+      margin:20px auto; max-width:800px; padding:10px; border-radius:6px;
+    }
+    .ok { background:#1e4620; color:#b5ffb5; }
+    .err { background:#641e1e; color:#ffb5b5; }
+  </style>
+</head>
+<body>
+  <!-- Top navigation bar -->
+  <div class="topbar">
+    <a href="/">🏠 Back to Home</a>
+    <a href="/send_files/">📤 Send File</a>
+  </div>
+
+  <h1>📂 Uploaded Files</h1>
+  <p style="text-align:center;">These files are stored in the <code>./data</code> directory on the server.</p>
+
+  <div id="msg"></div>
+  <table id="filesTable">
+    <thead>
+      <tr><th>File</th><th>Actions</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const msg = (html, ok=false) => {
+      const div = document.getElementById('msg');
+      div.innerHTML = html;
+      div.className = 'msg ' + (ok ? 'ok':'err');
+    };
+
+    async function loadFiles(){
+      try {
+        const res = await fetch('/uploads/');  // uses autoindex
+        const html = await res.text();
+
+        // parse links from autoindex
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const links = [...doc.querySelectorAll('a')];
+
+        const tbody = document.querySelector('#filesTable tbody');
+        tbody.innerHTML = '';
+
+        links.forEach(a => {
+          const href = a.getAttribute('href');
+          if (!href || href === '../') return; // ignore "parent" link
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><a href="/uploads/${href}" target="_blank">${href}</a></td>
+            <td><button onclick="delFile('${href}')">Delete</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } catch (e) {
+        msg('Error while loading file list: '+e);
+      }
+    }
+
+    async function delFile(name){
+      if (!confirm('Delete "'+name+'"?')) return;
+      try {
+        const res = await fetch('/uploads/'+encodeURIComponent(name), { method:'DELETE' });
+        if (res.ok) {
+          msg('✅ File "'+name+'" deleted successfully.', true);
+          loadFiles();
+        } else {
+          msg('❌ Error deleting "'+name+'": '+res.status+' '+res.statusText);
+        }
+      } catch(e){
+        msg('❌ Error deleting: '+e);
+      }
+    }
+
+    loadFiles();
+  </script>
+</body>
+</html>

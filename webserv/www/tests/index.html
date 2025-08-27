@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Webserv — Testes</title>
+  <title>Webserv — Test Suite</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root {
@@ -20,7 +20,7 @@
     .subtitle { margin-top: 6px; color: rgba(255,255,255,.75); font-size: 14px; }
     .grid {
       display:grid; gap:16px; padding: 20px 16px 40px;
-      grid-template-columns: repeat(5, 1fr); /* 5 por linha */
+      grid-template-columns: repeat(5, 1fr); /* 5 per row */
       max-width: 1600px; margin: 0 auto;
     }
     .card {
@@ -61,40 +61,40 @@
 </head>
 <body>
   <header>
-    <div class="title">Webserv — Suite de Testes</div>
-    <div class="subtitle">Clique em um card para executar. Os cartões “CLI” abrem um guia com os comandos.</div>
+    <div class="title">Webserv — Test Suite</div>
+    <div class="subtitle">Click on a card to run. The “CLI” cards open a guide with commands.</div>
   </header>
 
   <main class="grid" id="grid"></main>
 
-  <footer>Alguns testes exigem linha de comando (vhost, siege, UNKNOWN).</footer>
+  <footer>Some tests require the command line (vhost, siege, UNKNOWN).</footer>
 
   <script>
-    // Cards executáveis no navegador
+    // Browser-executable tests
     const TESTS_BROWSER = [
-      { id:"get",       tag:"HTTP",   title:"GET básico (200 + Content-Type)", desc:"Requisita / e valida 200 + Content-Type." },
-      { id:"head",      tag:"HTTP",   title:"HEAD sem corpo",                  desc:"Confere status 200 e body com 0 bytes." },
-      { id:"404",       tag:"HTTP",   title:"404 custom",                      desc:"Requisita /nao_existe e espera 404." },
-      { id:"autoindex", tag:"Static", title:"Autoindex",                       desc:"Lista de diretório habilitada em /files/." },
-      { id:"redirect",  tag:"HTTP",   title:"Redirect (3xx + Location)",       desc:"GET /old deve redirecionar com Location." },
-      { id:"405",       tag:"HTTP",   title:"405 Method Not Allowed",          desc:"DELETE em /new/index.html deve retornar 405." },
-      { id:"upload",    tag:"Upload", title:"Upload raw (POST /files/)",       desc:"POST text/plain e espera 200/201." },
-      { id:"413",       tag:"Limits", title:"Body limit (413)",                desc:"POST payload grande e espera 413." },
-      { id:"cgi-get",   tag:"CGI",    title:"CGI GET",                         desc:"GET /cgi/echo.py retorna 200." },
-      { id:"cgi-post",  tag:"CGI",    title:"CGI POST",                        desc:"POST /cgi/echo.py retorna 200." }
+      { id:"get",       tag:"HTTP",   title:"Basic GET (200 + Content-Type)", desc:"Request / and validate 200 + Content-Type." },
+      { id:"head",      tag:"HTTP",   title:"HEAD without body",              desc:"Check status 200 and body with 0 bytes." },
+      { id:"404",       tag:"HTTP",   title:"Custom 404",                     desc:"Request /not_found and expect 404." },
+      { id:"autoindex", tag:"Static", title:"Autoindex",                      desc:"Directory listing enabled on /files/." },
+      { id:"redirect",  tag:"HTTP",   title:"Redirect (3xx + Location)",      desc:"GET /old should redirect with Location." },
+      { id:"405",       tag:"HTTP",   title:"405 Method Not Allowed",         desc:"DELETE /new/index.html should return 405." },
+      { id:"upload",    tag:"Upload", title:"Raw upload (POST /files/)",      desc:"POST text/plain and expect 200/201." },
+      { id:"413",       tag:"Limits", title:"Body limit (413)",               desc:"POST large payload and expect 413." },
+      { id:"cgi-get",   tag:"CGI",    title:"CGI GET",                        desc:"GET /cgi/echo.py returns 200." },
+      { id:"cgi-post",  tag:"CGI",    title:"CGI POST",                       desc:"POST /cgi/echo.py returns 200." }
     ];
 
-    // Cards que precisam de terminal (vão para guide.html)
+    // CLI tests (go to guide.html)
     const TESTS_CLI = [
-      { id:"vhost",     tag:"CLI",    title:"🖥️ Multi-host (server_name)", desc:"Testa server_name com --resolve (curl).", cli:true },
-      { id:"unknown",   tag:"CLI",    title:"🖥️ UNKNOWN method",           desc:"Envia método 'FOO' via curl.", cli:true },
-      { id:"siege",     tag:"CLI",    title:"🖥️ Stress (siege)",           desc:"Carga com siege por 10s.", cli:true },
+      { id:"vhost",     tag:"CLI",    title:"🖥️ Multi-host (server_name)", desc:"Test server_name with --resolve (curl).", cli:true },
+      { id:"unknown",   tag:"CLI",    title:"🖥️ UNKNOWN method",           desc:"Send method 'FOO' with curl.", cli:true },
+      { id:"siege",     tag:"CLI",    title:"🖥️ Stress (siege)",           desc:"Run siege load test for 10s.", cli:true },
     ];
 
-    // Card para Home
+    // Home card
     const CARD_HOME = {
-      title:"Ir para Home",
-      desc:"Voltar para a página principal do Webserv.",
+      title:"Go to Home",
+      desc:"Return to the main Webserv page.",
       href:"/",
     };
 
@@ -107,8 +107,8 @@
       const hrefRun   = isCli ? `guide.html?id=${encodeURIComponent(t.id)}` : `run.html?id=${encodeURIComponent(t.id)}`;
       const hrefDet   = isCli ? `guide.html?id=${encodeURIComponent(t.id)}#detalhes` : `run.html?id=${encodeURIComponent(t.id)}&verbose=1`;
       const btnClass  = isCli ? 'btn cli' : 'btn';
-      const btnText   = isCli ? 'Abrir guia (CLI)' : 'Executar';
-      const detText   = 'Ver detalhes';
+      const btnText   = isCli ? 'Open guide (CLI)' : 'Run';
+      const detText   = 'See details';
 
       return `
         <article class="${cardClass}">
@@ -129,7 +129,7 @@
         <h3>🏠 ${CARD_HOME.title}</h3>
         <p class="desc">${CARD_HOME.desc}</p>
         <div class="actions">
-          <a class="btn home" href="${CARD_HOME.href}">Abrir Home</a>
+          <a class="btn home" href="${CARD_HOME.href}">Open Home</a>
         </div>
       </article>
     `;

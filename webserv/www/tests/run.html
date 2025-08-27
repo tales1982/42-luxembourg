@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Webserv — Executar Teste</title>
+  <title>Webserv — Run Test</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     body {
@@ -29,90 +29,90 @@
 </head>
 <body>
   <div class="wrap">
-    <a class="back" href="index.html">← Voltar aos testes</a>
-    <h1 id="title">Teste</h1>
+    <a class="back" href="index.html">← Back to tests</a>
+    <h1 id="title">Test</h1>
     <p id="desc"></p>
-    <button onclick="runTest()">Executar teste</button>
+    <button onclick="runTest()">Run test</button>
     <div id="result"></div>
   </div>
 
   <script>
     const id = new URLSearchParams(location.search).get('id') || '';
 
-    // Definição dos testes
+    // Test definitions
     const TESTS = {
       "get": {
-        title:"GET básico (200 + Content-Type)",
-        desc:"Requisita / e valida 200 + Content-Type.",
+        title:"Basic GET (200 + Content-Type)",
+        desc:"Request / and validate 200 + Content-Type.",
         req: { url:"/", method:"GET", expect:200 }
       },
       "head": {
-        title:"HEAD sem corpo",
-        desc:"Confere status 200 e body 0 bytes.",
+        title:"HEAD without body",
+        desc:"Check status 200 and body 0 bytes.",
         req: { url:"/", method:"HEAD", expect:200 }
       },
       "404": {
-        title:"404 custom",
-        desc:"Requisita /nao_existe e espera 404.",
+        title:"Custom 404",
+        desc:"Request /not_found and expect 404.",
         req: { url:"/nao_existe", method:"GET", expect:404 }
       },
       "autoindex": {
         title:"Autoindex",
-        desc:"Lista de diretório habilitada em /files/.",
+        desc:"Directory listing enabled at /files/.",
         req: { url:"/files/", method:"GET", expect:200 }
       },
       "redirect": {
         title:"Redirect (3xx + Location)",
-        desc:"GET /old deve redirecionar.",
+        desc:"GET /old should redirect.",
         req: { url:"/old", method:"GET", expect:301 }
       },
       "405": {
         title:"405 Method Not Allowed",
-        desc:"DELETE em /new/index.html deve retornar 405.",
+        desc:"DELETE on /new/index.html should return 405.",
         req: { url:"/new/index.html", method:"DELETE", expect:405 }
       },
       "upload": {
-        title:"Upload raw",
-        desc:"POST em /files/ deve retornar 200/201.",
+        title:"Raw upload",
+        desc:"POST on /files/ should return 200/201.",
         req: { url:"/files/", method:"POST", body:"hello webserv", headers:{ "Content-Type":"text/plain" }, expect:[200,201] }
       },
       "413": {
         title:"Body limit (413)",
-        desc:"POST grande deve retornar 413.",
+        desc:"Large POST should return 413.",
         req: { url:"/cgi/echo.py", method:"POST", body:"X".repeat(1024*1024*11), headers:{ "Content-Type":"application/octet-stream" }, expect:413 }
       },
       "cgi-get": {
         title:"CGI GET",
-        desc:"GET /cgi/echo.py retorna 200.",
+        desc:"GET /cgi/echo.py should return 200.",
         req: { url:"/cgi/echo.py", method:"GET", expect:200 }
       },
       "cgi-post": {
         title:"CGI POST",
-        desc:"POST /cgi/echo.py retorna 200.",
+        desc:"POST /cgi/echo.py should return 200.",
         req: { url:"/cgi/echo.py", method:"POST", body:"msg=hello", headers:{ "Content-Type":"application/x-www-form-urlencoded" }, expect:200 }
       }
     };
 
     const t = TESTS[id];
     if (!t) {
-      document.getElementById("title").textContent = "Teste não encontrado";
-      document.getElementById("desc").textContent = "ID inválido. Volte e escolha outro teste.";
+      document.getElementById("title").textContent = "Test not found";
+      document.getElementById("desc").textContent = "Invalid ID. Go back and choose another test.";
     } else {
-      document.getElementById("title").textContent = "Teste: " + t.title;
+      document.getElementById("title").textContent = "Test: " + t.title;
       document.getElementById("desc").textContent = t.desc;
     }
 
     async function runTest(){
       if (!t) return;
       const resultEl = document.getElementById("result");
-      resultEl.innerHTML = "<em>Executando...</em>";
+      resultEl.innerHTML = "<em>Running...</em>";
 
       try {
         const opt = { method:t.req.method, cache:"no-store", headers:t.req.headers||{} };
         if (t.req.body) opt.body = t.req.body;
 
         const res = await fetch(t.req.url, opt);
-        const ct = res.headers.get("Content-Type") || "(sem Content-Type)";
+        const ct = res.headers.get("Content-Type") || "(no Content-Type)";
         const expect = Array.isArray(t.req.expect) ? t.req.expect : [t.req.expect];
 
         let statusOk = expect.includes(res.status);
@@ -123,19 +123,19 @@
 
         resultEl.innerHTML = `
           <p>Status: <strong>${res.status} ${res.statusText}</strong> 
-            (esperado: ${expect.join(" ou ")}) 
+            (expected: ${expect.join(" or ")}) 
             ${statusOk ? "✅" : "❌"}
           </p>
           <p>Content-Type: <code>${ct}</code></p>
-          <h3>Prévia do corpo:</h3>
+          <h3>Body preview:</h3>
           <pre id="bodyPreview"></pre>
         `;
 
         document.getElementById("bodyPreview").textContent =
-          body.slice(0,600) + (body.length>600 ? "\n…(cortado)" : "");
+          body.slice(0,600) + (body.length>600 ? "\n…(truncated)" : "");
 
       } catch(e){
-        resultEl.innerHTML = "<p style='color:#ff6b6b'>Erro: "+e+"</p>";
+        resultEl.innerHTML = "<p style='color:#ff6b6b'>Error: "+e+"</p>";
       }
     }
   </script>

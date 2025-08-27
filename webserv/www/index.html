@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Webserv 42</title>
@@ -9,7 +9,7 @@
     html, body { height:100%; }
     body{
       color:#fff; min-height:100vh; display:flex; justify-content:center; align-items:center; padding:40px;
-      /* Deixa só a cor de fundo; a imagem será aplicada via JS (com cache-buster) */
+      /* Keep only the base color; the image is applied via JS (with cache-buster) */
       background-color:#111;
       background-position:center center; background-repeat:no-repeat; background-attachment:fixed; background-size:cover;
     }
@@ -49,53 +49,52 @@
   </style>
 </head>
 <body>
-  <!-- DEBUG: status da imagem + miniatura + links -->
+  <!-- DEBUG: image status + thumbnail + links -->
   <div id="dbgbar">
     <strong>DEBUG IMG</strong>
     <img id="dbgthumb" alt="(thumb)" />
     <div id="dbginfo">
-      <div id="dbgstatus">carregando…</div>
-      <small><a id="dbglink" href="#" target="_blank" rel="noopener">abrir imagem</a></small>
-      <small><a href="/testbg.html" target="_blank" rel="noopener">teste isolado</a></small>
+      <div id="dbgstatus">loading…</div>
+      <small><a id="dbglink" href="#" target="_blank" rel="noopener">open image</a></small>
+      <small><a href="/testbg.html" target="_blank" rel="noopener">isolated test</a></small>
     </div>
   </div>
 
   <div class="container">
     <h1>🚀 Webserv 42</h1>
     <ul>
-      <!--
-      <li><a href="/uploads/">📂 Visualizar Uploads</a></li>
-      <li><a href="/files/">⬆️ Página de Upload (autoindex)</a></li>
-      <li><a href="/cgi/echo.py">⚡ Página CGI Dinâmica</a></li>
-      -->
-      <li><a href="/tests/index.html">🧪 Página de Testes</a></li>
+      <li><a href="/send_files/">📤 Send file (UI)</a></li>
+      <li><a href="/view_uploads/">📁 View uploads</a></li>
+      <li><a href="/cgi/echo.py">⚡ Dynamic CGI page</a></li>
+      <li><a href="/tests/index.html">🧪 Test suite</a></li>
     </ul>
-<!--
+
+    <!--
     <form method="POST" action="/files/">
-      <h3>Upload Rápido (POST)</h3>
-      <textarea name="data" rows="4" cols="60" placeholder="Digite algo e envie"></textarea><br>
-      <button>Enviar</button>
+      <h3>Quick Upload (POST)</h3>
+      <textarea name="data" rows="4" cols="60" placeholder="Type something and submit"></textarea><br>
+      <button>Send</button>
     </form>
+    -->
   </div>
-   -->
+
   <script>
-    // Força "cache-buster" para garantir que não é cache do navegador.
+    // Force a cache-buster so we can see if it's not a cached background.
     const base = "/images/serve1.jpg";
     const url  = base + "?cb=" + Date.now();
 
-    // Link rápido para abrir a imagem diretamente
+    // Quick link to open the image directly
     document.getElementById("dbglink").href = base;
 
-    // Mostra a thumb (se quebrar, fica sem imagem => sabemos que falhou)
+    // Show a small thumb (if it fails, we know the fetch will fail too)
     const thumb = document.getElementById("dbgthumb");
     thumb.src = url;
 
-    // Tenta baixar a imagem e aplica como background se vier 200
+    // Try to fetch and apply as background if 200
     const statusEl = document.getElementById("dbgstatus");
     fetch(url, { cache: "no-store" }).then(async (res) => {
       statusEl.textContent = "fetch: " + res.status + " " + res.statusText;
       if (res.ok) {
-        // Aplica o bg com o mesmo cache-buster
         document.body.style.backgroundImage = `url("${url}")`;
         document.body.style.backgroundPosition = "center center";
         document.body.style.backgroundRepeat = "no-repeat";

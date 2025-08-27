@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Upload File</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0b1522; --panel:#0009; --txt:#eef; --muted:#cfe;
+      --accent:#ffd54a; --accent-hover:#ffb300; --link:#9fe8ff; --danger:#ff5d5d;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; font-family:system-ui, Segoe UI, Roboto;
+      min-height:100vh; display:grid; place-items:center; color:var(--txt);
+      background: var(--bg) url("/images/serve9.jpg") no-repeat center center fixed;
+      background-size: cover;
+      padding: 24px;
+    }
+    .wrap{ width:100%; max-width:760px; }
+    .nav{
+      display:flex; gap:10px; justify-content:flex-end; margin-bottom:12px;
+    }
+    .btn{
+      appearance:none; border:0; border-radius:12px; cursor:pointer; font-weight:800;
+      padding:10px 14px; background:var(--accent); color:#222; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+      box-shadow:0 2px 10px #0006;
+    }
+    .btn:hover{ background:var(--accent-hover); }
+    .btn.ghost{ background:#0000; color:var(--txt); border:1px solid #ffffff33; }
+    .btn.ghost:hover{ background:#ffffff10; }
+    .card{
+      background:var(--panel); border-radius:18px; padding:22px; box-shadow:0 10px 28px #0008; backdrop-filter:blur(4px);
+    }
+    h1{ margin:0 0 6px; font-size:26px; }
+    p.lead{ margin:0 0 16px; color:var(--muted); }
+    .grid{
+      display:grid; gap:18px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 760px){ .grid{ grid-template-columns: 1fr; } }
+
+    .panel{ background:#0006; border:1px solid #ffffff22; border-radius:14px; padding:16px; }
+    .panel h2{ margin:0 0 10px; font-size:18px; }
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    /* Custom file input */
+    .filepick{
+      display:flex; align-items:center; gap:10px; flex:1;
+      background:#0004; border:1px dashed #ffffff3a; padding:10px; border-radius:12px;
+    }
+    .filepick input[type="file"]{ display:none; }
+    .filepick .pickbtn{
+      padding:10px 14px; border-radius:10px; background:#111; color:#fff; cursor:pointer; border:1px solid #ffffff2a; font-weight:700;
+    }
+    .filepick .pickbtn:hover{ background:#1b1b1b; }
+    .filepick .fname{ opacity:.9; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width: 320px; }
+
+    textarea{
+      width:100%; min-height:120px; resize:vertical;
+      border-radius:12px; border:1px solid #ffffff2a; background:#0005; color:#fff; padding:12px; font-size:15px;
+    }
+    .inline{
+      display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;
+    }
+    .inline input[type="text"]{
+      flex:1; min-width:220px; padding:10px 12px; border-radius:10px; border:1px solid #ffffff2a; background:#0005; color:#fff;
+    }
+
+    .note{ font-size:13px; opacity:.85; margin-top:8px; }
+    a{ color:var(--link); }
+
+    pre#log{
+      margin-top:16px; white-space:pre-wrap; background:#0006; padding:12px; border-radius:10px; border:1px solid #ffffff1f;
+      max-height:240px; overflow:auto;
+    }
+
+    .result-link{ margin-top:8px; display:inline-block; padding:6px 10px; border-radius:8px; background:#0006; border:1px solid #ffffff2a; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a class="btn ghost" href="/"><span>🏠</span> Home</a>
+      <a class="btn ghost" href="/view_uploads/"><span>📁</span> View uploads</a>
+    </div>
+
+    <div class="card">
+      <h1>Upload File</h1>
+      <p class="lead">Send files or a text message to the server. Everything is stored in <code>./data</code>.</p>
+
+      <div class="grid">
+        <!-- ============ FILE UPLOAD ============ -->
+        <section class="panel">
+          <h2>File</h2>
+          <div class="row filepick">
+            <label class="pickbtn" for="fileInput">Choose file</label>
+            <input id="fileInput" type="file" />
+            <div class="fname" id="fileName">(no file selected)</div>
+          </div>
+          <div class="inline">
+            <button class="btn" id="btnFile">Upload file</button>
+            <a class="btn ghost" href="/view_uploads/">Open uploads</a>
+          </div>
+          <div class="note">We send the raw bytes with <code>X-Filename</code> and <code>Content-Type</code> to <code>POST /files/</code>.</div>
+        </section>
+
+        <!-- ============ MESSAGE ============ -->
+        <section class="panel">
+          <h2>Message</h2>
+          <textarea id="msg" placeholder="Type a message to save as a .txt file..."></textarea>
+          <div class="inline">
+            <input id="msgName" type="text" placeholder="Optional name (e.g. note.txt). Leave empty to auto-generate." />
+            <button class="btn" id="btnMsg">Send message</button>
+          </div>
+          <div class="note">Saved as plain text. If no name is provided, we create something like <code>message_YYYYMMDD_HHMMSS.txt</code>.</div>
+        </section>
+      </div>
+
+      <pre id="log"></pre>
+    </div>
+  </div>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const log = (m) => { $('#log').textContent = m; };
+
+    // Show chosen filename
+    $('#fileInput').addEventListener('change', e => {
+      const f = e.target.files[0];
+      $('#fileName').textContent = f ? f.name : '(no file selected)';
+    });
+
+    // Upload FILE
+    $('#btnFile').addEventListener('click', async () => {
+      const file = $('#fileInput').files[0];
+      if (!file) { alert('Please select a file'); return; }
+
+      try{
+        const res = await fetch('/files/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': file.type || 'application/octet-stream',
+            'X-Filename': file.name
+          },
+          body: file
+        });
+        const txt = await res.text().catch(()=> '');
+        const loc = res.headers.get('Location');
+        log(`File upload → ${res.status} ${res.statusText}\n${txt}${loc ? `\nSaved at: ${loc}` : ''}`);
+        if (res.ok && loc) {
+          const link = document.createElement('a');
+          link.href = loc;
+          link.target = '_blank';
+          link.className = 'result-link';
+          link.textContent = 'Open saved file';
+          $('#log').appendChild(document.createTextNode('\n'));
+          $('#log').appendChild(link);
+          setTimeout(()=>location.href='/view_uploads/', 600);
+        }
+      }catch(e){
+        log('Error: '+e);
+      }
+    });
+
+    // Send MESSAGE as text file
+    $('#btnMsg').addEventListener('click', async () => {
+      const text = $('#msg').value;
+      if (!text.trim()) { alert('Please type a message'); return; }
+
+      // filename
+      let fname = $('#msgName').value.trim();
+      if (!fname) {
+        const d = new Date();
+        const pad = n => String(n).padStart(2,'0');
+        fname = `message_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.txt`;
+      }
+
+      try{
+        const res = await fetch('/files/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'X-Filename': fname
+          },
+          body: new Blob([text], { type: 'text/plain; charset=utf-8' })
+        });
+        const txt = await res.text().catch(()=> '');
+        const loc = res.headers.get('Location');
+        log(`Message upload → ${res.status} ${res.statusText}\n${txt}${loc ? `\nSaved at: ${loc}` : ''}`);
+        if (res.ok && loc) {
+          const link = document.createElement('a');
+          link.href = loc;
+          link.target = '_blank';
+          link.className = 'result-link';
+          link.textContent = 'Open saved file';
+          $('#log').appendChild(document.createTextNode('\n'));
+          $('#log').appendChild(link);
+          setTimeout(()=>location.href='/view_uploads/', 600);
+        }
+      }catch(e){
+        log('Error: '+e);
+      }
+    });
+  </script>
+</body>
+</html>

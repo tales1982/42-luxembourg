@@ -113,6 +113,21 @@ RouteMatch Router::match(const HttpRequest &req) const {
     size_t q = rel.find('?'); if (q != std::string::npos) rel.erase(q);
     if (!rel.empty() && rel[0]=='/') rel.erase(0,1);
 
-    m.relPath = rel;            // "/cgi/echo.py" -> "cgi/echo.py"
+    // Remova o prefixo da location de relPath APENAS se a location tiver root customizado
+    if (m.loc && !m.loc->root.empty()) {
+        std::string prefix = m.loc->path;
+        if (!prefix.empty() && prefix[0] == '/') prefix.erase(0, 1);  // remove barra inicial do prefixo
+        size_t prefixLen = prefix.size();
+        if (prefixLen > 0 && Utils::startsWith(rel, prefix)) {
+            rel.erase(0, prefixLen);  // remove o prefixo
+        }
+        // Se a URI original terminava com '/', e relPath ficou vazio, adicione uma barra vazia para diretórios
+        if (rel.empty() && Utils::endsWith(req.uri, "/")) {
+            rel = "";  // Mantenha vazio para diretórios raiz da location
+        }
+        if (!rel.empty() && rel[0] == '/') rel.erase(0, 1);  // remove barra residual se houver
+    }
+
+    m.relPath = rel;  // agora relPath é relativo ao root da location (ou server)
     return m;
 }
