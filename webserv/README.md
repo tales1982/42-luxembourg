@@ -17,17 +17,6 @@ TENHO QUE REPARA AINDA
 
 # Veredito rápido
 
-**Ainda não dá pra entregar.** Há dois pontos que costumam dar **nota 0 imediata** na correção da 42:
-
-1. **Checar `errno` depois de `read`/`write`/`recv`/`send`.**
-
-   No `src/CGIManager.cpp` você trata `EAGAIN/EWOULDBLOCK` após `write()` e `read()` (linhas ~135 e ~170). Na grade está explícito: *“Se `errno` é checado depois de read/recv/write/send, a nota é 0 e a avaliação termina agora.”*
-2. **Ler/escrever FDs fora do `select()` (ou equivalente).**
-
-   Seu loop principal usa **um único `select`** correto (lê e escreve no mesmo ciclo — ponto positivo), mas o **manuseio dos pipes do CGI** (`inPipe[1]` e `outPipe[0]`) é feito em laços próprios com `usleep()` e sem `select()` (no `CGIManager.cpp`). A grade diz: *“Escrever ou ler **QUALQUER** file descriptor sem passar pelo `select()` (ou equivalente) é estritamente proibido.”* Avaliadores mais estritos aplicam isso também aos pipes do CGI — e reprovam.
-
-> ✅ No main loop eu confirmei que você usa  **um só `select()`** , monitora **leitura e escrita ao mesmo tempo** (rfds + wfds) e faz **apenas um `recv`/`send` por cliente por iteração** — isso cumpre os itens centrais da grade.
-
 ---
 
 # O que está OK (ou muito perto)

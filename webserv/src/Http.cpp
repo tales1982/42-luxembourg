@@ -65,6 +65,8 @@ std::string httpStatusReason(int code) {
 		case 405: return "Method Not Allowed";
 		case 413: return "Payload Too Large";
 		case 500: return "Internal Server Error";
+		case 502: return "Bad Gateway";      
+		case 504: return "Gateway Timeout";  
 		default: return "OK";
 	}
 }
