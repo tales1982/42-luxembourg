@@ -15,7 +15,6 @@
 
 TENHO QUE REPARA AINDA
 
-
 # Veredito rápido
 
 **Ainda não dá pra entregar.** Há dois pontos que costumam dar **nota 0 imediata** na correção da 42:
