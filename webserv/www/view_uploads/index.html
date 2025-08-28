@@ -1,120 +1,142 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>📂 Uploaded Files</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background:#0b1522 url("/images/serve10.jpg") no-repeat center center fixed;
-      background-size:cover;
-      color:#fff;
-      padding:70px 20px 20px; /* espaço extra no topo por causa da barra */
-    }
-    h1 { color:#ffd54a; text-align:center; }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Uploads</title>
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    color: #e8ecf1;
+    background: #000 url("/images/serve10.jpg") no-repeat center center fixed;
+    background-size: cover;   /* cover the whole viewport */
+    min-height: 100vh;
+    padding: 20px;
+  }
+  header {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  h1 { margin: 0; color:#ffd700 }
+  .btn, button.btn {
+    padding:6px 10px; border-radius:8px; border:1px solid #3a465f;
+    background:#1b2233; color:#e8ecf1; cursor:pointer;
+    text-decoration:none; font-weight:600;
+  }
+  .btn:hover, button.btn:hover { background:#24304a }
+  .danger { border-color:#734040; background:#2a1717 }
+  .danger:hover { background:#3a1e1e }
+  .muted { color:#9aa7b2; font-size:14px }
 
-    /* Top bar */
-    .topbar {
-      position:fixed; top:0; left:0; right:0;
-      background:rgba(0,0,0,.7);
-      padding:10px 20px;
-      display:flex; gap:10px;
-      box-shadow:0 2px 8px rgba(0,0,0,.6);
-    }
-    .topbar a {
-      background:#ffd54a; color:#222; font-weight:bold; padding:8px 14px;
-      border-radius:8px; text-decoration:none; font-size:14px;
-    }
-    .topbar a:hover { background:#ffb300; }
-
-    table { border-collapse: collapse; width: 100%; max-width: 800px; margin:20px auto; }
-    th, td { border:1px solid rgba(255,255,255,.2); padding:8px 12px; }
-    th { background:#111; }
-    tr:nth-child(even) { background:rgba(255,255,255,.05); }
-    a { color:#90ee90; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    button {
-      background:#ff5d5d; border:none; padding:6px 10px; border-radius:6px; color:#fff; cursor:pointer;
-    }
-    button:hover { background:#ff2d2d; }
-    .msg {
-      margin:20px auto; max-width:800px; padding:10px; border-radius:6px;
-    }
-    .ok { background:#1e4620; color:#b5ffb5; }
-    .err { background:#641e1e; color:#ffb5b5; }
-  </style>
+  table {
+    width:100%; border-collapse: collapse; background:#111826;
+    border:1px solid #283143; border-radius:12px; overflow:hidden
+  }
+  th, td { padding: 10px 12px; border-bottom:1px solid #283143 }
+  tr:last-child td { border-bottom: none }
+</style>
 </head>
 <body>
-  <!-- Top navigation bar -->
-  <div class="topbar">
-    <a href="/">🏠 Back to Home</a>
-    <a href="/send_files/">📤 Send File</a>
-  </div>
+  <header>
+    <h1>Uploads</h1>
+    <a class="btn" href="/">← Back to Home</a>
+  </header>
 
-  <h1>📂 Uploaded Files</h1>
-  <p style="text-align:center;">These files are stored in the <code>./data</code> directory on the server.</p>
+  <p class="muted">Click “Open” to view. Use “Delete” to remove.</p>
 
-  <div id="msg"></div>
-  <table id="filesTable">
-    <thead>
-      <tr><th>File</th><th>Actions</th></tr>
-    </thead>
-    <tbody></tbody>
+  <table id="tbl" aria-label="Uploaded files">
+    <thead><tr><th>File</th><th style="width:200px">Actions</th></tr></thead>
+    <tbody id="rows"><tr><td class="muted" colspan="2">Loading…</td></tr></tbody>
   </table>
 
-  <script>
-    const msg = (html, ok=false) => {
-      const div = document.getElementById('msg');
-      div.innerHTML = html;
-      div.className = 'msg ' + (ok ? 'ok':'err');
-    };
+<script>
+(function () {
+  // Always use the same public base path (switch to "/uploads/" if your config uses that alias)
+  const BASE = "/files/";
 
-    async function loadFiles(){
-      try {
-        const res = await fetch('/uploads/');  // uses autoindex
-        const html = await res.text();
+  function sanitizeName(name) {
+    // Strip dangerous sequences; do not allow traversal or subfolders
+    if (!name) return "";
+    name = name.replace(/\r|\n/g, "");
+    if (name.includes("..")) return "";
+    if (name.includes("/")) return "";
+    return name;
+  }
 
-        // parse links from autoindex
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const links = [...doc.querySelectorAll('a')];
+  async function list() {
+    // Read the autoindex HTML and extract file links
+    const res = await fetch(BASE, { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to list: " + res.status);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
 
-        const tbody = document.querySelector('#filesTable tbody');
-        tbody.innerHTML = '';
+    // Autoindex usually renders <a href="filename.ext">filename.ext</a>
+    const links = [...doc.querySelectorAll("a")]
+      .map(a => (a.getAttribute("href") || "").trim())
+      .filter(h => h && h !== "../");
 
-        links.forEach(a => {
-          const href = a.getAttribute('href');
-          if (!href || href === '../') return; // ignore "parent" link
-
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td><a href="/uploads/${href}" target="_blank">${href}</a></td>
-            <td><button onclick="delFile('${href}')">Delete</button></td>
-          `;
-          tbody.appendChild(tr);
-        });
-
-      } catch (e) {
-        msg('Error while loading file list: '+e);
-      }
+    const tbody = document.getElementById("rows");
+    tbody.innerHTML = "";
+    if (!links.length) {
+      tbody.innerHTML = '<tr><td class="muted" colspan="2">No files.</td></tr>';
+      return;
     }
 
-    async function delFile(name){
-      if (!confirm('Delete "'+name+'"?')) return;
-      try {
-        const res = await fetch('/uploads/'+encodeURIComponent(name), { method:'DELETE' });
+    for (const href of links) {
+      // Keep only the file name (no relative paths)
+      const raw = href.split("/").pop();
+      const name = sanitizeName(decodeURIComponent(raw));
+      if (!name) continue;
+
+      const tr = document.createElement("tr");
+
+      const tdName = document.createElement("td");
+      tdName.textContent = name;
+
+      const tdAct = document.createElement("td");
+
+      const open = document.createElement("a");
+      open.className = "btn";
+      // IMPORTANT: encode ONLY the file name, not the slash
+      open.href = BASE + encodeURIComponent(name);
+      open.target = "_blank";
+      open.rel = "noopener";
+      open.textContent = "Open";
+
+      const del = document.createElement("button");
+      del.className = "btn danger";
+      del.textContent = "Delete";
+      del.onclick = async () => {
+        if (!confirm(`Delete "${name}"?`)) return;
+        const url = BASE + encodeURIComponent(name); // Proper DELETE URL
+        const res = await fetch(url, { method: "DELETE" });
         if (res.ok) {
-          msg('✅ File "'+name+'" deleted successfully.', true);
-          loadFiles();
+          tr.remove();
+          if (!tbody.children.length) {
+            tbody.innerHTML = '<tr><td class="muted" colspan="2">No files.</td></tr>';
+          }
         } else {
-          msg('❌ Error deleting "'+name+'": '+res.status+' '+res.statusText);
+          const msg = await res.text().catch(() => "");
+          alert(`Deletion failed (${res.status}).\n${msg}`);
         }
-      } catch(e){
-        msg('❌ Error deleting: '+e);
-      }
-    }
+      };
 
-    loadFiles();
-  </script>
+      tdAct.appendChild(open);
+      tdAct.appendChild(document.createTextNode(" "));
+      tdAct.appendChild(del);
+
+      tr.appendChild(tdName);
+      tr.appendChild(tdAct);
+      tbody.appendChild(tr);
+    }
+  }
+
+  list().catch(err => {
+    document.getElementById("rows").innerHTML =
+      `<tr><td class="muted" colspan="2">Error: ${err.message}</td></tr>`;
+  });
+})();
+</script>
 </body>
 </html>
