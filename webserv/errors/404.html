@@ -1,1 +1,58 @@
-<!doctype html><html><body><h1>404 Not Found</h1></body></html>
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 — Página não encontrada</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box }
+    html, body {
+      height: 100%;
+      font-family: system-ui, sans-serif;
+      color: #fff;
+    }
+    body {
+      background: url("/images/error404.jpg") no-repeat center center;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .overlay {
+      background: rgba(0,0,0,0.55);
+      padding: 40px;
+      border-radius: 16px;
+    }
+    h1 {
+      font-size: clamp(32px, 6vw, 64px);
+      margin-bottom: 12px;
+      color: #ffd700;
+    }
+    p {
+      font-size: clamp(16px, 2.5vw, 20px);
+      margin-bottom: 20px;
+    }
+    a {
+      display:inline-block;
+      padding: 10px 18px;
+      margin: 0 6px;
+      border-radius: 8px;
+      background: #ffd700;
+      color: #000;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .2s ease;
+    }
+    a:hover { background:#ffea66; }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <h1>404</h1>
+    <p>Page not found</p>
+    <a href="/">Back to Home</a>
+  </div>
+</body>
+</html>
