@@ -25,11 +25,9 @@ namespace CGI
             return false;
         std::string ext = loc->cgi_ext;
         if (ext[0] != '.')
-            ext = "." + ext;               // aceita "py" e ".py"
-        return Utils::endsWith(path, ext); // compare com rm.relPath
+            ext = "." + ext;               
+        return Utils::endsWith(path, ext); 
     }
-
-    // --- SUBSTITUIR integralmente CGI::run pelo bloco abaixo ---
 
     HttpResponse run(const HttpRequest &req,
                      const RouteMatch &rm,
@@ -49,7 +47,7 @@ namespace CGI
         env["GATEWAY_INTERFACE"] = "CGI/1.1";
         env["SERVER_PROTOCOL"] = "HTTP/1.1";
         env["REQUEST_METHOD"] = req.method;
-        env["QUERY_STRING"] = qs; // <-- IMPORTANTE
+        env["QUERY_STRING"] = qs; 
         env["SCRIPT_FILENAME"] = fsPath;
 
         // Cabeçalhos de corpo
@@ -59,7 +57,7 @@ namespace CGI
 
         // Extras úteis
         env["SERVER_NAME"] = "webserv";
-        env["SERVER_PORT"] = "8080"; // ajuste se necessário
+        env["SERVER_PORT"] = "8080";
         env["SCRIPT_NAME"] = rm.relPath;
         env["PATH_INFO"] = "";
 
@@ -70,12 +68,11 @@ namespace CGI
         env["REMOTE_ADDR"] = "127.0.0.1";
 #endif
 
-        // interpretador (padrão python3, pode vir do cgi_executor da location)
+
         std::string exec = (rm.loc && !rm.loc->cgi_executor.empty())
                                ? rm.loc->cgi_executor
                                : "/usr/bin/python3";
 
-        // executa com timeout e limite de bytes
         CgiResult r = CGIManager::run(
             exec, fsPath, env, req.body,
             5000,            // timeout em ms (ajuste se quiser)
@@ -91,7 +88,7 @@ namespace CGI
             return res;
         }
 
-        // separa headers/body (o CGIManager já tenta, mas garantimos)
+        // separa headers/body 
         std::string headers = r.rawHeaders;
         std::string body = r.body;
         if (headers.empty())
@@ -149,8 +146,8 @@ namespace CGI
         res.headers["Content-Type"] =
             (hdrs.find("Content-Type") != hdrs.end()) ? hdrs["Content-Type"] : "text/plain";
 
-        // se o CGI não mandou Content-Length, o Server.cpp já trata (EOF/fechar conexão)
+
         return res;
     }
 
-} // namespace CGI
+} 

@@ -72,17 +72,25 @@
   <script>
     // Browser-executable tests
     const TESTS_BROWSER = [
-      { id:"get",       tag:"HTTP",   title:"Basic GET (200 + Content-Type)", desc:"Request / and validate 200 + Content-Type." },
-      { id:"head",      tag:"HTTP",   title:"HEAD without body",              desc:"Check status 200 and body with 0 bytes." },
-      { id:"404",       tag:"HTTP",   title:"Custom 404",                     desc:"Request /not_found and expect 404." },
-      { id:"autoindex", tag:"Static", title:"Autoindex",                      desc:"Directory listing enabled on /files/." },
-      { id:"redirect",  tag:"HTTP",   title:"Redirect (3xx + Location)",      desc:"GET /old should redirect with Location." },
-      { id:"405",       tag:"HTTP",   title:"405 Method Not Allowed",         desc:"DELETE /new/index.html should return 405." },
-      { id:"upload",    tag:"Upload", title:"Raw upload (POST /files/)",      desc:"POST text/plain and expect 200/201." },
-      { id:"413",       tag:"Limits", title:"Body limit (413)",               desc:"POST large payload and expect 413." },
-      { id:"cgi-get",   tag:"CGI",    title:"CGI GET",                        desc:"GET /cgi/echo.py returns 200." },
-      { id:"cgi-post",  tag:"CGI",    title:"CGI POST",                       desc:"POST /cgi/echo.py returns 200." }
-    ];
+  { id:"get",       tag:"HTTP",   title:"Basic GET (200 + Content-Type)", desc:"Request / and validate 200 + Content-Type." },
+  { id:"head",      tag:"HTTP",   title:"HEAD without body",              desc:"Check status 200 and body 0 bytes." },
+
+  { id:"400",       tag:"Errors", title:"400 Bad Request (CGI)",          desc:"/cgi/bad_request.py should return 400." },
+  { id:"403",       tag:"Errors", title:"403 Forbidden",                   desc:"GET /secret/ (no index, autoindex off)." },
+  { id:"404",       tag:"Errors", title:"404 Not Found",                   desc:"GET /nao_existe → 404." },
+  { id:"405",       tag:"Errors", title:"405 Method Not Allowed",          desc:"DELETE /new/index.html → 405 (+Allow)." },
+  { id:"413",       tag:"Errors", title:"413 Payload Too Large",           desc:"Large POST to /cgi/echo.py." },
+  { id:"500",       tag:"Errors", title:"500 Internal Server Error (CGI)", desc:"/cgi/fail500.py → 500." },
+  { id:"502",       tag:"Errors", title:"502 Bad Gateway (CGI)",           desc:"/cgi/bad_gateway.py → 502." },
+  { id:"504",       tag:"Errors", title:"504 Gateway Timeout (CGI)",       desc:"/cgi/slow.py should time out." },
+
+  { id:"autoindex", tag:"Static", title:"Autoindex",                       desc:"Directory listing enabled on /files/." },
+  { id:"redirect",  tag:"HTTP",   title:"Redirect (3xx + Location)",       desc:"GET /old should redirect with Location." },
+  { id:"upload",    tag:"Upload", title:"Raw upload (POST /files/)",       desc:"POST text/plain and expect 200/201." },
+  { id:"cgi-get",   tag:"CGI",    title:"CGI GET",                         desc:"GET /cgi/echo.py returns 200." },
+  { id:"cgi-post",  tag:"CGI",    title:"CGI POST",                        desc:"POST /cgi/echo.py returns 200." }
+];
+
 
     // CLI tests (go to guide.html)
     const TESTS_CLI = [

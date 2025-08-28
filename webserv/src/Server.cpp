@@ -79,15 +79,7 @@ static std::string safeBaseName(std::string s)
 	return out;
 }
 
-// --- helper: pega apenas o path sem query, e remove a leading '/' para virar relativo ---
-/* static std::string uriPathRel(const std::string &uri)
-{
-	size_t q = uri.find('?');
-	std::string p = (q == std::string::npos) ? uri : uri.substr(0, q);
-	if (!p.empty() && p[0] == '/')
-		p.erase(0, 1);
-	return p; // pode ser vazio -> root
-} */
+
 // Busca de header case-insensitive. Retorna "" se não achar.
 static std::string getHeaderCI(const HttpRequest &req, const std::string &keyWanted)
 {
@@ -758,18 +750,6 @@ void ServerApp::queueResponse(Connection &c, const HttpResponse &res)
 	bool suppressErrorBody = (final.headers.count("Content-Length") > 0);
 
 	// 1) Usa error_page customizada se houver e for erro
-	/* if ((final.status >= 400) && srv && srv->error_pages.count(final.status))
-	{
-		std::string ep = srv->error_pages.find(final.status)->second;
-		std::string body = Utils::readFile(ep);
-		if (!body.empty())
-		{
-			final.body = body;
-			final.headers["Content-Type"] = "text/html";
-		}
-	} */
-
-	// 1) Usa error_page customizada se houver e for erro
 	if (!suppressErrorBody && (final.status >= 400) && srv && srv->error_pages.count(final.status))
 	{
 		std::string ep = srv->error_pages.find(final.status)->second;
@@ -781,13 +761,6 @@ void ServerApp::queueResponse(Connection &c, const HttpResponse &res)
 		}
 	}
 
-	// 2) Fallback: erro sem corpo e sem error_page -> HTML padrão
-	/* 	if (final.status >= 400 && final.body.empty() &&
-			!(srv && srv->error_pages.count(final.status)))
-		{
-			final.body = generateDefaultErrorHtml(final.status);
-			final.headers["Content-Type"] = "text/html; charset=utf-8";
-		} */
 
 	if (!suppressErrorBody &&
 		final.status >= 400 && final.body.empty() &&

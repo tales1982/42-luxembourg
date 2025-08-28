@@ -5,7 +5,7 @@
   <title>Execution Guide (CLI)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    :root { --bg:#0e1a2a; --panel:#13233a; --txt:#e8f0ff; --muted:#e0c4c4; --accent:#ffd54a; }
+    :root { --bg:#0e1a2a; --panel:#13233a; --txt:#e8f0ff; --muted:#cfd8dc; --accent:#ffd54a; }
     * { box-sizing:border-box; }
     body{
       margin:0; font-family:system-ui,Segoe UI,Roboto,Ubuntu; color:var(--txt);
@@ -18,6 +18,7 @@
     p.muted{ color:var(--muted); }
     .card{ margin-top:14px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
       border:1px dashed rgba(255,255,255,.35); border-radius:16px; padding:16px; }
+    h3 { margin: 12px 0 8px; }
     pre{ background:rgba(0,0,0,.35); padding:12px; border-radius:12px; overflow:auto; color:#fff; }
     code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
     .tip{ color:var(--muted); font-size:14px; }
@@ -30,10 +31,14 @@
     <h1 id="title">Guide</h1>
     <p class="muted" id="desc">This test requires the command line. Follow the steps below.</p>
 
-    <section class="card" id="conteudo">
+    <section class="card" id="content">
       <h3>Commands</h3>
       <pre id="cmd">—</pre>
-      <h3 id="detalhes">Notes</h3>
+
+      <h3>Expected output</h3>
+      <pre id="expected">—</pre>
+
+      <h3 id="details">Notes</h3>
       <div id="notes" class="tip">—</div>
     </section>
   </div>
@@ -42,6 +47,7 @@
     const id = new URLSearchParams(location.search).get('id') || '';
 
     const GUIDES = {
+      // ===================== Multi-host / server_name =====================
       'vhost': {
         title: 'Multi-host (server_name)',
         desc: 'Validates that each virtual host responds according to its server_name.',
@@ -51,20 +57,35 @@ curl -s --resolve sitea.local:8081:127.0.0.1 http://sitea.local:8081/
 
 # Test Host B:
 curl -s --resolve siteb.local:8082:127.0.0.1 http://siteb.local:8082/`,
+        expected:
+`# Expected HTML for Site A:
+<!doctype html><title>SITE A (hostname)</title><h1>SITE A (hostname)</h1>
+
+# Expected HTML for Site B:
+<!doctype html><title>SITE B (hostname)</title><h1>SITE B (hostname)</h1>`,
         notes:
-`• Adjust domains and ports according to your \`configs/example.conf\`.
-• The <span class="kbd">--resolve</span> parameter forces DNS to 127.0.0.1 without editing /etc/hosts.
-• Check if the response body contains the expected text (e.g., “SITE A (hostname)”).`
+`• Adjust domains and ports according to your config (e.g., <code>configs/multi.conf</code>).
+• The <span class="kbd">--resolve</span> parameter forces DNS to 127.0.0.1 without editing <code>/etc/hosts</code>.
+• The test PASSES if each host returns its own expected HTML title/body as shown above.`
       },
+
+      // ===================== UNKNOWN method =====================
       'unknown': {
         title: 'UNKNOWN method',
         desc: 'Ensures the server does not crash with unknown methods.',
         cmd:
 `curl -i -X FOO http://127.0.0.1:8080/`,
+        expected:
+`HTTP/1.1 405 Method Not Allowed
+Allow: GET, HEAD
+
+# (Some implementations may return 400 Bad Request instead.)`,
         notes:
-`• The expected result is <span class="kbd">405 Method Not Allowed</span> (or 400, depending on your validation).
-• If it returns 405, also check the <span class="kbd">Allow</span> header with the supported methods.`
+`• If it returns 405, confirm the <span class="kbd">Allow</span> header lists supported methods for the target location.
+• Either 405 or 400 (with no crash) is accepted depending on your rubric.`
       },
+
+      // ===================== Siege / stress =====================
       'siege': {
         title: 'Stress (siege)',
         desc: 'Runs a short load test and measures availability.',
@@ -74,10 +95,21 @@ sudo apt-get update && sudo apt-get install -y siege
 
 # Run for 10 seconds:
 siege -b --no-log -t 10S http://127.0.0.1:8080/`,
+        expected:
+`# Sample (your numbers will vary)
+Transactions:                  500 hits
+Availability:                100.00 %
+Elapsed time:                  10.00 secs
+Data transferred:               0.85 MB
+Response time:                  0.01 secs
+Transaction rate:              50.00 trans/sec
+Throughput:                     0.08 MB/sec
+Concurrency:                    0.50
+Longest transaction:            0.03
+Shortest transaction:           0.00`,
         notes:
-`• You can adjust the target and duration: <span class="kbd">-t 30S</span>, <span class="kbd">-t 1M</span>.
-• Disable logs to avoid blocking (<span class="kbd">--no-log</span>).
-• Availability should be high (≥ 99%).`
+`• Availability should be high (≥ 99.5%) for a PASS.
+• Use <span class="kbd">--no-log</span> to avoid file locks; adjust duration with <span class="kbd">-t 30S</span> or <span class="kbd">-t 1M</span>.`
       }
     };
 
@@ -87,11 +119,13 @@ siege -b --no-log -t 10S http://127.0.0.1:8080/`,
       $('#title').textContent = 'Guide not found';
       $('#desc').textContent = 'Invalid ID. Go back and choose another CLI test.';
       $('#cmd').textContent = '—';
+      $('#expected').textContent = '—';
       $('#notes').textContent = '—';
     } else {
       $('#title').textContent = g.title + ' (CLI)';
       $('#desc').textContent = g.desc;
       $('#cmd').textContent = g.cmd;
+      $('#expected').textContent = g.expected;
       $('#notes').innerHTML = g.notes;
     }
   </script>

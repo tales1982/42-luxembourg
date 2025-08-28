@@ -41,57 +41,25 @@
 
     // Test definitions
     const TESTS = {
-      "get": {
-        title:"Basic GET (200 + Content-Type)",
-        desc:"Request / and validate 200 + Content-Type.",
-        req: { url:"/", method:"GET", expect:200 }
-      },
-      "head": {
-        title:"HEAD without body",
-        desc:"Check status 200 and body 0 bytes.",
-        req: { url:"/", method:"HEAD", expect:200 }
-      },
-      "404": {
-        title:"Custom 404",
-        desc:"Request /not_found and expect 404.",
-        req: { url:"/nao_existe", method:"GET", expect:404 }
-      },
-      "autoindex": {
-        title:"Autoindex",
-        desc:"Directory listing enabled at /files/.",
-        req: { url:"/files/", method:"GET", expect:200 }
-      },
-      "redirect": {
-        title:"Redirect (3xx + Location)",
-        desc:"GET /old should redirect.",
-        req: { url:"/old", method:"GET", expect:301 }
-      },
-      "405": {
-        title:"405 Method Not Allowed",
-        desc:"DELETE on /new/index.html should return 405.",
-        req: { url:"/new/index.html", method:"DELETE", expect:405 }
-      },
-      "upload": {
-        title:"Raw upload",
-        desc:"POST on /files/ should return 200/201.",
-        req: { url:"/files/", method:"POST", body:"hello webserv", headers:{ "Content-Type":"text/plain" }, expect:[200,201] }
-      },
-      "413": {
-        title:"Body limit (413)",
-        desc:"Large POST should return 413.",
-        req: { url:"/cgi/echo.py", method:"POST", body:"X".repeat(1024*1024*11), headers:{ "Content-Type":"application/octet-stream" }, expect:413 }
-      },
-      "cgi-get": {
-        title:"CGI GET",
-        desc:"GET /cgi/echo.py should return 200.",
-        req: { url:"/cgi/echo.py", method:"GET", expect:200 }
-      },
-      "cgi-post": {
-        title:"CGI POST",
-        desc:"POST /cgi/echo.py should return 200.",
-        req: { url:"/cgi/echo.py", method:"POST", body:"msg=hello", headers:{ "Content-Type":"application/x-www-form-urlencoded" }, expect:200 }
-      }
-    };
+  "get":   { title:"Basic GET (200 + Content-Type)", desc:"Request / and validate 200 + Content-Type.", req:{ url:"/", method:"GET", expect:200 } },
+  "head":  { title:"HEAD without body", desc:"Check status 200 and body 0 bytes.", req:{ url:"/", method:"HEAD", expect:200 } },
+
+  "400": { title:"400 Bad Request (CGI)", desc:"/cgi/bad_request.py should return 400.", req:{ url:"/cgi/bad_request.py", method:"GET", expect:400 } },
+  "403": { title:"403 Forbidden", desc:"GET /secret/ (no index, autoindex off).", req:{ url:"/secret/", method:"GET", expect:403 } },
+  "404": { title:"Custom 404", desc:"Request /nao_existe and expect 404.", req:{ url:"/nao_existe", method:"GET", expect:404 } },
+  "405": { title:"405 Method Not Allowed", desc:"DELETE on /new/index.html should return 405.", req:{ url:"/new/index.html", method:"DELETE", expect:405 } },
+  "413": { title:"Body limit (413)", desc:"Large POST should return 413.", req:{ url:"/cgi/echo.py", method:"POST", body:"X".repeat(1024*1024*11), headers:{ "Content-Type":"application/octet-stream" }, expect:413 } },
+  "500": { title:"500 Internal Server Error (CGI)", desc:"/cgi/fail500.py should return 500.", req:{ url:"/cgi/fail500.py", method:"GET", expect:500 } },
+  "502": { title:"502 Bad Gateway (CGI)", desc:"/cgi/bad_gateway.py should return 502.", req:{ url:"/cgi/bad_gateway.py", method:"GET", expect:502 } },
+  "504": { title:"504 Gateway Timeout (CGI)", desc:"/cgi/slow.py should time out.", req:{ url:"/cgi/slow.py", method:"GET", expect:504 } },
+
+  "autoindex": { title:"Autoindex", desc:"Directory listing enabled at /files/.", req:{ url:"/files/", method:"GET", expect:200 } },
+  "redirect":  { title:"Redirect (3xx + Location)", desc:"GET /old should redirect.", req:{ url:"/old", method:"GET", expect:301 } },
+  "upload":    { title:"Raw upload", desc:"POST on /files/ should return 200/201.", req:{ url:"/files/", method:"POST", body:"hello webserv", headers:{ "Content-Type":"text/plain" }, expect:[200,201] } },
+  "cgi-get":   { title:"CGI GET", desc:"GET /cgi/echo.py should return 200.", req:{ url:"/cgi/echo.py", method:"GET", expect:200 } },
+  "cgi-post":  { title:"CGI POST", desc:"POST /cgi/echo.py should return 200.", req:{ url:"/cgi/echo.py", method:"POST", body:"msg=hello", headers:{ "Content-Type":"application/x-www-form-urlencoded" }, expect:200 } }
+};
+
 
     const t = TESTS[id];
     if (!t) {
