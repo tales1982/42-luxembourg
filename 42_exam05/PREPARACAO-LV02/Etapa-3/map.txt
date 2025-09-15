@@ -1,0 +1,7 @@
+pato
+cachorro
+gato
+cavalo
+egua
+macaco
+viado
