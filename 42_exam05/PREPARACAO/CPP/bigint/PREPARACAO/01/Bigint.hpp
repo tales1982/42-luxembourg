@@ -1,4 +1,4 @@
-#ifndef BIGIINT_HPP
+#ifndef BIGINT_HPP
 #define BIGINT_HPP
 
 #include <sstream>
@@ -12,13 +12,13 @@ private:
     std::string _str;
 
 public:
-    Bigint();
-    Bigint(unsigned int num);
-    Bigint(const Bigint& sourc);
-    Bigint& operator=(const Bigint& sourc);
-    ~Bigint();
+    Bigint();                                   // default
+    Bigint(int num);                   // constructor with parametre
+    Bigint(const Bigint& other);                // copy ctor
+    Bigint& operator=(const Bigint& other);     // copy assign
+    ~Bigint();                                  //destructor
 
-    std::string getStr() const;
+    const std::string getStr() const;
 };
 
 std::ostream& operator<<(std::ostream& out, const Bigint& obj);
