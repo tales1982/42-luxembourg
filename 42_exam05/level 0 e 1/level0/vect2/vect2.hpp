@@ -1,61 +1,57 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   vect2.hpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: fatkeski <fatkeski@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/28 18:20:54 by fatkeski          #+#    #+#             */
-/*   Updated: 2025/08/01 21:14:17 by fatkeski         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef VECT2_HPP
-#define VECT2_HPP
+# define VECT2_HPP
 
-#include <iostream>
+# include <iostream>
 
-class vect2
-{
-	private:
-		int x;
-		int y;
-	public:
-		vect2();
-		vect2(int num1, int num2);
-		vect2(const vect2& source);
-		vect2& operator=(const vect2& source);
+class vect2 {
+private:
+	int _x;
+	int _y;
 
-		int operator[](int index) const;
-		int& operator[](int index); // NON-COST
+public:
+	/* Forma canônica */
+	vect2();                      // {0, 0}
+	vect2(int x, int y);          // {x, y}
+	vect2(const vect2& other);
+	~vect2();
+	vect2& operator=(const vect2& other);
 
-		vect2 operator-() const;
-		vect2 operator*(int num) const;
+	/* Acesso por índice (0 -> x, 1 -> y) */
+	int& operator[](int idx);          // permite atribuição: v[1] = 42;
+	int   operator[](int idx) const;   // leitura em objetos const
 
-		vect2& operator*=(int num);
+	/* Aritméticos básicos */
+	vect2  operator+(const vect2& rhs) const;
+	vect2  operator-(const vect2& rhs) const;
+	vect2& operator+=(const vect2& rhs);
+	vect2& operator-=(const vect2& rhs);
 
-		vect2& operator+=(const vect2& obj);
-		vect2& operator-=(const vect2& obj);
-		vect2& operator*=(const vect2& obj);
+	/* Unário menos (negação) */
+	vect2 operator-() const;
 
-		vect2 operator+(const vect2& obj) const;
-		vect2 operator-(const vect2& obj) const;
-		vect2 operator*(const vect2& obj) const;
+	/* Escalar (membro) */
+	vect2  operator*(int k) const;
+	vect2& operator*=(int k);
 
-		vect2& operator++();
-		vect2 operator++(int);
-		vect2& operator--();
-		vect2 operator--(int);
+	/* ++ / -- (pré e pós) */
+	// pré-incremento: ++v
+	vect2& operator++();     
+	// pós-incremento: v++
+	vect2  operator++(int);
+	// pré-decremento: --v
+	vect2& operator--();     
+	// pós-decremento: v--
+	vect2  operator--(int);
 
-		bool operator==(const vect2& obj) const;
-		bool operator!=(const vect2& obj) const;
-
-		~vect2();
+	/* Comparação */
+	bool operator==(const vect2& rhs) const;
+	bool operator!=(const vect2& rhs) const;
 };
 
-vect2 operator*(int num, const vect2& obj);
+/* Escalar (livre): k * v */
+vect2 operator*(int k, const vect2& v);
 
-std::ostream& operator<<(std::ostream& os,const vect2& obj);
+/* Impressão: {x, y} */
+std::ostream& operator<<(std::ostream& os, const vect2& v);
 
-#endif
-
+#endif /* VECT2_HPP */
