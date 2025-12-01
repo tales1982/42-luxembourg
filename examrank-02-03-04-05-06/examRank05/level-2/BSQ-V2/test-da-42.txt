@@ -1,0 +1,51 @@
+30 -rwxr-xr-x 1 root root 20408 Nov 25 15:02 user_exe
+31
+32 = bsq ================================================================================
+33 $> cc -Wextra -Wall -Werror main.c -o user_exe
+34
+35 = Test 1 ========================================================================
+36 $> ./4c1pcpxs6mkmmcm8pk7Sy4ob < test1.stdin
+37 $> diff -U 3 user_output_test1 test1.output | cat -e
+38
+39 Diff OK :D
+40 = Test 2 ========================================================================
+41 $> ./3j9n5zfu4y465gdzGydklpgo < test2.stdin
+42 $> diff -U 3 user_output_test2 test2.output | cat -e
+43
+44 Diff OK :D
+45 = Test 3 ========================================================================
+46 $> ./nf6ul8lmBexlsclp4rvpu2Ch < test3.stdin
+47 $> diff -U 3 user_output_test3 test3.output | cat -e
+48
+49 Diff OK :D
+50 = Test 4 ========================================================================
+51 $> ./3jcmr837mxx7ikrkzhva9fc2 < test4.stdin
+52 $> diff -U 3 user_output_test4 test4.output | cat -e
+53
+54 Diff OK :D
+55 = Test 5 ========================================================================
+56 $> ./udpgtzsbn93zdj2ukw7fp28n < test5.stdin
+57 $> diff -U 3 user_output_test5 test5.output | cat -e
+58
+59 Diff OK :D
+60 = Test 6 ========================================================================
+61 $> ./p9vhpuesvc21jgh6blf888e7 < test6.stdin
+62 $> diff -U 3 user_output_test6 test6.output | cat -e
+63 --- user_output_test6    2025-11-25 14:02:28.564985386 +0000$
+64 +++ test6.output         2025-11-25 14:02:28.540985347 +0000$
+65 @@ -1 +1,10 @@$
+66 -Error: invalid map$
+67 +2   2  22 $
+68 +2 22 2 222$
+69 +2 2   222 $
+70 +33  22    $
+71 +33  2  22 $
+72 +222 2    2$
+73 + 2    222 $
+74 +22 22    2$
+75 +22    2  2$
+76 +   2 2 22$
+77
+78 Diff KO :(
+79 Grade: 0
+80

@@ -1,0 +1,53 @@
+subject.fr.txt
+
+1 Assignment name              : bsq
+2 Expected files              : *.c *.h
+3 Allowed functions and globals: malloc, calloc, realloc, free, fopen, fclose,
+4 getline, fscanf, fputs, fprintf, fputc, stdout, stdin
+5 ---------------------------------------------------------------------------------
+6
+7 Le but de ce programme est de trouver le plus grand carré sur une carte, en évitant les obstacles.
+8 Un fichier contenant la carte sera fourni. Il sera passé en argument à votre programme.
+9 La première ligne de la carte contient des informations permettant de lire la carte :
+10 - Le nombre de lignes sur la carte;
+11 - Le caractère représentant les cases "vides";
+12 - Le caractère représentant les "obstacles";
+13 - Le caractère représentant les cases "pleines".
+14 La carte initiale est constituée de caractères '"vides"' et '"obstacles"' sur chaque ligne.
+15 Le but du programme est de remplacer certains caractères '"vides"' par des caractères
+16 '"pleins"' afin de représenter le plus grand carré possible.
+17 La carte est ensuite mise à jour et affichée.
+18
+19 S'il existe plusieurs solutions, il faut choisir de représenter le carré le plus proche du
+20 haut de la carte, puis celui le plus à gauche.
+21
+22 Votre programme recevra une seule carte en argument.
+23 Si aucun argument n'est passé, votre programme doit pouvoir lire depuis l'entrée standard.
+24
+25 Définition d'une carte valide :
+26 - Toutes les lignes de la carte doivent avoir la même longueur.
+27 - Il doit y avoir au moins une ligne contenant au moins une case.
+28 - Chaque fin de ligne doit se terminer par un saut de ligne.
+29 - Les caractères de la carte ne peuvent être que ceux définis dans la première ligne.
+30 - La carte est invalide s'il manque un caractère sur la première ligne, si deux caractères
+31   (vide, plein, obstacle) sont identiques, ou s'il y a des caractères
+32   en trop sur la première ligne.
+33 - Les caractères peuvent être n'importe quel caractère imprimable, même
+34   des chiffres (mais peut-être pas partout).
+35 - En cas de carte invalide, votre programme doit afficher "Error: invalid map" sur la sortie standard,
+36   suivi d'un saut de ligne.
+37
+38 En cas d'autres erreurs, votre programme affichera "Error: " suivi d'un message explicite.
+39
+40 Example:
+41 %> cat example_file
+42 9.ox
+...........................
+....o......................
+............o..............
+...........................
+....o......................
+...............o...........
+...........................
+......o..............o.....
+..o.......o................

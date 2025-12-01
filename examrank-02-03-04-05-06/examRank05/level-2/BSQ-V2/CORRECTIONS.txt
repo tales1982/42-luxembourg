@@ -1,0 +1,38 @@
+=== CORREÇÕES APLICADAS ===
+
+PROBLEMA IDENTIFICADO:
+  A função strlen() estava sendo usada, mas NÃO está na lista de funções permitidas.
+  
+  Funções permitidas pela 42:
+  - malloc, calloc, realloc, free
+  - fopen, fclose
+  - getline, fscanf, fputs, fprintf, fputc
+  - stdout, stdin
+
+SOLUÇÃO IMPLEMENTADA:
+  Criada função ft_strlen() customizada em map_reader.c
+  
+  int ft_strlen(char *str)
+  {
+      int len;
+      len = 0;
+      while (str[len])
+          len++;
+      return (len);
+  }
+
+ALTERAÇÕES:
+  - map_reader.c linha 4-12: Adicionada função ft_strlen()
+  - map_reader.c linha 25: strlen(line) -> ft_strlen(line)
+  - map_reader.c linha 120: strlen(line) -> ft_strlen(line)
+  - map_reader.c linha 121: strlen(line) -> ft_strlen(line)
+  - Removido: #include <string.h>
+
+VERIFICAÇÃO:
+  ✓ Compilação: cc -std=c99 -Wall -Wextra -Werror *.c -o programa
+  ✓ Sem erros ou warnings
+  ✓ Todos os 6 testes passando (Grade: 6/6)
+  ✓ Nenhuma função proibida no código
+  ✓ Test6 passando corretamente
+
+STATUS: PRONTO PARA SUBMISSÃO NA 42

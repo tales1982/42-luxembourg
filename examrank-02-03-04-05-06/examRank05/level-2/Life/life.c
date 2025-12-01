@@ -1,188 +1,47 @@
-#include "life.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
 
-/* ---------- helpers ---------- */
+static int indice(int larg,int i,int j){return i*larg+j;}
 
-static int  count_neighbors(const t_game *g, int r, int c)
-{
-    int dr, dc, rr, cc, count;
-
-    count = 0;
-    for (dr = -1; dr <= 1; dr++)
-    {
-        for (dc = -1; dc <= 1; dc++)
-        {
-            if (dr == 0 && dc == 0) continue;
-            rr = r + dr;
-            cc = c + dc;
-            if (rr >= 0 && rr < g->height && cc >= 0 && cc < g->width)
-                if (g->board[rr][cc] == g->alive)
-                    count++;
+int main(int qtd,char**arg){
+    int larg,alt,iter,i,j,t,x=0,y=0,caneta=0,viz,di,dj;
+    char *tab=NULL,*prox=NULL,c,*tmp;
+    if(qtd!=4)return 1;
+    larg=atoi(arg[1]);alt=atoi(arg[2]);iter=atoi(arg[3]);
+    if(larg<=0||alt<=0||iter<0)return 1;
+    tab=(char*)malloc((size_t)larg*alt);
+    prox=(char*)malloc((size_t)larg*alt);
+    if(!tab||!prox){free(tab);free(prox);return 1;}
+    for(i=0;i<alt;i++)for(j=0;j<larg;j++)tab[indice(larg,i,j)]=0;
+    while(read(0,&c,1)==1){
+        int comando_valido=1;
+        if(c=='w'){if(y>0)y--;else comando_valido=0;}
+        else if(c=='s'){if(y<alt-1)y++;else comando_valido=0;}
+        else if(c=='a'){if(x>0)x--;else comando_valido=0;}
+        else if(c=='d'){if(x<larg-1)x++;else comando_valido=0;}
+        else if(c=='x'){caneta=!caneta;}
+        else comando_valido=0;
+        if(caneta&&comando_valido)tab[indice(larg,y,x)]=1;
+    }
+    for(t=0;t<iter;t++){
+        for(i=0;i<alt;i++){
+            for(j=0;j<larg;j++){
+                viz=0;
+                for(di=-1;di<=1;di++)
+                    for(dj=-1;dj<=1;dj++)
+                        if((di||dj)&&i+di>=0&&i+di<alt&&j+dj>=0&&j+dj<larg)
+                            viz+=tab[indice(larg,i+di,j+dj)];
+                prox[indice(larg,i,j)]=(tab[indice(larg,i,j)]?(viz==2||viz==3):(viz==3));
+            }
         }
+        tmp=tab;tab=prox;prox=tmp;
     }
-    return count;
-}
-
-/* ---------- memory ---------- */
-
-void free_board(t_game *g)
-{
-    int r;
-
-    if (!g) return;
-    if (g->board)
-    {
-        for (r = 0; r < g->height; r++)
-            if (g->board[r]) free(g->board[r]);
-        free(g->board);
-    }
-    g->board = NULL;
-}
-
-int init_game(t_game *g, char *argv[])
-{
-    int r, c;
-
-    g->width      = atoi(argv[1]);
-    g->height     = atoi(argv[2]);
-    g->iterations = atoi(argv[3]);
-    g->alive = '0';
-    g->dead  = ' ';
-    g->i = 0;
-    g->j = 0;
-    g->draw = 0;
-    g->board = NULL;
-
-    /* validação básica */
-    if (g->width <= 0 || g->height <= 0 || g->iterations < 0)
-        return -1;
-
-    /* aloca vetor de linhas */
-    g->board = (char**)malloc((size_t)g->height * sizeof(char*));
-    if (!g->board) return -1;
-
-    /* zera ponteiros para free seguro em falha parcial */
-    for (r = 0; r < g->height; r++)
-        g->board[r] = NULL;
-
-    /* aloca cada linha com calloc (preenchida com zeros) e seta como ' ' */
-    for (r = 0; r < g->height; r++)
-    {
-        g->board[r] = (char*)malloc((size_t)g->width * sizeof(char));
-        if (!g->board[r])
-        {
-            free_board(g);
-            return -1;
-        }
-        for (c = 0; c < g->width; c++)
-            g->board[r][c] = g->dead;
-    }
-    return 0;
-}
-
-/* ---------- input drawing ---------- */
-
-void fill_board(t_game *g)
-{
-    char ch;
-
-    while (read(STDIN_FILENO, &ch, 1) == 1)
-    {
-        int valid_cmd = 1; /* reseta a cada byte */
-
-        switch (ch)
-        {
-            case 'w': if (g->i > 0)                g->i--;                break;
-            case 's': if (g->i < g->height - 1)    g->i++;                break;
-            case 'a': if (g->j > 0)                g->j--;                break;
-            case 'd': if (g->j < g->width  - 1)    g->j++;                break;
-            case 'x': g->draw = !g->draw;                                 break;
-            default:  valid_cmd = 0;                                      break;
-        }
-        if (g->draw && valid_cmd)
-            g->board[g->i][g->j] = g->alive;
-    }
-}
-
-/* ---------- game of life step ---------- */
-
-int step_game(t_game *g)
-{
-    char **next;
-    int    r, c;
-
-    next = (char**)malloc((size_t)g->height * sizeof(char*));
-    if (!next) return -1;
-
-    for (r = 0; r < g->height; r++)
-    {
-        next[r] = (char*)malloc((size_t)g->width * sizeof(char));
-        if (!next[r])
-        {
-            int k;
-            for (k = 0; k < r; k++) free(next[k]);
-            free(next);
-            return -1;
-        }
-    }
-
-    for (r = 0; r < g->height; r++)
-    {
-        for (c = 0; c < g->width; c++)
-        {
-            int n = count_neighbors(g, r, c);
-            if (g->board[r][c] == g->alive)
-                next[r][c] = (n == 2 || n == 3) ? g->alive : g->dead;
-            else
-                next[r][c] = (n == 3) ? g->alive : g->dead;
-        }
-    }
-
-    /* troca os tabuleiros */
-    free_board(g);
-    g->board = next;
-    return 0;
-}
-
-/* ---------- output ---------- */
-
-void print_board(const t_game *g)
-{
-    int r, c;
-
-    for (r = 0; r < g->height; r++)
-    {
-        for (c = 0; c < g->width; c++)
-            putchar(g->board[r][c]);
+    for(i=0;i<alt;i++){
+        for(j=0;j<larg;j++)
+            putchar(tab[indice(larg,i,j)]?'0':' ');
         putchar('\n');
     }
-}
-
-/* ---------- main ---------- */
-
-int main(int argc, char *argv[])
-{
-    t_game g;
-    int    it;
-
-    if (argc != 4)
-        return 1;
-
-    if (init_game(&g, argv) == -1)
-        return 1;
-
-    fill_board(&g);
-
-    for (it = 0; it < g.iterations; it++)
-    {
-        if (step_game(&g) == -1)
-        {
-            free_board(&g);
-            return 1;
-        }
-    }
-
-    print_board(&g);
-    free_board(&g);
+    free(tab);free(prox);
     return 0;
 }
-
