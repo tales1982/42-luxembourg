@@ -1,94 +1,42 @@
-Assignment name  : cpp_module01
-Expected files   : Warlock.cpp Warlock.hpp
-                   ASpell.hpp ASpell.cpp
-				   ATarget.hpp ATarget.cpp
-				   Fwoosh.hpp Fwoosh.cpp
-				   Dummy.hpp Dummy.cpp
+Assignment name  : mini_serv
+Expected files   : mini_serv.c
+Allowed functions: write, close, select, socket, accept, listen, send, recv, bind, strstr, malloc, realloc, free, calloc, bzero, atoi, sprintf, strlen, exit, strcpy, strcat, memset
 --------------------------------------------------------------------------------
 
-In the Warlock class, the switch statement is FORBIDDEN and its use would
-result in a -42.
+Write a program that will listen for client to connect on a certain port on 127.0.0.1 and will let clients to speak with each other
 
-Create an abstract class called ASpell, in Coplien's form, that has the
-following protected attributes:
+This program will take as first argument the port to bind to
+If no argument is given, it should write in stderr "Wrong number of arguments" followed by a \n and exit with status 1
+If a System Calls returns an error before the program start accepting connection, it should write in stderr "Fatal error" followed by a \n and exit with status 1
+If you cant allocate memory it should write in stderr "Fatal error" followed by a \n and exit with status 1
 
-* name (string)
-* effects (string)
+Your program must be non-blocking but client can be lazy and if they don't read your message you must NOT disconnect them...
 
-Both will have getters (getName and getEffects) that return strings.
+Your program must not contains #define preproc
+Your program must only listen to 127.0.0.1
+The fd that you will receive will already be set to make 'recv' or 'send' to block if select hasn't be called before calling them, but will not block otherwise. 
 
-Also add a clone pure method that returns a pointer to ASpell.
+When a client connect to the server:
+- the client will be given an id. the first client will receive the id 0 and each new client will received the last client id + 1
+- %d will be replace by this number
+- a message is sent to all the client that was connected to the server: "server: client %d just arrived\n"
 
-All these functions can be called on a constant object.
+clients must be able to send messages to your program.
+- message will only be printable characters, no need to check
+- a single message can contains multiple \n
+- when the server receive a message, it must resend it to all the other client with "client %d: " before every line!
 
-ASpell has a constructor that takes its name and its effects, in that order.
+When a client disconnect from the server:
+- a message is sent to all the client that was connected to the server: "server: client %d just left\n"
 
-Now you will create an ATarget abstract class, in Coplien's form. It has a type
-attribute, which is a string, and its associated getter, getType, that return a
-reference to constant string.
+Memory or fd leaks are forbidden
 
-In much the same way as ASpell, it has a clone() pure method.
+To help you, you will find the file main.c with the beginning of a server and maybe some useful functions. (Beware this file use forbidden functions or write things that must not be there in your final program)
 
-All these functions can be called on a constant object.
+Warning our tester is expecting that you send the messages as fast as you can. Don't do un-necessary buffer.
 
-It has a constructor that takes its type.
+Evaluation can be a bit longer than usual...
 
-Now, add to your ATarget a getHitBySpell function that takes a reference to
-constant ASpell.
-
-It will display :
-
-<TYPE> has been <EFFECTS>!
-
-<TYPE> is the ATarget's type, and <EFFECTS> is the return of the ASpell's
-getEffects function.
-
-Finally, add to your ASpell class a launch function that takes a reference to
-constant ATarget.
-
-This one will simply call the getHitBySpell of the passed object, passing the
-current instance as parameter.
-
-When all this is done, create an implementation of ASpell called Fwoosh. Its
-default constructor will set the name to "Fwoosh" and the effects to
-"fwooshed". You will, of course, implement the clone() method. In the case of
-Fwoosh, it will return a pointer to a new Fwoosh object.
-
-In the same way, create a concrete ATarget called Dummy, the type of which
-is "Target Practice Dummy". You must also implement its clone() method.
-
-Add to the Warlock the following member functions:
-
-* learnSpell, takes a pointer to ASpell, that makes the Warlock learn a spell
-* forgetSpell, takes a string corresponding a to a spell's name, and makes the
-  Warlock forget it. If it's not a known spell, does nothing.
-* launchSpell, takes a string (a spell name) and a reference to ATarget, that
-  launches the spell on the selected target. If it's not a known spell, does
-  nothing.
-
-You will need a new attribute to store the spells your Warlock knows. Several
-types fit the bill, it's up to you to choose the best one.
-
-Below is a possible test main and its expected output:
-
-int main()
-{
-  Warlock richard("Richard", "the Titled");
-
-  Dummy bob;
-  Fwoosh* fwoosh = new Fwoosh();
-
-  richard.learnSpell(fwoosh);
-
-  richard.introduce();
-  richard.launchSpell("Fwoosh", bob);
-
-  richard.forgetSpell("Fwoosh");
-  richard.launchSpell("Fwoosh", bob);
-}
-
-~$ ./a.out | cat -e
-Richard: This looks like another boring day.$
-Richard: I am Richard, the Titled!$
-Target Practice Dummy has been fwooshed!$
-Richard: My job here is done!$
+Hint: you can use nc to test your program
+Hint: you should use nc to test your program
+Hint: To test you can use fcntl(fd, F_SETFL, O_NONBLOCK) but use select and NEVER check EAGAIN (man 2 send)
