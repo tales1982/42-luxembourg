@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>42 Cybersecurity Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c0e;
+    --bg2: #0d1318;
+    --bg3: #111820;
+    --green: #00ff88;
+    --green-dim: #00c86a;
+    --green-dark: #003d1a;
+    --cyan: #00d4ff;
+    --cyan-dim: #008cb3;
+    --yellow: #ffcc00;
+    --orange: #ff7b00;
+    --red: #ff3355;
+    --purple: #bb44ff;
+    --white: #e2f0ff;
+    --gray: #4a6270;
+    --border: #1a2a33;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Fira Code', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 14px; height: 14px;
+    border: 2px solid var(--green);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9999;
+    transition: transform 0.1s, border-color 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-trail {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9998;
+    opacity: 0.5;
+    transition: all 0.15s ease;
+  }
+
+  /* Scanlines */
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0,255,136,0.015) 3px,
+      rgba(0,255,136,0.015) 4px
+    );
+    pointer-events: none; z-index: 100;
+  }
+
+  /* Matrix rain canvas */
+  #matrix-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0.04; z-index: 0; pointer-events: none;
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    position: relative;
+  }
+  .glitch-wrap { position: relative; display: inline-block; }
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    position: relative;
+    animation: flicker 4s infinite;
+  }
+  .hero-title::before, .hero-title::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0; width: 100%;
+  }
+  .hero-title::before {
+    color: var(--cyan); clip: rect(0,900px,0,0);
+    animation: glitch1 2.5s infinite;
+  }
+  .hero-title::after {
+    color: var(--red); clip: rect(0,900px,0,0);
+    animation: glitch2 3s infinite;
+  }
+  @keyframes glitch1 {
+    0%,95%,100% { clip: rect(0,900px,0,0); transform: none; }
+    96% { clip: rect(20px,900px,40px,0); transform: translateX(-3px); }
+    97% { clip: rect(60px,900px,80px,0); transform: translateX(3px); }
+    98% { clip: rect(10px,900px,30px,0); transform: translateX(-2px); }
+  }
+  @keyframes glitch2 {
+    0%,93%,100% { clip: rect(0,900px,0,0); transform: none; }
+    94% { clip: rect(40px,900px,55px,0); transform: translateX(3px); }
+    96% { clip: rect(5px,900px,20px,0); transform: translateX(-3px); }
+  }
+  @keyframes flicker {
+    0%,96%,100% { opacity: 1; }
+    97% { opacity: 0.85; }
+    98% { opacity: 1; }
+    99% { opacity: 0.9; }
+  }
+  .hero-sub {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--cyan);
+    font-size: 0.85rem;
+    letter-spacing: 6px;
+    margin-top: 0.6rem;
+    opacity: 0.8;
+  }
+  .terminal-bar {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px 8px 0 0;
+    padding: 8px 14px;
+    margin: 1.5rem 0 0;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f56; }
+  .dot.y { background: #ffbd2e; }
+  .dot.g { background: #27c93f; }
+  .term-title { font-size: 0.7rem; color: var(--gray); margin-left: auto; margin-right: auto; letter-spacing: 2px; }
+  .typewriter-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 1rem 1.4rem;
+    font-size: 0.8rem;
+    color: var(--green);
+    text-align: left;
+    min-height: 60px;
+  }
+  .prompt { color: var(--gray); }
+  #typewriter { display: inline; }
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── PROGRESS BAR ── */
+  .progress-track {
+    margin: 2.5rem 0;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+  }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.72rem; color: var(--gray);
+    margin-bottom: 0.6rem; letter-spacing: 1px;
+  }
+  .progress-bar-outer {
+    height: 8px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-bar-inner {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--green-dim), var(--cyan));
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    box-shadow: 0 0 10px var(--green);
+  }
+  .checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+    gap: 6px;
+    margin-top: 1rem;
+  }
+  .check-item {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-size: 0.75rem;
+    user-select: none;
+  }
+  .check-item:hover { border-color: var(--green-dim); }
+  .check-item.done {
+    border-color: var(--green);
+    background: rgba(0,255,136,0.05);
+  }
+  .check-item.done .check-box { background: var(--green); border-color: var(--green); }
+  .check-item.done .check-box::after { content: '✓'; color: var(--bg); font-size: 10px; line-height: 1; }
+  .check-box {
+    width: 16px; height: 16px; min-width: 16px;
+    border: 1px solid var(--gray);
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .check-text { color: var(--white); }
+  .check-item.done .check-text { color: var(--green); text-decoration: line-through; opacity: 0.7; }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 2.5rem 0 1.5rem;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    color: var(--gray);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ── PHASE CARDS ── */
+  .phase {
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    animation: fadeUp 0.6s ease both;
+  }
+  .phase:hover { box-shadow: 0 0 20px rgba(0,255,136,0.07); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .phase:nth-child(1) { animation-delay: 0.1s; border-color: rgba(255,204,0,0.3); }
+  .phase:nth-child(1):hover { border-color: var(--yellow); box-shadow: 0 0 25px rgba(255,204,0,0.1); }
+  .phase:nth-child(2) { animation-delay: 0.2s; border-color: rgba(74,98,112,0.5); }
+  .phase:nth-child(2):hover { border-color: var(--gray); }
+  .phase:nth-child(3) { animation-delay: 0.3s; border-color: rgba(255,123,0,0.3); }
+  .phase:nth-child(3):hover { border-color: var(--orange); box-shadow: 0 0 25px rgba(255,123,0,0.1); }
+  .phase:nth-child(4) { animation-delay: 0.4s; border-color: rgba(255,51,85,0.3); }
+  .phase:nth-child(4):hover { border-color: var(--red); box-shadow: 0 0 25px rgba(255,51,85,0.1); }
+  .phase:nth-child(5) { animation-delay: 0.5s; border-color: rgba(187,68,255,0.3); }
+  .phase:nth-child(5):hover { border-color: var(--purple); box-shadow: 0 0 25px rgba(187,68,255,0.1); }
+  .phase:nth-child(6) { animation-delay: 0.6s; border-color: rgba(255,51,85,0.5); }
+  .phase:nth-child(6):hover { border-color: var(--red); box-shadow: 0 0 30px rgba(255,51,85,0.15); }
+
+  .phase-header {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem 1.4rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .phase-icon { font-size: 1.6rem; min-width: 2rem; text-align: center; }
+  .phase-title-wrap { flex: 1; }
+  .phase-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .phase-meta { font-size: 0.7rem; color: var(--gray); margin-top: 2px; font-family: 'Share Tech Mono', monospace; }
+  .phase-chevron {
+    color: var(--gray); font-size: 1rem;
+    transition: transform 0.3s;
+  }
+  .phase.open .phase-chevron { transform: rotate(180deg); }
+  .phase-body {
+    display: none;
+    padding: 0 1.4rem 1.4rem;
+    border-top: 1px solid var(--border);
+    animation: slideDown 0.3s ease;
+  }
+  .phase.open .phase-body { display: block; }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Projects inside phase */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .project-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .project-card:hover { transform: translateY(-2px); }
+  .project-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 4px;
+  }
+  .project-desc { font-size: 0.72rem; color: var(--gray); margin-bottom: 0.6rem; }
+  .skills-list {
+    list-style: none;
+    display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .skill-tag {
+    font-size: 0.65rem;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: var(--cyan);
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .tip-box {
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .tip-box.warn { background: rgba(255,51,85,0.08); border: 1px solid rgba(255,51,85,0.25); color: var(--red); }
+  .tip-box.info { background: rgba(0,255,136,0.06); border: 1px solid rgba(0,255,136,0.2); color: var(--green); }
+  .tip-box.gold { background: rgba(255,204,0,0.06); border: 1px solid rgba(255,204,0,0.2); color: var(--yellow); }
+
+  /* ── EXTRAS SECTION ── */
+  .extras-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+  }
+  .extra-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    animation: fadeUp 0.6s ease both;
+  }
+  .extra-card:hover {
+    border-color: var(--cyan-dim);
+    box-shadow: 0 0 15px rgba(0,212,255,0.06);
+  }
+  .extra-card-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .extra-card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: var(--cyan);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .extra-card-desc { font-size: 0.72rem; color: var(--gray); line-height: 1.6; margin-bottom: 0.8rem; }
+  .extra-list { list-style: none; }
+  .extra-list li {
+    font-size: 0.72rem;
+    color: var(--white);
+    padding: 3px 0;
+    padding-left: 1rem;
+    position: relative;
+  }
+  .extra-list li::before { content: '›'; position: absolute; left: 0; color: var(--green); }
+  .extra-list a {
+    color: var(--cyan);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .extra-list a:hover { color: var(--green); text-decoration: underline; }
+
+  /* ── SUMMARY TABLE ── */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .summary-table th {
+    background: var(--green-dark);
+    color: var(--green);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    border: 1px solid rgba(0,255,136,0.15);
+  }
+  .summary-table td {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    color: var(--white);
+    vertical-align: middle;
+    transition: background 0.2s;
+  }
+  .summary-table tr:hover td { background: rgba(0,255,136,0.03); }
+  .phase-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+  }
+  .badge-gold { background: rgba(255,204,0,0.12); color: var(--yellow); border: 1px solid rgba(255,204,0,0.3); }
+  .badge-silver { background: rgba(74,98,112,0.2); color: #aaa; border: 1px solid #555; }
+  .badge-bronze { background: rgba(255,123,0,0.1); color: var(--orange); border: 1px solid rgba(255,123,0,0.3); }
+  .badge-fire { background: rgba(255,51,85,0.1); color: var(--red); border: 1px solid rgba(255,51,85,0.3); }
+  .badge-skull { background: rgba(187,68,255,0.1); color: var(--purple); border: 1px solid rgba(187,68,255,0.3); }
+  .badge-boss { background: rgba(255,0,0,0.15); color: #ff2222; border: 1px solid rgba(255,0,0,0.4); }
+
+  /* ── FINAL TIP ── */
+  .final-tip {
+    text-align: center;
+    margin: 3rem 0 1rem;
+    padding: 2rem;
+    background: var(--bg2);
+    border: 1px solid rgba(0,255,136,0.3);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .final-tip::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,255,136,0.04) 0%, transparent 70%);
+  }
+  .final-tip-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gray);
+    letter-spacing: 4px;
+    margin-bottom: 0.5rem;
+  }
+  .final-tip-text {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-weight: 900;
+    color: var(--green);
+    text-shadow: 0 0 20px rgba(0,255,136,0.4);
+  }
+  .final-tip-sub {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 0.6rem;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* ── NAV ── */
+  .sticky-nav {
+    position: fixed; top: 1rem; right: 1rem; z-index: 200;
+    display: flex; flex-direction: column; gap: 4px;
+    background: rgba(13,19,24,0.9);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    backdrop-filter: blur(10px);
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    border: 1px solid transparent;
+  }
+  .nav-dot:hover, .nav-dot.active {
+    background: var(--green);
+    transform: scale(1.3);
+    box-shadow: 0 0 6px var(--green);
+  }
+  .nav-dot[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    right: 22px;
+    background: var(--bg3);
+    color: var(--white);
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    border: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* Scroll indicator */
+  .scroll-line {
+    position: fixed; top: 0; left: 0;
+    height: 2px; width: 0%;
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+    z-index: 300;
+    transition: width 0.1s;
+    box-shadow: 0 0 8px var(--green);
+  }
+
+  /* responsive */
+  @media(max-width:600px) {
+    .projects-grid { grid-template-columns: 1fr; }
+    .extras-grid { grid-template-columns: 1fr; }
+    .sticky-nav { display: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="matrix-canvas"></canvas>
+<div class="scroll-line" id="scrollLine"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- Sticky nav -->
+<nav class="sticky-nav" id="stickyNav">
+  <div class="nav-dot" title="Topo" onclick="scrollTo(0,0)"></div>
+  <div class="nav-dot" title="Fase 1 – Hacking" onclick="scrollToPhase(0)"></div>
+  <div class="nav-dot" title="Fase 2 – Network" onclick="scrollToPhase(1)"></div>
+  <div class="nav-dot" title="Fase 3 – Crypto" onclick="scrollToPhase(2)"></div>
+  <div class="nav-dot" title="Fase 4 – Malware" onclick="scrollToPhase(3)"></div>
+  <div class="nav-dot" title="Fase 5 – Exploit" onclick="scrollToPhase(4)"></div>
+  <div class="nav-dot" title="Boss Fight" onclick="scrollToPhase(5)"></div>
+  <div class="nav-dot" title="Extras" onclick="document.getElementById('extras').scrollIntoView({behavior:'smooth'})"></div>
+  <div class="nav-dot" title="Resumo" onclick="document.getElementById('summary').scrollIntoView({behavior:'smooth'})"></div>
+</nav>
+
+<div class="container">
+  <!-- HEADER -->
+  <header>
+    <div class="glitch-wrap">
+      <h1 class="hero-title" data-text="CYBER ROADMAP">CYBER ROADMAP</h1>
+    </div>
+    <p class="hero-sub">42 LUXEMBOURG · CYBERSECURITY TRAIL · 2025</p>
+    <div style="margin-top:1.5rem;">
+      <div class="terminal-bar">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <span class="term-title">tales@42lux — ~/cybersec/roadmap</span>
+      </div>
+      <div class="typewriter-box">
+        <span class="prompt">$ </span><span id="typewriter"></span><span class="blink" id="cursor-blink">▋</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROGRESS TRACKER -->
+  <div class="progress-track">
+    <div class="progress-label">
+      <span>⚡ PROGRESSO DA TRILHA</span>
+      <span id="progress-text">0 / 18 projetos</span>
+    </div>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progressBar"></div>
+    </div>
+    <div class="checkboxes" id="checkboxes"></div>
+  </div>
+
+  <!-- SECTION DIVIDER -->
+  <div class="section-divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">⭐ ordem recomendada</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- PHASES -->
+  <div id="phases">
+
+    <!-- FASE 1 -->
+    <div class="phase open" id="phase-0">
+      <div class="phase-header" onclick="togglePhase(0)">
+        <div class="phase-icon">🥇</div>
+        <div class="phase-title-wrap">
+          <div class="phase-title" style="color:var(--yellow)">Fase 1 — Base de Hacking</div>
+          <div class="phase-meta">COMECE AQUI · 2 projetos · fundamento essencial</div>
+        </div>
+        <div class="phase-chevron">▼</div>
+      </div>
+      <div class="phase-body">
+        <div class="projects-grid">
+          <div class="project-card" style="border-color:rgba(255,204,0,0.2)">
+            <div class="project-name">❄️ snow-crash</div>
+            <div class="project-desc">👉 INTRO ao hacking da 42 — Todo mundo começa aqui</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Linux internals</li>
+              <li class="skill-tag">Privilege escalation</li>
+              <li class="skill-tag">PATH hijacking</li>
+              <li class="skill-tag">SUID</li>
+              <li class="skill-tag">Bash tricks</li>
+              <li class="skill-tag">Enumeration</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(255,204,0,0.2)">
+            <div class="project-name">🌐 darkly</div>
+            <div class="project-desc">👉 Introdução a Web Security (OWASP)</div>
+            <ul class="skills-list">
+              <li class="skill-tag">SQL Injection</li>
+              <li class="skill-tag">XSS</li>
+              <li class="skill-tag">CSRF</li>
+              <li class="skill-tag">File upload attack</li>
+              <li class="skill-tag">Cookies/Sessions</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-box info">💡 Snowcrash + Darkly = base completa de hacker. Sem atalhos.</div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase" id="phase-1">
+      <div class="phase-header" onclick="togglePhase(1)">
+        <div class="phase-icon">🥈</div>
+        <div class="phase-title-wrap">
+          <div class="phase-title" style="color:#aaaaaa">Fase 2 — Fundamentos de Network</div>
+          <div class="phase-meta">MUITO IMPORTANTE · 3 projetos · base para TUDO</div>
+        </div>
+        <div class="phase-chevron">▼</div>
+      </div>
+      <div class="phase-body">
+        <div class="projects-grid">
+          <div class="project-card">
+            <div class="project-name">🛰️ ft_nmap</div>
+            <div class="project-desc">Reimplementar o Nmap em C — network scanning real</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Sockets</li>
+              <li class="skill-tag">Scanning</li>
+              <li class="skill-tag">TCP/IP</li>
+              <li class="skill-tag">Network enum</li>
+            </ul>
+          </div>
+          <div class="project-card">
+            <div class="project-name">📡 ft_ping</div>
+            <div class="project-desc">ICMP ping do zero — entender pacotes raw</div>
+            <ul class="skills-list">
+              <li class="skill-tag">ICMP</li>
+              <li class="skill-tag">Raw sockets</li>
+              <li class="skill-tag">TTL</li>
+              <li class="skill-tag">Checksum</li>
+            </ul>
+          </div>
+          <div class="project-card">
+            <div class="project-name">🗺️ ft_traceroute</div>
+            <div class="project-desc">Rastrear rota de pacotes — hop a hop</div>
+            <ul class="skills-list">
+              <li class="skill-tag">UDP probes</li>
+              <li class="skill-tag">TTL manipulation</li>
+              <li class="skill-tag">ICMP responses</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-box info">💡 ft_nmap ajuda em ABSOLUTAMENTE TODOS os outros projetos. Prioridade máxima.</div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase" id="phase-2">
+      <div class="phase-header" onclick="togglePhase(2)">
+        <div class="phase-icon">🥉</div>
+        <div class="phase-title-wrap">
+          <div class="phase-title" style="color:var(--orange)">Fase 3 — Criptografia</div>
+          <div class="phase-meta">A PARTE DIFÍCIL · 3 projetos · math heavy</div>
+        </div>
+        <div class="phase-chevron">▼</div>
+      </div>
+      <div class="phase-body">
+        <div class="projects-grid">
+          <div class="project-card" style="border-color:rgba(255,123,0,0.2)">
+            <div class="project-name">🔑 ft_ssl_md5</div>
+            <div class="project-desc">Reimplementar MD5 e SHA — hashing puro</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Hash functions</li>
+              <li class="skill-tag">Bit operations</li>
+              <li class="skill-tag">Padding</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(255,123,0,0.2)">
+            <div class="project-name">🔒 ft_ssl_des</div>
+            <div class="project-desc">DES/3DES — criptografia simétrica</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Block ciphers</li>
+              <li class="skill-tag">Key scheduling</li>
+              <li class="skill-tag">Feistel network</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(255,123,0,0.2)">
+            <div class="project-name">🗝️ ft_ssl_rsa</div>
+            <div class="project-desc">RSA do zero — criptografia assimétrica</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Prime numbers</li>
+              <li class="skill-tag">Modular math</li>
+              <li class="skill-tag">Key pairs</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-box warn">⚠️ Sem network forte + C sólido → você vai sofrer MUITO aqui. Não pule etapas.</div>
+      </div>
+    </div>
+
+    <!-- FASE 4 -->
+    <div class="phase" id="phase-3">
+      <div class="phase-header" onclick="togglePhase(3)">
+        <div class="phase-icon">🔥</div>
+        <div class="phase-title-wrap">
+          <div class="phase-title" style="color:var(--red)">Fase 4 — Malware / Reverse Engineering</div>
+          <div class="phase-meta">😈 A DIVERSÃO COMEÇA · 3 projetos · dark side</div>
+        </div>
+        <div class="phase-chevron">▼</div>
+      </div>
+      <div class="phase-body">
+        <div class="projects-grid">
+          <div class="project-card" style="border-color:rgba(255,51,85,0.2)">
+            <div class="project-name">📦 woody-woodpacker</div>
+            <div class="project-desc">ELF packer — comprimir e criptografar binários</div>
+            <ul class="skills-list">
+              <li class="skill-tag">ELF format</li>
+              <li class="skill-tag">PE internals</li>
+              <li class="skill-tag">Anti-debug</li>
+              <li class="skill-tag">Shellcode</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(255,51,85,0.2)">
+            <div class="project-name">🐛 dr_quine</div>
+            <div class="project-desc">Programa que se auto-replica — quine + malware</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Self-replication</li>
+              <li class="skill-tag">Quine theory</li>
+              <li class="skill-tag">Virus basics</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(255,51,85,0.2)">
+            <div class="project-name">🛡️ ft_shield</div>
+            <div class="project-desc">Rootkit — esconder processos e ficheiros</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Kernel techniques</li>
+              <li class="skill-tag">Process hiding</li>
+              <li class="skill-tag">Syscall hooking</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-box warn">⚠️ Estude ELF format antes de começar. Ferramentas: GDB, Radare2, strace, ltrace.</div>
+      </div>
+    </div>
+
+    <!-- FASE 5 -->
+    <div class="phase" id="phase-4">
+      <div class="phase-header" onclick="togglePhase(4)">
+        <div class="phase-icon">💀</div>
+        <div class="phase-title-wrap">
+          <div class="phase-title" style="color:var(--purple)">Fase 5 — Exploit Real</div>
+          <div class="phase-meta">NÍVEL HARD · 3 projetos · hacker de verdade</div>
+        </div>
+        <div class="phase-chevron">▼</div>
+      </div>
+      <div class="phase-body">
+        <div class="projects-grid">
+          <div class="project-card" style="border-color:rgba(187,68,255,0.2)">
+            <div class="project-name">🌧️ rainfall</div>
+            <div class="project-desc">CTF de exploits clássicos — buffer overflow puro</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Buffer overflow</li>
+              <li class="skill-tag">Shellcode</li>
+              <li class="skill-tag">Return address</li>
+              <li class="skill-tag">GDB mastery</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(187,68,255,0.2)">
+            <div class="project-name">🎯 override</div>
+            <div class="project-desc">Exploits avançados — heap, format strings, ROP</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Heap exploit</li>
+              <li class="skill-tag">Format strings</li>
+              <li class="skill-tag">ROP chains</li>
+              <li class="skill-tag">ASLR bypass</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(187,68,255,0.2)">
+            <div class="project-name">🖥️ boot2root</div>
+            <div class="project-desc">VM comprometida do zero ao root — pentest completo</div>
+            <ul class="skills-list">
+              <li class="skill-tag">Recon</li>
+              <li class="skill-tag">Priv esc</li>
+              <li class="skill-tag">Web exploit</li>
+              <li class="skill-tag">Post-exploit</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-box info">💡 Aqui você já está hacker de verdade. Treine no pwn.college antes de começar.</div>
+      </div>
+    </div>
+
+    <!-- FASE FINAL BOSS -->
+    <div class="phase" id="phase-5" style="background: linear-gradient(135deg, var(--bg2), #1a0000)">
+      <div class="phase-header" onclick="togglePhase(5)">
+        <div class="phase-icon">☠️</div>
+        <div class="phase-title-wrap">
+          <div class="phase-title" style="color:#ff2222; text-shadow: 0 0 10px rgba(255,0,0,0.5)">FASE FINAL — BOSS FIGHT</div>
+          <div class="phase-meta">ENDGAME · 4 projetos · apenas os escolhidos</div>
+        </div>
+        <div class="phase-chevron">▼</div>
+      </div>
+      <div class="phase-body">
+        <div class="projects-grid">
+          <div class="project-card" style="border-color:rgba(255,0,0,0.3)">
+            <div class="project-name" style="color:#ff4444">💀 death</div>
+            <div class="project-desc">Desafio final extremo — nível máximo</div>
+            <ul class="skills-list">
+              <li class="skill-tag" style="border-color:rgba(255,0,0,0.3);color:#ff6666">Tudo acima</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(255,0,0,0.3)">
+            <div class="project-name" style="color:#ff4444">⚔️ war</div>
+            <div class="project-desc">Combate total — habilidades combinadas</div>
+            <ul class="skills-list">
+              <li class="skill-tag" style="border-color:rgba(255,0,0,0.3);color:#ff6666">Full stack attack</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(255,0,0,0.3)">
+            <div class="project-name" style="color:#ff4444">🌾 famine</div>
+            <div class="project-desc">Resistência e persistência — não desista</div>
+            <ul class="skills-list">
+              <li class="skill-tag" style="border-color:rgba(255,0,0,0.3);color:#ff6666">Persistence</li>
+            </ul>
+          </div>
+          <div class="project-card" style="border-color:rgba(255,0,0,0.3)">
+            <div class="project-name" style="color:#ff4444">🦠 pestilence</div>
+            <div class="project-desc">O último — prova que você chegou ao fim</div>
+            <ul class="skills-list">
+              <li class="skill-tag" style="border-color:rgba(255,0,0,0.3);color:#ff6666">Mastery</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-box gold">🏆 Se você chegar aqui, você é um hacker completo. Parabéns.</div>
+      </div>
+    </div>
+
+  </div><!-- /phases -->
+
+  <!-- ─────────────────────────────────────── -->
+  <!-- EXTRA: FORTALECER SEU PROCESSO          -->
+  <!-- ─────────────────────────────────────── -->
+  <div class="section-divider" id="extras">
+    <div class="divider-line"></div>
+    <div class="divider-label">💪 fortaleça seu processo</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <p style="font-size:0.78rem;color:var(--gray);font-family:'Share Tech Mono',monospace;margin-bottom:0.5rem;">
+    Recursos externos + práticas que aceleram sua evolução em paralelo à trilha 42:
+  </p>
+
+  <div class="extras-grid">
+
+    <div class="extra-card" style="animation-delay:0.1s;border-color:rgba(0,255,136,0.15)">
+      <div class="extra-card-icon">🎮</div>
+      <div class="extra-card-title">Plataformas de Prática CTF</div>
+      <div class="extra-card-desc">Pratique exploits reais fora da 42. Use em paralelo com os projetos.</div>
+      <ul class="extra-list">
+        <li><a href="https://pwn.college" target="_blank">pwn.college</a> — melhor para binários/exploits</li>
+        <li><a href="https://tryhackme.com" target="_blank">TryHackMe</a> — guiado, ótimo para iniciantes</li>
+        <li><a href="https://hackthebox.com" target="_blank">HackTheBox</a> — nível intermediate/hard</li>
+        <li><a href="https://picoctf.org" target="_blank">picoCTF</a> — Carnegie Mellon, gratuito</li>
+        <li><a href="https://overthewire.org" target="_blank">OverTheWire</a> — wargames clássicos Linux</li>
+        <li><a href="https://root-me.org" target="_blank">Root-Me</a> — muitos desafios em francês</li>
+      </ul>
+    </div>
+
+    <div class="extra-card" style="animation-delay:0.2s;border-color:rgba(0,212,255,0.15)">
+      <div class="extra-card-icon">🛠️</div>
+      <div class="extra-card-title">Ferramentas Essenciais</div>
+      <div class="extra-card-desc">Domine estas ferramentas antes e durante os projetos. São o alfabeto do hacker.</div>
+      <ul class="extra-list">
+        <li><strong style="color:var(--cyan)">GDB + pwndbg</strong> — debug avançado de binários</li>
+        <li><strong style="color:var(--cyan)">Radare2 / Ghidra</strong> — reverse engineering</li>
+        <li><strong style="color:var(--cyan)">Burp Suite</strong> — interceptar HTTP (web hacking)</li>
+        <li><strong style="color:var(--cyan)">Wireshark</strong> — análise de pacotes de rede</li>
+        <li><strong style="color:var(--cyan)">Metasploit</strong> — framework de exploits</li>
+        <li><strong style="color:var(--cyan)">pwntools (Python)</strong> — automatizar exploits CTF</li>
+        <li><strong style="color:var(--cyan)">strace / ltrace</strong> — trace de syscalls</li>
+      </ul>
+    </div>
+
+    <div class="extra-card" style="animation-delay:0.3s;border-color:rgba(255,204,0,0.15)">
+      <div class="extra-card-icon">📚</div>
+      <div class="extra-card-title">Leituras Fundamentais</div>
+      <div class="extra-card-desc">Livros e recursos que separam quem entende de quem apenas executa.</div>
+      <ul class="extra-list">
+        <li><em style="color:var(--yellow)">Hacking: Art of Exploitation</em> — Jon Erickson</li>
+        <li><em style="color:var(--yellow)">The Web Application Hacker's Handbook</em></li>
+        <li><em style="color:var(--yellow)">Computer Security: Art and Science</em> — Matt Bishop</li>
+        <li><a href="https://beej.us/guide/bgnet/" target="_blank">Beej's Guide to Network Programming</a></li>
+        <li><a href="https://exploit.education" target="_blank">exploit.education</a> — VMs práticas</li>
+        <li><a href="https://github.com/0xZ0F/Z0FCourse_ReverseEngineering" target="_blank">Z0F Reverse Engineering Course</a></li>
+      </ul>
+    </div>
+
+    <div class="extra-card" style="animation-delay:0.4s;border-color:rgba(255,123,0,0.15)">
+      <div class="extra-card-icon">🧠</div>
+      <div class="extra-card-title">Mindset & Metodologia</div>
+      <div class="extra-card-desc">Hacker não é título, é forma de pensar. Treina isso todo dia.</div>
+      <ul class="extra-list">
+        <li>Leia writeups de CTFs resolvidos (post-mortem)</li>
+        <li>Mantenha um diário de exploits (Obsidian/Notion)</li>
+        <li>Pratique OSINT em alvos fictícios/legais</li>
+        <li>Siga: <strong style="color:var(--orange)">LiveOverflow</strong>, <strong style="color:var(--orange)">John Hammond</strong> no YouTube</li>
+        <li>Participe de CTFs ao vivo: CTFtime.org</li>
+        <li>Crie seu home lab: Kali + VMs vulneráveis</li>
+      </ul>
+    </div>
+
+    <div class="extra-card" style="animation-delay:0.5s;border-color:rgba(187,68,255,0.15)">
+      <div class="extra-card-icon">🔐</div>
+      <div class="extra-card-title">Certificações para o Futuro</div>
+      <div class="extra-card-desc">Após a trilha 42, estas certs provam seu skill no mercado.</div>
+      <ul class="extra-list">
+        <li><strong style="color:var(--purple)">eJPT</strong> — INE, entry-level pentest</li>
+        <li><strong style="color:var(--purple)">CEH</strong> — EC-Council, reconhecida globalmente</li>
+        <li><strong style="color:var(--purple)">OSCP</strong> — OffSec, a mais respeitada de pentest</li>
+        <li><strong style="color:var(--purple)">CompTIA Security+</strong> — fundamento amplo</li>
+        <li><strong style="color:var(--purple)">GREM</strong> — GIAC, reverse engineering/malware</li>
+        <li>Após 42: OSCP é o objetivo natural</li>
+      </ul>
+    </div>
+
+    <div class="extra-card" style="animation-delay:0.6s;border-color:rgba(0,255,136,0.15)">
+      <div class="extra-card-icon">⚡</div>
+      <div class="extra-card-title">Stack C que você PRECISA dominar</div>
+      <div class="extra-card-desc">A 42 é em C — estes tópicos são pré-requisito silencioso para os projetos crypto/malware.</div>
+      <ul class="extra-list">
+        <li>Ponteiros e aritmética de ponteiros (avançado)</li>
+        <li>Gestão de memória: malloc/free/valgrind</li>
+        <li>Bit manipulation: AND, OR, XOR, shifts</li>
+        <li>Endianness (big vs little) — crítico em crypto</li>
+        <li>Inline assembly (x86/x64 basics)</li>
+        <li>Makefile + linking manual</li>
+        <li>System calls: open/read/write/mmap/fork</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- SUMMARY TABLE -->
+  <div class="section-divider" id="summary">
+    <div class="divider-line"></div>
+    <div class="divider-label">🧭 rota ideal resumida</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Projeto</th>
+        <th>Fase</th>
+        <th>Foco principal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>01</td><td>❄️ snow-crash</td><td><span class="phase-badge badge-gold">🥇 Base Hacking</span></td><td>Linux + Privilege Escalation</td></tr>
+      <tr><td>02</td><td>🌐 darkly</td><td><span class="phase-badge badge-gold">🥇 Base Hacking</span></td><td>Web Security (OWASP)</td></tr>
+      <tr><td>03</td><td>🛰️ ft_nmap</td><td><span class="phase-badge badge-silver">🥈 Network</span></td><td>TCP/IP + Port scanning</td></tr>
+      <tr><td>04</td><td>📡 ft_ping</td><td><span class="phase-badge badge-silver">🥈 Network</span></td><td>ICMP + Raw sockets</td></tr>
+      <tr><td>05</td><td>🗺️ ft_traceroute</td><td><span class="phase-badge badge-silver">🥈 Network</span></td><td>Routing + TTL</td></tr>
+      <tr><td>06</td><td>🔑 ft_ssl_md5</td><td><span class="phase-badge badge-bronze">🥉 Crypto</span></td><td>Hashing algorithms</td></tr>
+      <tr><td>07</td><td>🔒 ft_ssl_des</td><td><span class="phase-badge badge-bronze">🥉 Crypto</span></td><td>Symmetric encryption</td></tr>
+      <tr><td>08</td><td>🗝️ ft_ssl_rsa</td><td><span class="phase-badge badge-bronze">🥉 Crypto</span></td><td>Asymmetric + Math</td></tr>
+      <tr><td>09</td><td>📦 woody-woodpacker</td><td><span class="phase-badge badge-fire">🔥 Malware</span></td><td>ELF packer</td></tr>
+      <tr><td>10</td><td>🐛 dr_quine</td><td><span class="phase-badge badge-fire">🔥 Malware</span></td><td>Self-replication</td></tr>
+      <tr><td>11</td><td>🛡️ ft_shield</td><td><span class="phase-badge badge-fire">🔥 Malware</span></td><td>Rootkit techniques</td></tr>
+      <tr><td>12</td><td>🌧️ rainfall</td><td><span class="phase-badge badge-skull">💀 Exploit</span></td><td>Buffer overflow</td></tr>
+      <tr><td>13</td><td>🎯 override</td><td><span class="phase-badge badge-skull">💀 Exploit</span></td><td>Heap + ROP chains</td></tr>
+      <tr><td>14</td><td>🖥️ boot2root</td><td><span class="phase-badge badge-skull">💀 Exploit</span></td><td>Full pentest</td></tr>
+      <tr><td>15–18</td><td>☠️ death → war → famine → pestilence</td><td><span class="phase-badge badge-boss">☠️ BOSS</span></td><td>Endgame total</td></tr>
+    </tbody>
+  </table>
+
+  <!-- FINAL TIP -->
+  <div class="final-tip">
+    <div class="final-tip-label">💬 DICA SINCERA DA 42</div>
+    <div class="final-tip-text">Comece pelo snow-crash. Sempre.</div>
+    <div class="final-tip-sub">Quem começa por crypto ou malware direto… sofre MUITO. Não há atalhos. 🧊→🌐→🛰️→🔑→🔥→💀→☠️</div>
+  </div>
+
+  <div style="text-align:center;font-size:0.65rem;color:var(--gray);font-family:'Share Tech Mono',monospace;margin-top:2rem;letter-spacing:2px;">
+    42 LUXEMBOURG · TALES LIMA · CYBERSECURITY ROADMAP · 2025
+  </div>
+</div>
+
+<script>
+// ── MATRIX RAIN ──
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const cols = Math.floor(canvas.width / 16);
+const drops = Array(cols).fill(1);
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(8,12,14,0.05)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#00ff88';
+  ctx.font = '13px Fira Code';
+  const chars = '01アイウエオカキクケコ<>{}[]|/\\!@#$%^&*';
+  drops.forEach((y, i) => {
+    const c = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(c, i*16, y*16);
+    if (y*16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  });
+}
+setInterval(drawMatrix, 50);
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursorTrail');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX - 7 + 'px';
+  cursor.style.top = e.clientY - 7 + 'px';
+  setTimeout(() => {
+    trail.style.left = e.clientX - 3 + 'px';
+    trail.style.top = e.clientY - 3 + 'px';
+  }, 80);
+});
+
+// ── TYPEWRITER ──
+const messages = [
+  'cat roadmap.txt',
+  'Starting cybersec journey...',
+  'Loading 18 projects...',
+  'snow-crash → darkly → ft_nmap...',
+  'chmod +x hacker.sh && ./hacker.sh',
+  'grep -r "vulnerability" ./system/',
+  'sudo su - // access granted',
+];
+let mi = 0, ci = 0, deleting = false;
+const tw = document.getElementById('typewriter');
+function type() {
+  const msg = messages[mi];
+  if (!deleting) {
+    tw.textContent = msg.slice(0, ci+1); ci++;
+    if (ci === msg.length) { deleting = true; setTimeout(type, 1800); return; }
+  } else {
+    tw.textContent = msg.slice(0, ci-1); ci--;
+    if (ci === 0) { deleting = false; mi = (mi+1) % messages.length; }
+  }
+  setTimeout(type, deleting ? 40 : 70);
+}
+type();
+
+// ── PHASE TOGGLE ──
+function togglePhase(i) {
+  const p = document.getElementById('phase-' + i);
+  p.classList.toggle('open');
+}
+
+// ── SCROLL LINE ──
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('scrollLine').style.width = pct + '%';
+});
+
+// ── PROGRESS TRACKER ──
+const projects = [
+  'snow-crash','darkly','ft_nmap','ft_ping','ft_traceroute',
+  'ft_ssl_md5','ft_ssl_des','ft_ssl_rsa',
+  'woody-woodpacker','dr_quine','ft_shield',
+  'rainfall','override','boot2root',
+  'death','war','famine','pestilence'
+];
+const emojis = ['❄️','🌐','🛰️','📡','🗺️','🔑','🔒','🗝️','📦','🐛','🛡️','🌧️','🎯','🖥️','💀','⚔️','🌾','🦠'];
+const saved = JSON.parse(localStorage.getItem('42_progress') || '[]');
+const checkboxes = document.getElementById('checkboxes');
+function updateProgress() {
+  const done = projects.filter((_,i) => document.getElementById('cb-'+i)?.classList.contains('done')).length;
+  document.getElementById('progress-text').textContent = done + ' / 18 projetos';
+  document.getElementById('progressBar').style.width = (done/18*100) + '%';
+}
+projects.forEach((p, i) => {
+  const div = document.createElement('div');
+  div.className = 'check-item' + (saved.includes(i) ? ' done' : '');
+  div.id = 'cb-'+i;
+  div.innerHTML = `<div class="check-box">${saved.includes(i)?'✓':''}</div><span class="check-text">${emojis[i]} ${p}</span>`;
+  div.addEventListener('click', () => {
+    div.classList.toggle('done');
+    div.querySelector('.check-box').textContent = div.classList.contains('done') ? '✓' : '';
+    const s = projects.map((_,j) => document.getElementById('cb-'+j)?.classList.contains('done') ? j : -1).filter(x=>x>=0);
+    localStorage.setItem('42_progress', JSON.stringify(s));
+    updateProgress();
+  });
+  checkboxes.appendChild(div);
+});
+updateProgress();
+
+// ── SCROLL TO PHASE ──
+function scrollToPhase(i) {
+  document.getElementById('phase-'+i).scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+// ── STAGGER ANIMATIONS ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.style.opacity = 1; });
+}, { threshold: 0.1 });
+document.querySelectorAll('.phase, .extra-card').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Snow Crash (42) — Guia de Estudo por Níveis</title>
+  <style>
+    :root { --bg:#0b0f14; --card:#121826; --text:#e6edf3; --muted:#9fb0c0; --accent:#66d9ef; --warn:#ffb86c; --ok:#50fa7b; }
+    body{ margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background:linear-gradient(180deg,#0b0f14,#070a0f); color:var(--text); }
+    header{ padding:32px 18px; max-width:1100px; margin:0 auto; }
+    h1{ margin:0 0 8px; font-size:28px; }
+    p{ color:var(--muted); line-height:1.55; margin:10px 0; }
+    .container{ max-width:1100px; margin:0 auto; padding:0 18px 44px; }
+    .grid{ display:grid; grid-template-columns: 1fr; gap:14px; }
+    @media (min-width: 880px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    .card{ background:rgba(18,24,38,.92); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:16px 16px 14px; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+    .badge{ display:inline-block; padding:3px 9px; border-radius:999px; font-size:12px; letter-spacing:.2px; background:rgba(102,217,239,.14); color:var(--accent); border:1px solid rgba(102,217,239,.28); }
+    .badge.warn{ background:rgba(255,184,108,.12); color:var(--warn); border-color:rgba(255,184,108,.22); }
+    h2{ margin:10px 0 6px; font-size:18px; }
+    ul{ margin:8px 0 0 18px; padding:0; color:var(--text); }
+    li{ margin:6px 0; color:var(--muted); }
+    .k{ color:var(--text); }
+    .note{ margin-top:10px; padding:10px 12px; border-radius:12px; background:rgba(80,250,123,.06); border:1px solid rgba(80,250,123,.14); color:var(--muted); }
+    .note strong{ color:var(--ok); }
+    .footer{ opacity:.9; font-size:12px; color:var(--muted); margin-top:22px; }
+    code{ background:rgba(255,255,255,.06); padding:2px 6px; border-radius:8px; }
+    .toc{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:14px; margin-top:14px; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Snow Crash (42) — Guia por Níveis</h1>
+  <p>
+    Guia de estudo para entender o que cada nível quer ensinar.
+    O foco aqui é metodologia, observação e documentação do raciocínio.
+  </p>
+  <div class="toc">
+    <p><span class="k">Fluxo geral do projeto:</span> entrar como <code>levelXX</code> → investigar o ambiente → identificar a fraqueza do nível → obter acesso ao <code>flagXX</code> → executar <code>getflag</code> → usar a flag para entrar no próximo <code>level</code>.</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="grid">
+
+    <section class="card" id="level00">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level00 — Enumeração e cifra simples</h2>
+      <p>Objetivo: aprender a procurar pistas no sistema e reconhecer que um texto pode estar apenas ofuscado, não realmente protegido.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> explorar arquivos do sistema, procurar conteúdo incomum e testar se ele representa uma senha ou dica codificada.</li>
+        <li><span class="k">O que registrar:</span> onde a pista foi encontrada e por que você concluiu que o texto precisava ser decodificado.</li>
+        <li><span class="k">O que aprende:</span> enumeração básica, observação de padrões e identificação de cifra simples.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> nem todo dado “estranho” é criptografia; às vezes é apenas ofuscação fraca.</div>
+    </section>
+
+    <section class="card" id="level01">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level01 — Hash de senha e password cracking</h2>
+      <p>Objetivo: entender como senhas podem aparecer em formato de hash e como hashes fracos podem ser quebrados.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> examinar o arquivo de usuários, localizar a entrada do usuário alvo e identificar o hash da senha.</li>
+        <li><span class="k">O que registrar:</span> qual era o hash, como você reconheceu o formato e qual ferramenta usou para quebrá-lo.</li>
+        <li><span class="k">O que aprende:</span> diferença entre senha e hash, formato de hash Unix antigo e uso básico do John the Ripper.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> hash fraco e mal armazenado pode levar à exposição completa da conta.</div>
+    </section>
+
+    <section class="card" id="level02">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level02 — Captura e análise de credenciais</h2>
+      <p>Objetivo: perceber que credenciais podem aparecer em arquivos de captura ou em dados trafegados, e que analisar esses artefatos pode revelar segredos.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> investigar arquivos fornecidos no nível, identificar seu tipo e procurar neles dados úteis, especialmente autenticação.</li>
+        <li><span class="k">O que registrar:</span> qual arquivo foi importante, que tipo de conteúdo ele tinha e como você extraiu a informação útil.</li>
+        <li><span class="k">O que aprende:</span> análise de arquivos de captura, observação de tráfego e recuperação de credenciais expostas.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> dados em trânsito ou capturados podem revelar senhas se o protocolo ou o contexto forem inseguros.</div>
+    </section>
+
+    <section class="card" id="level03">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level03 — Execução de binários e contexto privilegiado</h2>
+      <p>Objetivo: observar como um programa se comporta quando executado com mais privilégios e como dependências externas podem ser abusadas.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> analisar o binário, entender o que ele chama e verificar se ele depende de caminhos ou comandos externos.</li>
+        <li><span class="k">O que registrar:</span> comportamento do programa, dependências observadas e hipótese validada.</li>
+        <li><span class="k">O que aprende:</span> relação entre binário, ambiente e execução privilegiada.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> programas privilegiados precisam controlar exatamente o que executam.</div>
+    </section>
+
+    <section class="card" id="level04">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level04 — Entrada do usuário e execução indireta</h2>
+      <p>Objetivo: entender como uma entrada aparentemente simples pode chegar a uma execução insegura em um script ou serviço.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> examinar como o serviço ou script recebe parâmetros e como esses dados são tratados internamente.</li>
+        <li><span class="k">O que registrar:</span> caminho da entrada até a saída e o ponto onde faltou validação adequada.</li>
+        <li><span class="k">O que aprende:</span> risco de entrada não filtrada, sanitização insuficiente e execução indireta.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> qualquer entrada do usuário precisa ser tratada como não confiável.</div>
+    </section>
+
+    <section class="card" id="level05">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level05 — Automação e tarefas agendadas</h2>
+      <p>Objetivo: entender como processos automáticos podem criar oportunidades de exploração se executarem arquivos de forma insegura.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> observar arquivos, diretórios e comportamentos que mudam com o tempo e levantar a hipótese de execução automática.</li>
+        <li><span class="k">O que registrar:</span> evidências temporais e o mecanismo automático identificado.</li>
+        <li><span class="k">O que aprende:</span> riscos de cron/jobs automáticos e abuso de contexto privilegiado.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> automação com privilégio é poderosa, mas perigosa quando mal configurada.</div>
+    </section>
+
+    <section class="card" id="level06">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level06 — Script interpretado e validação insuficiente</h2>
+      <p>Objetivo: perceber como scripts interpretados podem ser explorados quando tratam mal a entrada recebida.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> ler o script, identificar fontes de input e observar se há transformação ou execução insegura desses dados.</li>
+        <li><span class="k">O que registrar:</span> qual parte do código era frágil e qual comportamento mostrou a falha.</li>
+        <li><span class="k">O que aprende:</span> validação de entrada, interpretação insegura e risco de execução indireta.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> scripts curtos também podem conter falhas graves.</div>
+    </section>
+
+    <section class="card" id="level07">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level07 — Variáveis de ambiente e PATH</h2>
+      <p>Objetivo: aprender que o ambiente de execução influencia diretamente o comportamento de programas.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> verificar como o binário/script chama outros programas e se depende de PATH ou de variáveis de ambiente.</li>
+        <li><span class="k">O que registrar:</span> quais variáveis afetavam a execução e como isso alterava o resultado.</li>
+        <li><span class="k">O que aprende:</span> hijacking de PATH, ambiente inseguro e necessidade de caminhos absolutos.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> execução privilegiada deve ocorrer em ambiente controlado.</div>
+    </section>
+
+    <section class="card" id="level08">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level08 — Controle fraco de acesso a arquivos</h2>
+      <p>Objetivo: entender que bloquear um nome ou uma verificação superficial não é o mesmo que proteger o recurso real.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> observar como o programa decide o que pode ou não pode abrir, e testar a lógica dessa restrição.</li>
+        <li><span class="k">O que registrar:</span> qual era a regra de bloqueio e por que ela não protegia de verdade.</li>
+        <li><span class="k">O que aprende:</span> controle de acesso mal implementado e checagens frágeis.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> segurança não pode depender apenas de comparação superficial de nomes.</div>
+    </section>
+
+    <section class="card" id="level09">
+      <span class="badge">Nível obrigatório</span>
+      <h2>level09 — Transformação de dados e comportamento inesperado</h2>
+      <p>Objetivo: perceber que um programa pode modificar dados de forma não óbvia, e que entender essa transformação é essencial para resolver o nível.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> testar entradas pequenas, comparar entrada e saída e descobrir a lógica de transformação usada.</li>
+        <li><span class="k">O que registrar:</span> padrão observado e como você chegou ao funcionamento correto.</li>
+        <li><span class="k">O que aprende:</span> análise de transformação de caracteres, lógica reversível e investigação por comparação.</li>
+      </ul>
+      <div class="note"><strong>Lição:</strong> entender o comportamento do programa vale mais do que tentar “adivinhar”.</div>
+    </section>
+
+    <section class="card" id="bonus">
+      <span class="badge warn">Bônus</span>
+      <h2>level10–level14 — Consolidação</h2>
+      <p>Objetivo: aplicar com mais autonomia tudo o que foi aprendido nos níveis anteriores.</p>
+      <ul>
+        <li><span class="k">O que fazer:</span> repetir o ciclo: enumeração → hipótese → teste → evidência → mitigação.</li>
+        <li><span class="k">O que registrar:</span> foco no raciocínio, não só no resultado final.</li>
+        <li><span class="k">O que aprende:</span> autonomia técnica, documentação e defesa oral.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="defesa">
+      <span class="badge">Entrega & Defesa</span>
+      <h2>Checklist para a avaliação</h2>
+      <ul>
+        <li><span class="k">Método:</span> explique como investigou cada nível.</li>
+        <li><span class="k">Evidências:</span> registre comandos, saídas relevantes e observações.</li>
+        <li><span class="k">Conceito:</span> diga qual falha ou fraqueza o nível queria ensinar.</li>
+        <li><span class="k">Mitigação:</span> mostre como corrigiria isso em um sistema real.</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <p class="footer">
+    Este guia descreve o que cada nível quer ensinar e como documentar a jornada de forma ética e clara.
+  </p>
+</div>
+</body>
+</html>
