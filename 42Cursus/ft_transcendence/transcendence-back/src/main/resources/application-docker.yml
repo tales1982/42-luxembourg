@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: transcendence-back
+
+  # Load secrets from Vault before other config
+  config:
+    import: "vault://"
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/transcendence
+    driver-class-name: org.postgresql.Driver
+    # username and password are injected by Vault (spring.datasource.username / password)
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  cloud:
+    vault:
+      enabled: true
+      fail-fast: true
+      host: vault
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN}
+      kv:
+        enabled: true
+        backend: secret
+        default-context: transcendence
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: /app/certs/keystore.p12
+    key-store-password: transcendence123
+    key-store-type: PKCS12
+
+file:
+  upload-dir: /app/uploads
+
+jwt:
+  expiration: 86400000
+
+blockchain:
+  chain-id: 11155111
+  # rpc-url, contract-address, minter-private-key are injected by Vault

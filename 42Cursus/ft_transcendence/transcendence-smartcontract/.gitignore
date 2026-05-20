@@ -1,0 +1,10 @@
+# Foundry build artifacts
+out/
+cache/
+
+# Environment (contains private keys — NEVER commit!)
+.env
+
+# Broadcast logs (contain tx hashes from deploys)
+broadcast/*/31337/
+broadcast/*/11155111/dry-run/

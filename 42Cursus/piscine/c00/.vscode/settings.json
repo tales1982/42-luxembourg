@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.page-template": "vue",
-        "*.layout-template": "vue",
-        "*.vue": "vue",
-        "stdlib.h": "c",
-        "main.h": "c"
-    }
-}

@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: transcendence-back
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:default}
+
+  datasource:
+    url: jdbc:h2:mem:transcendence
+    driver-class-name: org.h2.Driver
+    username: admin
+    password: admin
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  cloud:
+    vault:
+      enabled: false
+
+file:
+  upload-dir: ./uploads
+
+server:
+  port: 8080
+
+springdoc:
+  default-flat-param-object: false
+
+jwt:
+  secret: bXlTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25UaGF0SXNBdExlYXN0MjU2Qml0c0xvbmcxMjM0NTY3ODk=
+  expiration: 86400000 # 24 hours in milliseconds
+
+blockchain:
+  rpc-url: ${BLOCKCHAIN_RPC_URL:https://eth-sepolia.g.alchemy.com/v2/amXFYaunCo1a-njVqtBYQqB3whzUVX4_}
+  contract-address: ${ZION_TOKEN_ADDRESS:0x273FA47B2401c583D615b44Cd435707FA7383Eed}
+  minter-private-key: ${BLOCKCHAIN_MINTER_KEY:}
+  chain-id: 11155111

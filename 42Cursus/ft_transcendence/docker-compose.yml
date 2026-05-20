@@ -1,0 +1,179 @@
+services:
+  # ============================================
+  # VAULT - Secret Management
+  # ============================================
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: transcendence-vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: transcendence-root-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+      VAULT_ADDR: http://127.0.0.1:8200
+      SKIP_SETCAP: "true"
+    volumes:
+      - vault-data:/vault/data
+    command: server -dev
+    networks:
+      - transcendence-network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "VAULT_ADDR=http://127.0.0.1:8200 vault status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ============================================
+  # VAULT INIT - Initialize secrets
+  # ============================================
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: transcendence-vault-init
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: transcendence-root-token
+      BLOCKCHAIN_MINTER_KEY: ${BLOCKCHAIN_MINTER_KEY:-}
+    volumes:
+      - ./scripts:/scripts
+    entrypoint: /scripts/init-vault.sh
+    networks:
+      - transcendence-network
+
+  # ============================================
+  # POSTGRESQL 17
+  # ============================================
+  postgres:
+    image: postgres:17-alpine
+    container_name: transcendence-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: transcendence
+      POSTGRES_USER: transcendence
+      POSTGRES_PASSWORD: transcendence123
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - transcendence-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U transcendence -d transcendence || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ============================================
+  # PGADMIN - Database Management UI
+  # ============================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: transcendence-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - transcendence-network
+
+  # ============================================
+  # BACKEND - Spring Boot
+  # ============================================
+  backend:
+    build:
+      context: ./transcendence-back
+      dockerfile: Dockerfile
+    container_name: transcendence-backend
+    ports:
+      - "8443:8443"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      VAULT_TOKEN: transcendence-root-token
+    volumes:
+      - ./uploads:/app/uploads
+      - ./certs:/app/certs:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      vault-init:
+        condition: service_completed_successfully
+    networks:
+      - transcendence-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --no-check-certificate https://localhost:8443/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================
+  # WAF - Nginx + ModSecurity (OWASP CRS)
+  # ============================================
+  waf:
+    build:
+      context: ./waf
+      dockerfile: Dockerfile
+    container_name: transcendence-waf
+    ports:
+      - "80:8080"
+    environment:
+      PORT: "8080"
+      MODSEC_RULE_ENGINE: "On"
+      ALLOWED_METHODS: "GET HEAD POST PUT DELETE OPTIONS PATCH"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - transcendence-network
+
+  # ============================================
+  # FRONTEND - React/Vite (Development with Hot Reload)
+  # ============================================
+  frontend:
+    build:
+      context: ./transcendence-front
+      dockerfile: Dockerfile.dev
+    container_name: transcendence-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./transcendence-front:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+    networks:
+      - transcendence-network
+
+# ============================================
+# NETWORKS
+# ============================================
+networks:
+  transcendence-network:
+    driver: bridge
+
+# ============================================
+# VOLUMES
+# ============================================
+volumes:
+  postgres-data:
+  vault-data:
+  pgadmin-data:

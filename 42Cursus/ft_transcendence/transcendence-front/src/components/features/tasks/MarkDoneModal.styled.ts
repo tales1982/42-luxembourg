@@ -1,0 +1,62 @@
+import styled from "styled-components"
+
+export const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.space(2)};
+`;
+
+export const UploadZone = styled.div`
+  border: 2px dashed ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.md};
+  padding: ${({ theme }) => theme.space(4)};
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 150ms ease;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+export const UploadText = styled.p`
+  color: ${({ theme }) => theme.colors.muted};
+  font-size: 0.875rem;
+`;
+
+export const UploadSub = styled.p`
+  color: ${({ theme }) => theme.colors.muted};
+  font-size: 0.75rem;
+  margin-top: 4px;
+`;
+
+export const SelectedFile = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.space(1)};
+  margin-top: ${({ theme }) => theme.space(1.5)};
+  padding: ${({ theme }) => `${theme.space(1)} ${theme.space(2)}`};
+  background: ${({ theme }) => theme.colors.card};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.md};
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+export const RemoveFile = styled.button`
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.colors.danger};
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: ${({ theme }) => theme.space(1.5)};
+  padding-top: ${({ theme }) => theme.space(2)};
+`;
