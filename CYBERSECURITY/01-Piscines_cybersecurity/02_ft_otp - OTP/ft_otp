@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import hmac
+import hashlib
+import struct
+import time
+
+ENCRYPTION_KEY = b"ft_otp_secret_42"
+
+
+def xor_encrypt(data: bytes, key: bytes) -> bytes:
+    return bytes(b ^ key[i % len(key)] for i, b in enumerate(data))
+
+
+def save_key(hex_key: str) -> None:
+    hex_key = hex_key.strip()
+    if len(hex_key) < 64 or not all(c in "0123456789abcdefABCDEF" for c in hex_key):
+        print("./ft_otp: error: key must be 64 hexadecimal characters.")
+        sys.exit(1)
+    encrypted = xor_encrypt(hex_key.encode(), ENCRYPTION_KEY)
+    with open("ft_otp.key", "wb") as f:
+        f.write(encrypted)
+    print("Key was successfully saved in ft_otp.key.")
+
+
+def load_key(key_file: str) -> bytes:
+    if not os.path.isfile(key_file):
+        print(f"./ft_otp: error: cannot open '{key_file}'.")
+        sys.exit(1)
+    with open(key_file, "rb") as f:
+        encrypted = f.read()
+    hex_key = xor_encrypt(encrypted, ENCRYPTION_KEY).decode()
+    return bytes.fromhex(hex_key)
+
+
+def hotp(key: bytes, counter: int) -> int:
+    msg = struct.pack(">Q", counter)
+    h = hmac.new(key, msg, hashlib.sha1).digest()
+    offset = h[-1] & 0x0F
+    code = struct.unpack(">I", h[offset:offset + 4])[0] & 0x7FFFFFFF
+    return code % 1_000_000
+
+
+def totp(key: bytes) -> str:
+    counter = int(time.time()) // 30
+    return f"{hotp(key, counter):06d}"
+
+
+def main():
+    if len(sys.argv) != 3:
+        print("Usage: ./ft_otp -g <keyfile> | ./ft_otp -k <ft_otp.key>")
+        sys.exit(1)
+
+    flag, arg = sys.argv[1], sys.argv[2]
+
+    if flag == "-g":
+        if not os.path.isfile(arg):
+            print(f"./ft_otp: error: cannot open '{arg}'.")
+            sys.exit(1)
+        with open(arg, "r") as f:
+            save_key(f.read())
+    elif flag == "-k":
+        print(totp(load_key(arg)))
+    else:
+        print(f"./ft_otp: error: unknown flag '{flag}'.")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
