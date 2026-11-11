@@ -1,0 +1,44 @@
+:root {
+  --cell: 28px;
+  font-family: system-ui, sans-serif;
+  color: #eee;
+  background: #1a1a1f;
+}
+body { margin: 0; }
+button { padding: 8px 20px; font-size: 1rem; cursor: pointer; background: #c0392b; color: #fff; border: 0; border-radius: 4px; }
+input { padding: 8px; font-size: 1rem; }
+
+.home { display: flex; flex-direction: column; gap: 12px; width: 260px; margin: 80px auto; }
+
+.room { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px; }
+.room-header { display: flex; align-items: baseline; gap: 16px; }
+.room-header h1 { color: #e74c3c; margin: 0; }
+.room-main { display: flex; gap: 32px; align-items: flex-start; }
+.player-area { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.status { font-size: 1.3rem; font-weight: bold; }
+.error { background: #7b241c; padding: 8px 16px; border-radius: 4px; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, var(--cell));
+  grid-template-rows: repeat(20, var(--cell));
+  gap: 1px;
+  background: #333;
+  border: 2px solid #555;
+}
+.cell { background: #111; }
+.cell-I { background: #00bcd4; }
+.cell-J { background: #2962ff; }
+.cell-L { background: #ff9100; }
+.cell-O { background: #ffd600; }
+.cell-S { background: #00c853; }
+.cell-T { background: #aa00ff; }
+.cell-Z { background: #d50000; }
+.cell-P { background: #616161; }
+
+.opponents { display: flex; flex-direction: column; gap: 16px; }
+.spectrum-name { margin-bottom: 4px; }
+.spectrum-columns { display: flex; align-items: flex-end; gap: 1px; height: 120px; width: 120px; background: #111; border: 1px solid #555; }
+.spectrum-column { flex: 1; height: 100%; display: flex; align-items: flex-end; }
+.spectrum-fill { width: 100%; background: #e74c3c; }
+.spectrum-dead { opacity: 0.4; }

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ft_onion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        .onion {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #7f5af0;
+            margin-bottom: 0.5rem;
+            letter-spacing: 4px;
+        }
+
+        .subtitle {
+            color: #72757e;
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .info-box {
+            border: 1px solid #2d2d2d;
+            border-radius: 4px;
+            padding: 1.5rem;
+            background: #161616;
+            text-align: left;
+        }
+
+        .info-box p {
+            margin: 0.4rem 0;
+            font-size: 0.8rem;
+            color: #72757e;
+        }
+
+        .info-box span {
+            color: #7f5af0;
+        }
+
+        .info-box .value {
+            color: #2cb67d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="onion">&#x1F9C5;</div>
+        <h1>ft_onion</h1>
+        <p class="subtitle">hidden service &bull; tor network</p>
+        <div class="info-box">
+            <p><span>service</span>  : <span class="value">nginx</span></p>
+            <p><span>network</span>  : <span class="value">tor hidden service</span></p>
+            <p><span>http</span>     : <span class="value">port 80</span></p>
+            <p><span>ssh</span>      : <span class="value">port 4242</span></p>
+            <p><span>status</span>   : <span class="value">online</span></p>
+        </div>
+    </div>
+</body>
+</html>

