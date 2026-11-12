@@ -2,35 +2,99 @@
 
 Networked multiplayer Tetris — Full Stack JavaScript (Node.js + socket.io + React + Redux).
 
-## Como rodar
+## Como executar
+
+Na 42 o projeto roda **somente via Docker**. Você precisa apenas do Docker com
+o Docker Compose (`docker compose version`) e do `make`. Não precisa instalar Node.
+
+### 1. Subir o jogo
 
 ```bash
 cd red-tetris
-npm install          # só na primeira vez
-npm run build        # gera dist/index.html e dist/bundle.js
-npm start            # sobe o servidor na porta 3000
+make
 ```
 
-Depois abra no navegador `http://localhost:3000/<sala>/<seu_nome>`, por exemplo `http://localhost:3000/sala1/tales`.
+Na primeira vez ele cria a imagem, o que leva cerca de 1 minuto. Depois o
+servidor fica rodando em segundo plano na porta **3000**.
 
-**Para jogar multiplayer:** abra outra aba com a mesma sala e outro nome, como `http://localhost:3000/sala1/bob`. Quem entrou primeiro é o host e aparece o botão **Start** para ele.
+### 2. Jogar
 
-**Teclas:** ← → movem, ↑ gira, ↓ desce mais rápido, Espaço derruba a peça.
+Abra no navegador `http://localhost:3000/<sala>/<seu_nome>`, por exemplo:
 
-**Para desenvolver**, com recarga automática quando você edita o código:
-
-```bash
-npm run dev
+```
+http://localhost:3000/sala1/tales
 ```
 
-Nesse modo abra `http://localhost:5173/sala1/tales` (porta 5173, não 3000).
+**Multiplayer:** abra outra aba (ou outro computador) com a **mesma sala** e
+**outro nome**, por exemplo `http://localhost:3000/sala1/bob`. Quem entra
+primeiro é o host, e só ele vê o botão **Start**.
 
-**Outros comandos:**
+Para jogar de outro computador na mesma rede, troque `localhost` pelo IP da
+máquina que roda o Docker.
+
+**Teclas:** ← → movem · ↑ gira · ↓ desce mais rápido · Espaço derruba a peça.
+
+### 3. Parar
 
 ```bash
-npm test            # roda os testes
-npm run coverage    # testes + cobertura
-npm run lint        # verifica o código
+make down
+```
+
+### Todos os comandos
+
+| Comando     | O que faz |
+|-------------|-----------|
+| `make`      | Cria a imagem e sobe o jogo em `http://localhost:3000` (em segundo plano) |
+| `make logs` | Mostra os logs do servidor (Ctrl+C para sair) |
+| `make down` | Para e remove os containers |
+| `make test` | Roda lint, testes e cobertura dentro de um container |
+| `make dev`  | Modo desenvolvimento com recarga automática em `http://localhost:5173` |
+| `make clean`| Para tudo e apaga as imagens do projeto |
+| `make re`   | `clean` e depois `make`: reconstrói do zero |
+
+**Mudar a porta:** `PORT=8080 make` e abra `http://localhost:8080/sala1/tales`.
+
+**Sem `make`:**
+
+```bash
+docker compose up --build -d app                     # subir o jogo
+docker compose down                                  # parar
+docker compose --profile test run --rm --build test  # testes
+docker compose --profile dev up --build dev          # modo desenvolvimento
+```
+
+### Modo desenvolvimento (`make dev`)
+
+O código da pasta é montado dentro do container. Quando você salva um arquivo,
+o navegador (client) e o servidor recarregam sozinhos. Nesse modo use a porta
+**5173**: `http://localhost:5173/sala1/tales`. Para sair, use Ctrl+C.
+
+### Como funciona o Docker aqui
+
+- `Dockerfile` com etapas: `deps` instala as dependências, `build` gera
+  `dist/` (index.html + bundle.js) com Vite, e `prod` é a imagem final, só com
+  o servidor, `src/shared`, `dist/` e as dependências de produção, rodando
+  como usuário não root.
+- `docker-compose.yml` tem três serviços: `app` (padrão), `dev` e `test`. Os
+  dois últimos só sobem quando são pedidos (profiles).
+- `.dockerignore` deixa de fora da imagem `node_modules`, `.git`, `.env` e o PDF.
+
+### Problemas comuns
+
+- **`port is already allocated`**: a porta 3000 já está em uso. Rode
+  `make down` ou use `PORT=8080 make`.
+- **Alterei o código e o `make` não mostra a mudança**: rode `make re`.
+- **`permission denied` no Docker**: seu usuário precisa estar no grupo
+  `docker`, ou use o Docker rootless da 42.
+
+### Sem Docker (fora da 42, opcional)
+
+Precisa de Node 20.19+ (recomendado 24).
+
+```bash
+npm install && npm run build && npm start   # http://localhost:3000
+npm run dev                                 # http://localhost:5173
+npm test · npm run coverage · npm run lint
 ```
 
 ## Structure
@@ -79,7 +143,3 @@ tests/       Vitest
 | S → C | `pieces` | `{ index, pieces[] }` | Reply to `pieces:request` (7 pieces). |
 | S → C | `penalty` | `{ lines }` | Add indestructible lines to the bottom. |
 | S → C | `game:over` | `{ winner }` | End of the round (`null` in solo). |
-
-## Controls
-
-← → move · ↑ rotate · ↓ soft drop · Space hard drop

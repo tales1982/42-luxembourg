@@ -1,0 +1,37 @@
+services:
+  # Produção: docker compose up --build  ->  http://localhost:3000/sala1/tales
+  app:
+    build:
+      context: .
+      target: prod
+    image: red-tetris
+    ports:
+      - "${PORT:-3000}:3000"
+    restart: unless-stopped
+
+  # Desenvolvimento com hot reload: docker compose --profile dev up dev
+  #   -> http://localhost:5173/sala1/tales
+  dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      target: dev
+    ports:
+      - "5173:5173"
+      - "3001:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  # Testes / lint: docker compose --profile test run --rm test
+  test:
+    profiles: ["test"]
+    build:
+      context: .
+      target: deps
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "npm run lint && npm run coverage"
